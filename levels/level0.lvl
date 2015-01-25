@@ -1,0 +1,52 @@
+// Mantener orden de secciones o se arruina todo
+// Si una línea empieza con "espacio" o "/", es salteada
+
+//Si no hay tres números, se arruina todo.
+>tiles
+1 // rug: 0=none, 1=red
+1 // wall: 0=black, 1=bird, 2=egg, 3=purple, 4=green
+1 // papering: 0=none, 1=purple, 2=green, 3=red
+
+// Mapa de sectores sólidos
+// 59x14 caracteres [real: 30x14 tiles]
+// Si no mide eso, se arruina todo.
+// # significa sólido. Cualquier otra cosa no lo es [aunque yo uso "espacio"].
+// El caracter separador '|' es mentira, pero tiene que haber algo entre cada tile
+// Lo hice así sólo para que se vea mejor
+>map
+#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#
+#| | | | | | | | | | | | | | | | | | | | | | | | | | | | |#
+#| | | | | | | | | | | | | | | | | | | | | | | | | | | | |#
+#| | | | |#| | | | | | | | | | | | | | | | | | | | |#|#| |#
+#| | | | | | | | | | |#|#|#|#|#|#|#|#| | | | | | | | | | |#
+#| | | | | | | | | | | | | | | | | | | | | | | | | | | | |#
+#| | | | | | | | | | | | | | | | | | | | | | | | | | | | |#
+#| |#| |#|#|#|#|#|#| | | | | | | | | | |#|#|#|#|#|#| | | |#
+#| | |#| | |#| | | | | | | | | | | | | | | | | | | | | | |#
+#| | | | | | | | | | | | | | | | | | | | | | | | | | | | |#
+#| | | | | | | | |#|#|#|#|#| | |#|#|#|#|#| | | | | | | | |#
+#| | | | | | | | | | | | |#| | |#| | | | | | | | | | | | |#
+#| | | | | | | | | | | | |#| | |#| | | | | | | | | | | | |#
+#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#
+
+//formato: name x y
+// y si no, se arruina todo
+>props
+silla1 160 192 // una silla  
+mesa0 192 192  // una mesa
+
+>enemies
+// name x/32 y/32
+ghost 25 5
+ghost 5 5
+ghost 23 10
+ghost 10 12
+ghost 17 12
+
+>items
+// name x/32 y/32
+tomato 14 12
+
+//Todos los .lvl deben terminar en >end
+>end
+//A nadie le importa lo que escribas acá

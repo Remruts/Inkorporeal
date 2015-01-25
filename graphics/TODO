@@ -1,0 +1,35 @@
+
+> PROPS
+	- Biblioteca
+	- Candelabros
+	- "Bandeja" de comida
+	- Platos
+
+> SPRITES
+	- Animación de muerte
+	- Enemigos
+	- Puerta [desapareciendo, abriendose]
+	- Candado [rompiéndose/cayendo]
+	- Llave
+
+> UI
+	- Barra de vida enemigo
+	- Title [Inkorporeal]
+
+
+> DISEÑO
+	- Niveles
+	- Enemigos
+	- power-ups?
+
+> PROGRAMACIÓN
+	- melee
+	- disparos enemigo 
+	- power-ups?
+	
+>DONE [sort of]:
+-loader de niveles
+- disparos personaje
+- enemigos
+- movimiento
+- colisiones
