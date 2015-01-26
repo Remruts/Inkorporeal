@@ -72,6 +72,12 @@ juego::juego(painter* p){
 		exit(1);
 	}
 	
+	effectSheet = leonardo->loadTexture("graphics/effects.png");
+	if (effectSheet == NULL){
+		std::cout << "Error al cargar los gráficos de los efectos. " << std::endl;
+		exit(1);
+	}
+	
 	//Creo un jugador nuevo
 	jugador = new player(playerSprites);
 	
@@ -85,6 +91,17 @@ juego::juego(painter* p){
 }
 
 juego::~juego(){
+	
+	if (currentLevel != NULL){
+		delete currentLevel;
+		currentLevel = NULL;
+	}
+	
+	if (jugador != NULL){
+		delete jugador;
+		jugador = NULL;
+	}
+	
 	if (tiles != NULL){
 		leonardo->freeImage(tiles);
 		tiles = NULL;
@@ -95,14 +112,19 @@ juego::~juego(){
 		props = NULL;
 	}
 	
-	if (currentLevel != NULL){
-		delete currentLevel;
-		currentLevel = NULL;
+	if (playerSprites != NULL){
+		leonardo->freeTexture(playerSprites);
+		playerSprites = NULL;
 	}
 	
-	if (jugador != NULL){
-		delete jugador;
-		jugador = NULL;
+	if (enemySprites != NULL){
+		leonardo->freeTexture(enemySprites);
+		enemySprites = NULL;
+	}
+	
+	if (effectSheet != NULL){
+		leonardo->freeTexture(effectSheet);
+		effectSheet = NULL;
 	}
 }
 
@@ -245,6 +267,10 @@ LTexture* juego::getPlayerSprites(){
 
 LTexture* juego::getEnemySprites(){
 	return enemySprites;
+}
+
+LTexture* juego::getEffectSheet(){
+	return effectSheet;
 }
 
 int juego::getLevelNum(){

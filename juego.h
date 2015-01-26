@@ -34,6 +34,7 @@ public:
 	SDL_Surface* getTilesheet();
 	LTexture* getPlayerSprites();
 	LTexture* getEnemySprites();
+	LTexture* getEffectSheet();
 	int getLevelNum();
 	painter* getPainter();
 	player* getPlayer();
@@ -48,10 +49,12 @@ private:
 	
 	SDL_Surface* tiles; //puntero a Surface de tiles
 	SDL_Surface* props; //puntero a Surface de props
+	
 	map<string, pair<int, int> > posEnSheet; // mapa de posiciones para props en spritesheet
 	
 	LTexture* playerSprites; //puntero a Texture de spritesheet de MC
 	LTexture* enemySprites; //puntero a Texture de spritesheet de enemigos
+	LTexture* effectSheet; //puntero a texture de effectos
 	
 	level* currentLevel; //pointer al nivel actual
 	player* jugador;

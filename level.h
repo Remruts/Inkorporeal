@@ -16,6 +16,8 @@
 #include <string>
 #include <utility>
 #include <fstream>
+#include <stdlib.h> //para random
+#include <time.h> 	//idem
 
 //forward declarations ftw
 class player;
@@ -83,6 +85,7 @@ private:
 	SDL_Surface *propSheet;
 	SDL_Surface *tileSheet;
 	LTexture *enemySprites;
+	LTexture *effectSheet;
 	
 	bool solid[420]; // mapa de 30x14 (=420). Determina si es sólido (true) o no (false)
 	player* jugador; //puntero al jugador

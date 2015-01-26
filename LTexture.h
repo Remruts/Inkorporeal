@@ -16,6 +16,7 @@ public:
 	
 	void setAlpha(int);
 	void setColor(int, int, int);
+	void setBlendMode(int);
 	
 	//gets texture
 	SDL_Texture* getTexture();

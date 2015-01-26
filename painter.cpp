@@ -185,8 +185,16 @@ LTexture* painter::textureFromSurface(SDL_Surface* sur){
 	LTexture* finalTex = NULL;
 	SDL_Texture* newTexture = NULL;
 	newTexture = SDL_CreateTextureFromSurface( canvas, sur);
-	SDL_SetTextureBlendMode(newTexture, SDL_BLENDMODE_BLEND);
+	SDL_Texture* copy = SDL_CreateTexture(canvas, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, sur->w, sur->h);
+
 	finalTex = new LTexture(sur->w, sur->h, newTexture);
+	SDL_SetRenderTarget(canvas, copy);
+	draw(finalTex, 0, 0, 0, 0, 0, 0);
+	resetRenderTarget();
+	delete finalTex;
+	
+	SDL_SetTextureBlendMode(copy, SDL_BLENDMODE_BLEND);
+	finalTex = new LTexture(sur->w, sur->h, copy);
 	return finalTex;
 }
 

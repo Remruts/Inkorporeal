@@ -55,6 +55,17 @@ void LTexture::setColor(int R, int G, int B){
 	SDL_SetTextureColorMod(tex, r, g, b);
 }
 
+void LTexture::setBlendMode(int blend){
+	if (blend == 1){
+		SDL_SetTextureBlendMode(tex, SDL_BLENDMODE_ADD);
+	} else if (blend == 2){
+		SDL_SetTextureBlendMode(tex, SDL_BLENDMODE_MOD);
+	} else {
+		SDL_SetTextureBlendMode(tex, SDL_BLENDMODE_BLEND);
+	}
+	
+}
+
 //gets texture
 SDL_Texture* LTexture::getTexture(){
 	return tex;

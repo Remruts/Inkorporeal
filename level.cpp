@@ -16,6 +16,7 @@ level::level(const string & filename, juego* game){
 	leonardo = game->getPainter();			// paso puntero a painter
 	jugador = game->getPlayer(); 			// paso puntero a jugador
 	enemySprites = game->getEnemySprites();	// paso puntero a sprites de enemigos
+	effectSheet = game->getEffectSheet();	// paso puntero a sprites de effectos
 	
 	//Determino el número de nivel
 	int num = game->getLevelNum();
@@ -276,6 +277,24 @@ void level::updateEnemies(){
 				(*it)->step(this);
 				it++;
 			} else{
+				int x, y;
+				(*it)->getPos(x, y);
+				srand(time(NULL)*(x+y));
+				
+				int effect;
+				int scale;
+				
+				leonardo->setRenderTarget(background);
+				effectSheet->setBlendMode(1);
+				effectSheet->setAlpha(200);
+				for (int i = 0; i<4; ++i){
+					effect = rand()%9;
+					scale = 32*(rand()%3+1);
+					effectSheet->setColor(rand()%256, rand()%256, rand()%256);
+						leonardo->drawEx(effectSheet, 32*(effect%3), 32*(effect/3), 32, 32, 
+						x+rand()%32-16 - 192, y+rand()%32-16, scale, scale, rand()%360, rand()%4);
+				}
+				leonardo->resetRenderTarget();
 				delete *it;
 				*it = NULL;
 				it = enemyList.erase(it);

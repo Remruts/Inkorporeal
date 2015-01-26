@@ -23,7 +23,7 @@ animation::animation(int frmnum, float spd, bool lp, LTexture* sprsh, unsigned i
 }
 
 animation::~animation(){
-	delete frames;
+	delete[] frames;
 }
 	
 void animation::setCurrentFrame(int frm){
