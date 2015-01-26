@@ -25,6 +25,7 @@ class bullet;
 class juego;
 class enemy;
 class ghost;
+class skelleton;
 
 class level{
 public:

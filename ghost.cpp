@@ -13,6 +13,13 @@ ghost::ghost(LTexture* sprt, int X, int Y) : enemy(sprt, X, Y){
 	maxSpeedY = 2;
 	visible = 1;
 	alpha = 170;
+	
+	colBox.x = x+4;
+	colBox.y = y;
+	colBox.w = 24;
+	colBox.h = 32;
+	
+	lives = 2;
 }
 
 ghost::~ghost(){
@@ -45,9 +52,11 @@ void ghost::step(level* lvl){
 	}
 	
 	enemy::step(lvl);
+	
+	colBox.x = x+4;
+	colBox.y = y;
 }
 
 void ghost::draw(painter* pintor){
-	spritesheet->setAlpha(10);
 	enemy::draw(pintor);
 }

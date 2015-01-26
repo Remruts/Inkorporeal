@@ -28,7 +28,7 @@ public:
 	bool isAlive();
 protected:
 	int x, y;
-	int spdX, spdY;
+	double spdX, spdY;
 	double maxSpeedX, maxSpeedY;
 	double accel;
 	int visible;

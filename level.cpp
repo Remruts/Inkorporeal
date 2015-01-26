@@ -1,6 +1,9 @@
 //Implementación del level de niveles
 #include "level.h"
 #include "ghost.h"
+#include "skelleton.h"
+#include "demobat.h"
+#include "imp.h"
 #include <iostream> //debug
 
 using namespace std;
@@ -285,7 +288,6 @@ void level::updateEnemies(){
 				int scale;
 				
 				leonardo->setRenderTarget(background);
-				effectSheet->setBlendMode(1);
 				effectSheet->setAlpha(200);
 				for (int i = 0; i<4; ++i){
 					effect = rand()%9;
@@ -468,18 +470,17 @@ int level::vRaySolid(int y1, int y2, int x) const{
 				return 12;
 			}
 			
-			if (solid[X+i+Y*30]){
-				return X+i-1;
+			if (solid[X+(Y+i)*30]){
+				return Y+i-1;
 			}
 		}
 	} else if (dist < 0){
 		dist = -dist;
 		for (int i = 0; i <= dist/32; ++i){
-			std::cout << i << std::endl;
 			if (Y+i < 1){
 				return 1;
 			}
-			if (solid[X+i+Y*30]){
+			if (solid[X+(Y+i)*30]){
 				return Y+i+1;
 			}
 		}
@@ -711,6 +712,15 @@ int level::load(std::istream& is, map<string, pair<int, int> >& posEnSheet){
 			
 				if (str == "ghost"){
 					toSpawn = new ghost(enemySprites, pos.x, pos.y);
+				} else if (str == "skelleton"){
+					toSpawn = new skelleton(enemySprites, pos.x, pos.y);
+				} else if (str == "imp"){
+					toSpawn = new imp(enemySprites, pos.x, pos.y);
+				} else if (str == "demobat"){
+					toSpawn = new demobat(enemySprites, pos.x, pos.y);
+				} else {
+					std::cout << "Falla cargar enemigos. Archivo corrupto.\n";
+					exit(1);
 				}
 				enemyList.push_back(toSpawn);
 				ignore(is);

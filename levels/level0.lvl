@@ -41,7 +41,10 @@ ghost 25 5
 ghost 5 5
 ghost 23 10
 ghost 10 12
-ghost 17 12
+skelleton 17 6
+imp 10 6
+demobat 14 12
+//ghost 17 12
 
 >items
 // name x/32 y/32

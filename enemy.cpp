@@ -102,14 +102,16 @@ void enemy::step(level*){
 void enemy::draw(painter* disney){
 	if (alive){
 		if (currentAnim != NULL){
-		
+			
+			spritesheet->setAlpha(alpha);
+			
 			if (hurt){
 				spritesheet->setColor(200, 0, 0);
 			} else{
 				spritesheet->setColor(255, 255, 255);
 			}
 			
-			currentAnim->setFlip(facingRight);
+			currentAnim->setFlip(!facingRight);
 			
 			if ((visible == 0) || (visible == 2)){
 				currentAnim->draw(disney, x, y);
@@ -117,14 +119,14 @@ void enemy::draw(painter* disney){
 			
 			if (visible == 0){
 				currentAnim->setStretch(1);
-				spritesheet->setAlpha(5+hurt*90);
+				spritesheet->setAlpha(10+hurt*90);
 				currentAnim->draw(disney, x, y);
 				spritesheet->setAlpha(alpha);
 				currentAnim->setStretch(0);
 			}
 			
 			if (visible == 1){
-				spritesheet->setAlpha(5+hurt*90);
+				spritesheet->setAlpha(10+hurt*90);
 				currentAnim->draw(disney, x, y);
 				spritesheet->setAlpha(alpha);
 			}
