@@ -286,9 +286,9 @@ void level::updateEnemies(){
 				
 				int effect;
 				int scale;
-				
+				//partículas truchas
 				leonardo->setRenderTarget(background);
-				effectSheet->setAlpha(200);
+				effectSheet->setAlpha(100);
 				for (int i = 0; i<4; ++i){
 					effect = rand()%9;
 					scale = 32*(rand()%3+1);
@@ -401,7 +401,7 @@ void level::draw(){
 		jugador->draw(leonardo);
 	
 	// texto/UI
-	leonardo->draw(testText, 0, 0, 0, 0, 24, 64);
+	leonardo->draw(testText, 0, 0, 0, 0, 24, 72);
 	leonardo->draw(levelNumText, 0, 0, 0, 0, 1175, 64);
 }
 

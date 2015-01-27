@@ -9,6 +9,7 @@ animation::animation(int frmnum, float spd, bool lp, LTexture* sprsh, unsigned i
 	curFrame = 0.0f;
 	flip = 0;
 	stretched = 0;
+	angle = 0;
 
 	speed = spd;
 	if (speed < 0.0f)
@@ -69,11 +70,11 @@ void animation::draw(painter* disney, int x, int y){
 	if (stretched){
 		disney->drawEx(spritesheet, width * (frames[int(curFrame)]%(spritesheet->getWidth()/width)), 
 			height * (frames[int(curFrame)]/(spritesheet->getWidth()/width)), width, height, 
-			x, 448+(320-y*0.7143)-height*0.7143, width, height*0.7143, 0, flip+2);
+			x, 448+(320-y*0.7143)-height*0.7143, width, height*0.7143, angle, flip+2);
 	} else{
 		disney->drawEx(spritesheet, width * (frames[int(curFrame)]%(spritesheet->getWidth()/width)), 
 			height * (frames[int(curFrame)]/(spritesheet->getWidth()/width)), width, height, 
-			x, y, width, height, 0, flip);
+			x, y, width, height, angle, flip);
 	}
 }
 	
@@ -101,4 +102,9 @@ void animation::setFlip(bool flp){
 
 void animation::setStretch(bool strt){
 	stretched = strt;
+}
+
+void animation::setAngle(int ang){
+	angle = ang;
+	angle = angle % 360;
 }

@@ -30,6 +30,7 @@ public:
 
 	void setFlip(bool);
 	void setStretch(bool);
+	void setAngle(int);
 	
 private:
 	float speed;
@@ -38,6 +39,7 @@ private:
 	bool loop;
 	unsigned int* frames;
 	int width, height;
+	int angle;
 	bool stretched;
 	bool flip;
 	

@@ -47,5 +47,34 @@ protected:
 	LTexture* spritesheet;
 };
 
-#endif
+//Seh, muy parecido a enemy, pero no lo voy a heredar, for reasons
+class enemyBullet{
+public:
+	enemyBullet(LTexture* sprt, int X, int Y, double SDPX, double SPDY);
+	~enemyBullet();
+	
+	virtual void step(level*);
+	virtual void draw(painter*);
+	
+	void getPos(int &x, int &y) const;
+	SDL_Rect* getColBox();
+	
+	bool isAlive();
+	void die();
+	
+private:
+	int x, y;
+	double spdX, spdY;
+	double accelX, accelY;
+	int visible;
+	int alpha;
+	int angle;
+	bool alive;
+	SDL_Rect colBox;
+	LTexture* spritesheet;
+	animation* currentAnim;
+};
 
+
+
+#endif

@@ -2,6 +2,8 @@
 #include <iostream>
 
 enemy::enemy(LTexture* sprt, int X, int Y){
+	currentAnim = NULL;
+	
 	x = X+192;
 	y = Y;
 	
@@ -96,7 +98,8 @@ void enemy::step(level*){
 			alive = false;
 		}
 	}
-	currentAnim->step();
+	if (currentAnim != NULL)
+		currentAnim->step();
 }
 
 void enemy::draw(painter* disney){
@@ -167,4 +170,143 @@ void enemy::getHurt(){
 		hurt = true;
 	}
 	
+}
+
+enemyBullet::enemyBullet(LTexture* sprt, int X, int Y, double SPDX, double SPDY){
+	
+	currentAnim = NULL;
+	angle = 0;
+	
+	x = X;
+	y = Y;
+	
+	spritesheet = sprt;
+	
+	alive = true;
+	
+	spdX = SPDX;
+	spdY = SPDY;
+	
+	accelX = 0;
+	accelY = 0;
+	
+	colBox.x = x;
+	colBox.y = y;
+	colBox.w = 32;
+	colBox.h = 32;
+	
+	visible = 0;
+	
+	srand(time(NULL)*(x+y));
+	alpha = 255;
+}
+
+enemyBullet::~enemyBullet(){
+	
+}
+	
+void enemyBullet::step(level*){
+	if (alive){
+		colBox.x = x;
+		colBox.y = y;
+		
+		if (spdX > 0){
+			
+			spdX -= accelX;
+		
+			if (spdX <= 0.1){
+				spdX = 0;
+			}
+		
+			x += int(spdX);
+			
+		}
+		if (spdX < 0){
+		
+			spdX += accelX;
+		
+			if (spdX >= -0.1){
+				spdX = 0;
+			}
+			
+			x -= int(abs(spdX));
+			
+		}
+	
+		if (spdY>0){
+			
+			spdY -= accelY;
+			
+			if (spdY <= 0.1){
+				spdY = 0;
+			}
+		
+			y += int(spdY);
+			
+		} else if (spdY<0){
+			
+			spdY += accelY;
+			
+			if (spdY >= -0.1){
+				spdY = 0;
+			}
+			
+			y -= int(abs(spdY));
+			
+		}
+
+	}
+	if (currentAnim != NULL)
+		currentAnim->step();
+}
+
+void enemyBullet::draw(painter* disney){
+	if (alive){
+		if (currentAnim != NULL){
+		
+			currentAnim->setAngle(angle);
+			spritesheet->setAlpha(alpha);
+			
+			if ((visible == 0) || (visible == 2)){
+				currentAnim->draw(disney, x, y);
+			}
+			
+			if (visible == 0){
+				currentAnim->setStretch(1);
+				spritesheet->setAlpha(10);
+				currentAnim->draw(disney, x, y);
+				spritesheet->setAlpha(alpha);
+				currentAnim->setStretch(0);
+			}
+			
+			if (visible == 1){
+				spritesheet->setAlpha(10);
+				currentAnim->draw(disney, x, y);
+				spritesheet->setAlpha(alpha);
+			}
+			
+			if ((visible == 1) || (visible == 2)){
+				currentAnim->setStretch(1);
+				currentAnim->draw(disney, x, y);
+				currentAnim->setStretch(0);
+			}
+		}
+	}
+}
+	
+bool enemyBullet::isAlive(){
+	return alive;
+}
+
+void enemyBullet::getPos(int &X, int &Y) const{	
+	X = x;
+	Y = y;
+}
+
+SDL_Rect* enemyBullet::getColBox(){
+	return &colBox;
+}
+
+void enemyBullet::die(){
+	alive = false;
 }
