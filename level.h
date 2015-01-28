@@ -10,6 +10,7 @@
 #include "LTexture.h"
 #include "player.h"
 #include "control.h"
+#include "particles.h"
 
 #include <vector>
 #include <map>
@@ -24,8 +25,10 @@ class player;
 class bullet;
 class juego;
 class enemy;
+class enemyBullet;
 class ghost;
 class skelleton;
+class emitter;
 
 class level{
 public:
@@ -49,7 +52,9 @@ public:
 	// Si hubiese, devuelve la posición de contacto (en y), sino -1
 	int vRaySolid(int y1, int y2, int x) const;
 	
-	void addBullet(bullet*, bool type); //agrega una bala a la escena
+	void addBullet(bullet*); 	//agrega una bala del jugador a la escena
+	void addEnemyBullet(enemyBullet*); //agrega una bala de enemigo a la escena
+	void addEmitter(emitter*); //agrega un emisor de partículas a la escena
 	
 	bool isFinished();
 	lvlState getState();
@@ -64,11 +69,13 @@ private:
 	void updateBullets();
 	//rutina de actualización de enemigos
 	void updateEnemies();
+	//rutina de actualización de partículas
+	void updateEmitters();
 	
 	void checkBulletCollisions();
 	void checkPlayerEnemyCollisions();
 	
-	bool checkCollision(SDL_Rect* A, SDL_Rect* B);
+	bool checkCollision(const SDL_Rect* A, const SDL_Rect* B);
 
 	
 	lvlState currentState; 	//indica si el nivel se está jugando, se ganó o se perdió
@@ -92,6 +99,8 @@ private:
 	player* jugador; //puntero al jugador
 	vector<bullet*> bulletList; //vector de punteros a balas de jugador
 	vector<enemy*> enemyList; //vector a puntero de enemigos
+	vector<enemyBullet*> enemyBulletList; //vector a puntero de balas de enemigos
+	vector<emitter*> emitterList; //vector a puntero de emisores de partículas
 	
 	LTexture* testText; //Texto de prueba
 	unsigned int levelnum;

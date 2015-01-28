@@ -2,6 +2,7 @@
 #define _OLD_BONES_
 
 #include "enemy.h"
+#include <deque>
 
 class skelleton : public enemy{
 public:
@@ -15,6 +16,21 @@ private:
 	animation* shootingAnim;
 	double timer;
 	bool onGround;
+	bool shooting;
+};
+
+class thrownbone : public enemyBullet{
+public:
+	thrownbone(LTexture*, int x, int y, bool right);
+	~thrownbone();
+	
+	virtual void step(level*);
+	virtual void draw(painter*);
+private:
+	animation* boneSprite;
+	bool side;
+	deque<int> prevX;
+	deque<int> prevY;
 };
 
 #endif

@@ -205,7 +205,15 @@ enemyBullet::~enemyBullet(){
 	
 }
 	
-void enemyBullet::step(level*){
+void enemyBullet::step(level* lvl){
+	
+	if (angle>360){
+		angle = angle % 360;
+	}
+	if (angle < 0){
+		angle = 360+angle%360;
+	}
+
 	if (alive){
 		colBox.x = x;
 		colBox.y = y;
@@ -221,7 +229,7 @@ void enemyBullet::step(level*){
 			x += int(spdX);
 			
 		}
-		if (spdX < 0){
+		if (spdX <= 0){
 		
 			spdX += accelX;
 		
@@ -232,28 +240,13 @@ void enemyBullet::step(level*){
 			x -= int(abs(spdX));
 			
 		}
-	
-		if (spdY>0){
-			
-			spdY -= accelY;
-			
-			if (spdY <= 0.1){
-				spdY = 0;
-			}
 		
-			y += int(spdY);
-			
-		} else if (spdY<0){
-			
-			spdY += accelY;
-			
-			if (spdY >= -0.1){
-				spdY = 0;
-			}
-			
-			y -= int(abs(spdY));
-			
-		}
+		spdY += accelY;
+		
+		if (spdY> 15)
+			spdY = 15;
+		
+		y += int(spdY);
 
 	}
 	if (currentAnim != NULL)

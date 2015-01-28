@@ -115,6 +115,29 @@ level::~level(){
 		}
 		
 	}
+	
+	vector<enemyBullet*>::iterator it3 = enemyBulletList.begin();
+	while (it3 != enemyBulletList.end()){
+		if (*it3 != NULL){
+			delete *it3;
+			*it3 = NULL;
+			it3 = enemyBulletList.erase(it3);
+		}else{
+			it3++;	
+		}
+	}
+	
+	//partículas
+	vector<emitter*>::iterator itEmitter = emitterList.begin();
+	while (itEmitter != emitterList.end()){
+		if (*itEmitter != NULL){
+				delete *itEmitter;
+				(*itEmitter) = NULL;
+				itEmitter = emitterList.erase(itEmitter);
+		} else{
+			itEmitter = emitterList.erase(itEmitter);
+		}
+	}
 
 }
 
@@ -270,6 +293,28 @@ void level::updateBullets(){
 			}
 		}
 	}
+	
+	SDL_Rect* cBox;
+	vector<enemyBullet*>::iterator it2 = enemyBulletList.begin();
+	while (it2 != enemyBulletList.end()){
+	
+		if (*it2 != NULL){
+			if ((*it2)->isAlive()){
+				(*it2)->step(this);
+				
+				cBox = (*it2)->getColBox();				
+				if ((cBox->y+cBox->h > 416) || (cBox->y < 0) || (cBox->x < 0) || (cBox->x+cBox->w > 1120)){
+					(*it2)->die();
+				}
+				
+				it2++;
+			} else{
+				delete *it2;
+				*it2 = NULL;
+				it2 = enemyBulletList.erase(it2);
+			}
+		}
+	}
 }
 
 void level::updateEnemies(){
@@ -280,8 +325,10 @@ void level::updateEnemies(){
 				(*it)->step(this);
 				it++;
 			} else{
+				
 				int x, y;
 				(*it)->getPos(x, y);
+				/*
 				srand(time(NULL)*(x+y));
 				
 				int effect;
@@ -296,7 +343,11 @@ void level::updateEnemies(){
 						leonardo->drawEx(effectSheet, 32*(effect%3), 32*(effect/3), 32, 32, 
 						x+rand()%32-16 - 192, y+rand()%32-16, scale, scale, rand()%360, rand()%4);
 				}
+				*/
+				colourExplosion* exp = new colourExplosion(effectSheet, x, y);
+				addEmitter(exp);
 				leonardo->resetRenderTarget();
+				
 				delete *it;
 				*it = NULL;
 				it = enemyList.erase(it);
@@ -305,6 +356,25 @@ void level::updateEnemies(){
 		
 	}
 
+}
+
+void level::updateEmitters(){
+	//partículas
+	vector<emitter*>::iterator itEmitter = emitterList.begin();
+	while (itEmitter != emitterList.end()){
+		if (*itEmitter != NULL){
+			if ((*itEmitter)->isAlive()){
+				(*itEmitter)->step(this);
+				itEmitter++;
+			}else{
+				delete *itEmitter;
+				(*itEmitter) = NULL;
+				itEmitter = emitterList.erase(itEmitter);
+			}
+		} else{
+			itEmitter = emitterList.erase(itEmitter);
+		}
+	}
 }
 
 void level::checkBulletCollisions(){
@@ -326,6 +396,18 @@ void level::checkBulletCollisions(){
 		}
 		it++;
 	}
+	
+	vector<enemyBullet*>::iterator it3 = enemyBulletList.begin();
+	while (it3 != enemyBulletList.end()){
+		if ((*it3) != NULL && (*it3)->isAlive()){
+			if ((jugador != NULL) && (jugador->getLives() > 0) && checkCollision((*it3)->getColBox(), &jugador->getColBox())){
+				(*it3)->die();
+				jugador->getHurt();
+			}
+		}
+		it3++;
+	}
+	
 }
 
 void level::checkPlayerEnemyCollisions(){
@@ -352,6 +434,7 @@ void level::update(control* c){
 	updateBullets();
 	updatePlayer(c);
 	updateEnemies();
+	updateEmitters();
 	
 	if (jugador->getLives() <= 0){
 		currentState = stLose;
@@ -363,15 +446,22 @@ void level::update(control* c){
 	}
 }
 
-bool level::checkCollision(SDL_Rect* A, SDL_Rect* B){
+bool level::checkCollision(const SDL_Rect* A, const SDL_Rect* B){
 	return ( ((B->x >= A->x) && (B->x <= A->x+A->w)) || ((A->x >= B->x) && (A->x <= B->x+B->w)) ) && //chequeo x
 		( ((B->y >= A->y) && (B->y <= A->y+A->h)) || ((A->y >= B->y) && (A->y <= B->y+B->h)) ); //chequeo y
 }
 
 
-void level::addBullet(bullet* b, bool type){
-	if (type)
-		bulletList.push_back(b);
+void level::addBullet(bullet* b){
+	bulletList.push_back(b);
+}
+
+void level::addEnemyBullet(enemyBullet* b){
+	enemyBulletList.push_back(b);
+}
+
+void level::addEmitter(emitter* e){
+	emitterList.push_back(e);
 }
 
 void level::draw(){
@@ -396,9 +486,25 @@ void level::draw(){
 		it2++;
 	}
 	
+	//balas enemigos
+	vector<enemyBullet*>::iterator it3 = enemyBulletList.begin();
+	while (it3 != enemyBulletList.end()){
+		if (*it3 != NULL)
+			(*it3)->draw(leonardo);
+		it3++;
+	}
+	
 	// jugador
 	if (jugador!=NULL)
 		jugador->draw(leonardo);
+	
+	//partículas
+	vector<emitter*>::iterator itEmitter = emitterList.begin();
+	while (itEmitter != emitterList.end()){
+		if (*itEmitter != NULL)
+			(*itEmitter)->draw(leonardo, background);
+		itEmitter++;
+	}
 	
 	// texto/UI
 	leonardo->draw(testText, 0, 0, 0, 0, 24, 72);
@@ -735,5 +841,4 @@ int level::load(std::istream& is, map<string, pair<int, int> >& posEnSheet){
 	
 	return 1;	
 }
-
 

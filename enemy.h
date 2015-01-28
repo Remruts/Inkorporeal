@@ -51,7 +51,7 @@ protected:
 class enemyBullet{
 public:
 	enemyBullet(LTexture* sprt, int X, int Y, double SDPX, double SPDY);
-	~enemyBullet();
+	virtual ~enemyBullet();
 	
 	virtual void step(level*);
 	virtual void draw(painter*);
@@ -60,9 +60,9 @@ public:
 	SDL_Rect* getColBox();
 	
 	bool isAlive();
-	void die();
+	virtual void die();
 	
-private:
+protected:
 	int x, y;
 	double spdX, spdY;
 	double accelX, accelY;

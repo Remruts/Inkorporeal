@@ -220,7 +220,7 @@ void player::step(level* lvl){
 	if (shooting && (gunCounter == 0)){
 		
 		bullet* b = new bullet(spritesheet, x + spdX + facingRight*32, y+20+spdY, 24*facingRight-12);
-		lvl->addBullet(b, 1);
+		lvl->addBullet(b);
 		gunCounter = 1;
 	}
 	

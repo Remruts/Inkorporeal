@@ -106,5 +106,12 @@ void animation::setStretch(bool strt){
 
 void animation::setAngle(int ang){
 	angle = ang;
-	angle = angle % 360;
+	
+	if (angle>360){
+		angle = angle % 360;
+	}
+	
+	if (angle < 0){
+		angle = 360+angle%360;
+	}
 }
