@@ -739,6 +739,7 @@ int level::load(std::istream& is, map<string, pair<int, int> >& posEnSheet){
 					//rectángulo en pantalla
 					pos.x = i%30 * 32;
 					pos.y = i/30 * 32;
+					//Arreglar para que se usen texturas
 					//screw encapsulation.
 					if (i >= 30 && solid[i-30] == 0){
 						if (rug == 1){ //Alfombra

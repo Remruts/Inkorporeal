@@ -24,7 +24,6 @@
 
 > PROGRAMACIÓN
 	- melee
-	- disparos enemigo 
 	- power-ups?
 	
 >DONE [sort of]:
@@ -33,3 +32,5 @@
 - enemigos
 - movimiento
 - colisiones
+- sistema de partículas
+- disparos enemigo 
