@@ -303,7 +303,7 @@ void level::updateBullets(){
 				(*it2)->step(this);
 				
 				cBox = (*it2)->getColBox();				
-				if ((cBox->y+cBox->h > 416) || (cBox->y < 0) || (cBox->x < 0) || (cBox->x+cBox->w > 1120)){
+				if ((cBox->y+cBox->h > 416) || (cBox->y < 32) || (cBox->x < 224) || (cBox->x+cBox->w > 1120)){
 					(*it2)->die();
 				}
 				
@@ -610,6 +610,7 @@ int level::load(std::istream& is, map<string, pair<int, int> >& posEnSheet){
 	string str;
 	
 	//variables para la creación del nivel
+	int floor = -1;
 	int rug = -1;
 	int wall = -1;
 	int papering = -1;
@@ -633,9 +634,12 @@ int level::load(std::istream& is, map<string, pair<int, int> >& posEnSheet){
 			ignore(is);
 			is >> papering; //Cargo papering
 			ignore(is);
+			is >> floor; //Cargo floor
+			ignore(is);
 			
 			//Si no son los valores correctos, falla
-			if (rug > 1 || wall > 4 || papering > 3){
+			if (rug > 1 || rug < 0 || wall > 4 || wall < 0 
+				|| papering > 4 || papering < 0 || floor > 7 || floor < 0){
 				std::cout << "Archivo corrupto!\n";
 				return 0;
 			}
@@ -728,12 +732,64 @@ int level::load(std::istream& is, map<string, pair<int, int> >& posEnSheet){
 			//tile de "piso"
 			rect.w = 32;
 			rect.h = 32;
-			rect.x = 64;
-			rect.y = 96;
+			rugrect.w = 32;
+			rugrect.h = 32;
+			
+			switch(floor){
+			case 0:
+				rect.x = 64;
+				rect.y = 96;
+				rugrect.x = 96;
+				rugrect.y = 96;
+			break;
+			case 1:
+				rect.x = 96;
+				rect.y = 0;
+				rugrect.x = 32;
+				rugrect.y = 128;
+			break;
+			case 2:
+				rect.x = 96;
+				rect.y = 0;
+				rugrect.x = 64;
+				rugrect.y = 128;
+			break;
+			case 3:
+				rect.x = 96;
+				rect.y = 0;
+				rugrect.x = 96;
+				rugrect.y = 128;
+			break;
+			case 4:
+				rect.x = 0;
+				rect.y = 192;
+				rugrect.x = 0;
+				rugrect.y = 160;
+			break;
+			case 5:
+				rect.x = 32;
+				rect.y = 192;
+				rugrect.x = 32;
+				rugrect.y = 160;
+			break;
+			case 6:
+				rect.x = 64;
+				rect.y = 192;
+				rugrect.x = 64;
+				rugrect.y = 160;
+			break;
+			case 7:
+				rect.x = 96;
+				rect.y = 192;
+				rugrect.x = 96;
+				rugrect.y = 160;
+			break;
+			}
 			
 			for (int i = 0; i< 420; ++i){
 				is.get(c); //Obtengo el caracter sin formato (o sea, hasta espacios)
 				//Si fuera '#', es sólido
+				int prevX, prevY;
 				if (c == '#'){ 
 					solid[i] = 1; 
 					//rectángulo en pantalla
@@ -743,25 +799,31 @@ int level::load(std::istream& is, map<string, pair<int, int> >& posEnSheet){
 					//screw encapsulation.
 					if (i >= 30 && solid[i-30] == 0){
 						if (rug == 1){ //Alfombra
-						
-							rect.x = 96; //posición en tilesheet de alfombra
-							SDL_BlitSurface(tileSheet, &rect, backSurface, &pos);							
-							rect.x = 64; //vuelvo a la del piso
+							SDL_BlitSurface(tileSheet, &rugrect, backSurface, &pos);
 							
 						} else {
 							SDL_BlitSurface(tileSheet, &rect, backSurface, &pos);
 						}
 						
 						if (papering > 0){
-							rect.x = papering*32-32;
-							rect.y = 0;
+							prevX = rect.x;
+							prevY = rect.y;
+							
+							if (papering == 4){
+								rect.x = 0;
+								rect.y = 128;
+							}else{
+								rect.x = papering*32-32;
+								rect.y = 0;
+							}
+							
 		
 							pos.x = i%30 * 32;
 							pos.y = i/30 * 32 - 32;
 							SDL_BlitSurface(tileSheet, &rect, backSurface, &pos);
 							
-							rect.x = 64;
-							rect.y = 96;
+							rect.x = prevX;
+							rect.y = prevY;
 						}
 						
 					} else {

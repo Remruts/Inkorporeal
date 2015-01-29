@@ -85,7 +85,7 @@ private:
 	
 	LTexture *background; //esto es lo que se muestra
 	SDL_Surface* backSurface; //buffer
-	SDL_Rect rect, pos; //Creo rectángulos para blitear cada tile en el background
+	SDL_Rect rect, pos, rugrect; //Creo rectángulos para blitear cada tile en el background
 	
 	std::map<string, std::pair<int, int> >* posEnSheet;
 	

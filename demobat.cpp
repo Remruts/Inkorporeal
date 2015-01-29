@@ -17,7 +17,6 @@ demobat::demobat(LTexture* sprt, int X, int Y) : enemy(sprt, X, Y){
 	
 	spdX = 2;
 	facingRight = true;
-	onGround = false;
 	
 	colBox.x = x+12;
 	colBox.y = y+15;
@@ -38,15 +37,28 @@ void demobat::step(level* lvl){
 	
 	if (alive){
 		
-		int colDisplace = lvl->vRaySolid(colBox.y+colBox.h, colBox.y+colBox.h+spdY+1, colBox.x+colBox.w/2);
+		int colDisplace;
+		if (spdY>=0){
+			colDisplace = lvl->vRaySolid(colBox.y+colBox.h, colBox.y+colBox.h+spdY+1, colBox.x+colBox.w/2);
+		} else{
+			colDisplace = lvl->vRaySolid(colBox.y, colBox.y+spdY-1, colBox.x+colBox.w/2);
+		}
+		
 		if (colDisplace != -1){
-			y = colDisplace*32;
+			
 			spdY = 0;
-			onGround = true;
+			if (spdY >= 0){
+				y = colDisplace*32;
+			} else {
+				y = colDisplace*32+33;
+			}
+			colBox.y = y+9;
+				
 		} else {
-			onGround = false;
 			spdY += 0.5;
 		}
+		
+		
 			
 		timer -= 0.1;
 		
@@ -54,28 +66,25 @@ void demobat::step(level* lvl){
 			srand(time(NULL)+(long int)(this));
 			timer = 1+rand()%3;
 			spdY = -7;
-			onGround = false;
 		} 
 		
-		colDisplace = lvl->vRaySolid(colBox.y, colBox.y+colBox.h+spdY-1, colBox.x+colBox.w/2);
-		if (spdY<0){
-			if (colDisplace != -1){
-				//y = colDisplace*32;
-				spdY = 0;
-			}
-		}
+		
 		
 		if (facingRight){
-			colDisplace = lvl->hRaySolid(colBox.x+colBox.w, colBox.x+colBox.w+spdX, colBox.y+colBox.h/2+spdY);
+			colDisplace = lvl->hRaySolid(colBox.x+colBox.w, colBox.x+colBox.w+spdX+1, colBox.y+colBox.h/2+spdY);
 		} else {
-			colDisplace = lvl->hRaySolid(colBox.x, colBox.x+spdX, colBox.y+colBox.h/2+spdY);
+			colDisplace = lvl->hRaySolid(colBox.x, colBox.x+spdX-1, colBox.y+colBox.h/2+spdY);
 		}
 		
 		
 		if (colDisplace != -1){
-			x = 192+colDisplace*32;
+			if (facingRight)
+				x = 192+colDisplace*32-32+(colBox.w+(colBox.x-x));
+			else
+				x = 192+colDisplace*32-(colBox.x-x);
 			facingRight = !facingRight;
 			spdX *= -1;
+			colBox.x = x+12;
 		}
 	
 		if (((colBox.x+colBox.w >= 1120) && (spdX > 0)) || ((colBox.x <= 224) && (spdX < 0))){

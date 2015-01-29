@@ -13,7 +13,6 @@ public:
 private:
 	animation* movingAnim;
 	double timer;
-	bool onGround;
 };
 
 #endif
