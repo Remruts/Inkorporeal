@@ -19,6 +19,8 @@ pickup::pickup(LTexture* sprt, int X, int Y, int Lives){
 	spritesheet = sprt;
 	currentAnim = NULL;
 	
+	pickable = false;
+	
 	alive = true;
 	lives = Lives;
 	maxLives = lives;
@@ -44,7 +46,10 @@ void pickup::step(level* lvl){
 	}
 	
 	if (alive){
-		
+	
+		if (lives < maxLives-5)
+			pickable = true;
+			
 		colBox.x = x;
 		colBox.y = y;
 		
@@ -146,20 +151,24 @@ void pickup::die(){
 	alive = false;
 }
 
+bool pickup::isPickable(){
+	return pickable;
+}
 
-coin::coin(LTexture* sprt, int X, int Y) : pickup(sprt, X, Y, 300){
+
+coin::coin(LTexture* sprt, int X, int Y) : pickup(sprt, X, Y, 400){
 	srand(time(NULL)+(X+Y)*(long int)(this));
 	
 	int random = (1-(rand()%2)*2);
 	
-	spdX = 0.5*random + random*(rand()%20)/10.0f;
-	spdY = -5 - rand()%3;
+	spdX = 0.5*random + random*(rand()%200)/100.0f;
+	spdY = -5 - (rand()%300/100.0);
 	
 	accelY = 0.1;
 	accelX = 0.005;
 	
-	unsigned int frms[] = {0, 1, 2, 3, 4};
-	monedita = new animation(5, 0.2, true, sprt, frms, 16);
+	unsigned int frms[] = {0, 1, 2, 3, 4, 5};
+	monedita = new animation(6, 0.2, true, sprt, frms, 16);
 	monedita->setCurrentFrame(rand()%5);
 	currentAnim = monedita;
 	
@@ -177,13 +186,15 @@ coin::~coin(){
 }
 
 void coin::onCollisionWithPlayer(level* lvl){
+	lvl->addEmitter(new coinSparkle(spritesheet, x+8, y));
+	lvl->addPoints(5);
 	pickup::onCollisionWithPlayer(lvl);
 }
 
 void coin::step(level* lvl){
-
+	
 	int colDisplace;
-	if (spdY>=0){
+	if (spdY >= 0){
 		colDisplace = lvl->vRaySolid(colBox.y+colBox.h, colBox.y+colBox.h+spdY+1, colBox.x+colBox.w/2);
 	} else{
 		colDisplace = lvl->vRaySolid(colBox.y, colBox.y+spdY-1, colBox.x+colBox.w/2);
@@ -193,29 +204,37 @@ void coin::step(level* lvl){
 		
 		spdY *= -0.98;
 		
-		if (spdY <= 0.1 && spdY > -0.1)
-			spdY = 0;
-		
-		if (spdY == 0){
+		if (spdY <= 0.1 && spdY > -0.1){
 			onGround = true;
-			y = colDisplace*32;
-		} else {
-			if (spdY>0)
-				y = colDisplace*32;
-			else
-				y = colDisplace*32+colBox.h;
+			spdX *= 0.98; //fricción en piso
+			spdY = 0;
 		}
+		
+		if (spdY > 0){
+			spdY = 0;
+			y = colDisplace*32-colBox.h;
+		} else {
+			y = colDisplace*32+colBox.h;
+		}
+		
 		colBox.y = y;
 			
 	} else {
 		onGround = false;
 	}
-	
+		
 	if (!onGround && spdY<12){
 		spdY+=0.5;
 	}
-		
-		
+	
+	// Problemas con colisiones
+	// Con estas líneas espero se solucionen
+	if (lvl->isSolid(x, y)){
+		if (spdY<0)
+			y+=32;
+		else
+			y-=32;
+	}
 	
 	if (spdX>=0){
 		colDisplace = lvl->hRaySolid(colBox.x+colBox.w, colBox.x+colBox.w+spdX+1, colBox.y+colBox.h/2+spdY);
@@ -226,7 +245,7 @@ void coin::step(level* lvl){
 	
 	if (colDisplace != -1){
 		if (spdX>=0)
-			x = 192+colDisplace*32-16+(colBox.w+(colBox.x-x));
+			x = 192+colDisplace*32+(colBox.w+(colBox.x-x));
 		else
 			x = 192+colDisplace*32-(colBox.x-x);
 		

@@ -32,6 +32,7 @@ public:
 	
 	void setAlpha(int);
 	void setAngle(int);
+	void setSpriteSize(int);
 	
 	void setPermanence(bool);
 	
@@ -67,6 +68,8 @@ private:
 	bool permanent;
 	bool alive;
 	
+	int spriteSize;
+	
 	LTexture* spritesheet;
 };
 
@@ -101,6 +104,17 @@ public:
 	void emit();
 	void step(level*);
 	
+private:
+	
+};
+
+class coinSparkle : public emitter{
+public:
+	coinSparkle(LTexture* sprt, int x, int y);
+	~coinSparkle();
+	
+	void emit();
+	void step(level*);
 private:
 	
 };

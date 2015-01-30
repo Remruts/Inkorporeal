@@ -26,6 +26,7 @@ public:
 	
 	void getPos(int &x, int &y) const;
 	SDL_Rect* getColBox();
+	bool isPickable();
 	
 	bool isAlive();
 	virtual void onCollisionWithPlayer(level*);
@@ -36,6 +37,7 @@ protected:
 	double spdX, spdY;
 	double accelX, accelY;
 	bool onGround;
+	bool pickable;
 	
 	int visible;
 	int alpha;

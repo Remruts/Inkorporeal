@@ -26,6 +26,7 @@ imp::imp(LTexture* sprt, int X, int Y) : enemy(sprt, X, Y){
 	colBox.h = 24;
 	
 	lives = 1;
+	maxLives = lives;
 }
 
 imp::~imp(){

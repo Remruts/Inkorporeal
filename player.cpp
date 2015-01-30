@@ -93,6 +93,14 @@ void player::reset(){
 int player::getLives(){
 	return lives;
 }
+
+void player::addPoints(int p){
+	points += p;
+}
+
+int player::getPoints(){
+	return points;
+}
 	
 void player::setPos(int X, int Y){
 	x = X;
@@ -381,3 +389,4 @@ void bullet::die(){
 SDL_Rect* bullet::getColBox(){
 	return &collisionBox;
 }
+

@@ -24,6 +24,7 @@ demobat::demobat(LTexture* sprt, int X, int Y) : enemy(sprt, X, Y){
 	colBox.h = 10;
 	
 	lives = 1;
+	maxLives = lives;
 }
 
 demobat::~demobat(){

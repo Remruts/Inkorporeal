@@ -162,6 +162,10 @@ level::lvlState level::getState(){
 	return currentState;
 }
 
+void level::addPoints(int p){
+	jugador->addPoints(p);
+}
+
 void level::updatePlayer(control *c){
 	//WIP: meter parte de este código en step() de player
 	if (jugador!=NULL){
@@ -362,7 +366,8 @@ void level::updateEnemies(){
 				//leonardo->resetRenderTarget()
 				
 				coin *c;
-				for (int i = 0; i<5; ++i){
+				int max = (*it)->getMaxLives() * 2+1;
+				for (int i = 0; i<max; ++i){
 					c = new coin(coinSheet, x, y);
 					addPickup(c);
 				}
@@ -474,7 +479,7 @@ void level::checkPlayerPickup(){
 		vector<pickup*>::iterator it = pickupList.begin();
 	
 		while (it !=  pickupList.end()){
-			if ((*it != NULL) && (*it)->isAlive() && checkCollision(colBox, (*it)->getColBox())){
+			if ((*it != NULL) && (*it)->isAlive() && (*it)->isPickable() && checkCollision(colBox, (*it)->getColBox())){
 				(*it)->onCollisionWithPlayer(this);
 			}
 			it++;

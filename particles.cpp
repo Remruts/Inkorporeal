@@ -25,6 +25,8 @@ particle::particle(LTexture* sprt, int X, int Y, int Life){
 	permanent = false;
 	blend = 0;
 	
+	spriteSize = 32;
+	
 	r = 255;
 	g = 255;
 	b = 255;
@@ -32,6 +34,11 @@ particle::particle(LTexture* sprt, int X, int Y, int Life){
 }
 particle::~particle(){
 	
+}
+
+void particle::setSpriteSize(int s){
+	if (s > 0)
+		spriteSize = s;
 }
 
 void particle::setFriction(double f){
@@ -160,16 +167,16 @@ void particle::draw(painter* picasso, LTexture* background){
 	spritesheet->setColor(r, g, b);	
 
 	if (life > 1){
-		picasso->drawEx(spritesheet, (sprite*32)%spritesheet->getWidth(), (sprite*32)/spritesheet->getWidth(), 
-			32, 32, x, y, 32*scale, 32*scale, angle, 0);
-		picasso->drawEx(spritesheet, (sprite*32)%spritesheet->getWidth(), (sprite*32)/spritesheet->getWidth(), 32, 32, 
-			x, 448+(320-y*0.7143)-32*0.7143, 32*scale, 32*scale*0.7143, angle, 2); //espejado
+		picasso->drawEx(spritesheet, (sprite*spriteSize)%spritesheet->getWidth(), (sprite*spriteSize)/spritesheet->getWidth(), 
+			spriteSize, spriteSize, x, y, spriteSize*scale, spriteSize*scale, angle, 0);
+		picasso->drawEx(spritesheet, (sprite*spriteSize)%spritesheet->getWidth(), (sprite*spriteSize)/spritesheet->getWidth(), 
+			spriteSize, spriteSize, x, 448+(320-y*0.7143)-spriteSize*0.7143, spriteSize*scale, spriteSize*scale*0.7143, angle, 2); //espejado
 	}	
 	
 	if ((life == 1) && permanent){
 		picasso->setRenderTarget(background);
-		picasso->drawEx(spritesheet, (sprite*32)%spritesheet->getWidth(), (sprite*32)/spritesheet->getWidth(), 
-			32, 32, x-192, y, 32*scale, 32*scale, angle, 0);
+		picasso->drawEx(spritesheet, (sprite*spriteSize)%spritesheet->getWidth(), (sprite*spriteSize)/spritesheet->getWidth(), 
+			spriteSize, spriteSize, x-192, y, spriteSize*scale, spriteSize*scale, angle, 0);
 		picasso->resetRenderTarget();
 	}
 	
@@ -292,6 +299,60 @@ void colourExplosion::step(level* lvl){
 	while(it != particles.end()){
 		if ((*it) != NULL && (*it)->isAlive()){
 			(*it)->setScale((*it)->getScale()*1.08);
+			it++;
+		} else {
+			if (*it != NULL)
+				delete *it;
+			*it = NULL;
+			
+			it = particles.erase(it);
+		}
+	}
+	emitter::step(lvl);
+}
+
+coinSparkle::coinSparkle(LTexture* sprt, int X, int Y) : emitter(sprt, 1, X, Y){
+	timer = 1;
+	maxTimer = 1;
+	rate = 4+rand()%2;
+}
+
+coinSparkle::~coinSparkle(){
+	
+}
+	
+void coinSparkle::emit(){
+	srand(time(NULL)*(x+y));
+	
+	particle* part = NULL;
+	double spdX, spdY, speed;
+	for (int i = 0; i < rate; i++){
+		speed = (rand()%50-25)/10;
+		spdX = cos((i/double(rate))*2*3.1415)*speed;
+		spdY = sin((i/double(rate))*2*3.1415)*speed;
+		
+		part = new particle(spritesheet, x, y, rand()%3+12);
+		part->setSpeed(spdX, spdY);
+		part->setSpriteSize(16);
+		part->setSprite(rand()%6+5);
+		part->setGravity(true);
+		part->setGravityDir(90);
+		part->setScale(rand()%3/10.0f+0.1);
+		part->setAlpha(255);
+		part->setBlend(1);
+		part->setAngle(rand()%360);
+		part->setColor(255, 255, 255);
+		part->setFriction(1);
+		part->setPermanence(false);
+		particles.push_back(part);
+	}
+}
+
+void coinSparkle::step(level* lvl){
+	vector<particle*>::iterator it = particles.begin();
+	while(it != particles.end()){
+		if ((*it) != NULL && (*it)->isAlive()){
+			(*it)->setAlpha(((*it)->getLife()/double((*it)->getMaxLife()))*255);
 			it++;
 		} else {
 			if (*it != NULL)

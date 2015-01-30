@@ -59,6 +59,8 @@ public:
 	void addEmitter(emitter*); //agrega un emisor de partículas a la escena
 	void addPickup(pickup*);	//agrega un pickup a la escena
 	
+	void addPoints(int);
+	
 	bool isFinished();
 	lvlState getState();
 

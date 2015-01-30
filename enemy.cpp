@@ -27,6 +27,7 @@ enemy::enemy(LTexture* sprt, int X, int Y){
 	colBox.h = 32;
 	
 	lives = 3;
+	maxLives = lives;
 	visible = 0;
 	
 	facingRight = true;
@@ -170,6 +171,10 @@ void enemy::getHurt(){
 		hurt = true;
 	}
 	
+}
+
+int enemy::getMaxLives(){
+	return maxLives;
 }
 
 enemyBullet::enemyBullet(LTexture* sprt, int X, int Y, double SPDX, double SPDY){

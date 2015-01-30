@@ -21,6 +21,7 @@ public:
 	virtual void draw(painter*);
 	
 	void getPos(int &x, int &y) const;
+	int getMaxLives();
 	SDL_Rect* getColBox();
 	
 	virtual void getHurt();
@@ -34,6 +35,7 @@ protected:
 	int visible;
 	
 	int lives;
+	int maxLives;
 	bool hurt;
 	double hurtTimer;
 	bool alive;

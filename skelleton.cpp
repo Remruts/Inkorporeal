@@ -28,6 +28,9 @@ skelleton::skelleton(LTexture* sprt, int X, int Y) : enemy(sprt, X, Y){
 	colBox.y = y+9;
 	colBox.w = 14;
 	colBox.h = 24;
+	
+	lives = 3;
+	maxLives = lives;
 }
 
 skelleton::~skelleton(){

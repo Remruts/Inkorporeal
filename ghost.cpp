@@ -20,6 +20,7 @@ ghost::ghost(LTexture* sprt, int X, int Y) : enemy(sprt, X, Y){
 	colBox.h = 32;
 	
 	lives = 2;
+	maxLives = lives;
 }
 
 ghost::~ghost(){
