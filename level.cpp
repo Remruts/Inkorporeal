@@ -596,7 +596,7 @@ void level::draw(){
 	}
 	
 	// texto/UI
-	leonardo->draw(testText, 0, 0, 0, 0, 24, 72);
+	leonardo->draw(testText, 0, 0, 0, 0, 24, 120);
 	leonardo->draw(levelNumText, 0, 0, 0, 0, 1175, 64);
 	drawPoints();
 }
@@ -606,7 +606,7 @@ void level::drawPoints(){
 	int power;
 	for (int i = 0; i<10; i++){
 		power = points%10;
-		leonardo->drawEx(pointsText, 24*power+power-1, 0, 24, 32, 1330-18*i, 200, 24, 32, 0, 0);
+		leonardo->drawEx(pointsText, 24*power+power-1, 0, 24, 32, 1330-18*i, 120, 24, 32, 0, 0);
 		points/=10;
 	}
 }

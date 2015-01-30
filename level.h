@@ -120,8 +120,6 @@ private:
 	unsigned int levelnum;
 	LTexture* levelNumText;
 	
-	animation* monedita;
-	
 };
 
 #endif
