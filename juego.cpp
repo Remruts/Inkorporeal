@@ -78,6 +78,12 @@ juego::juego(painter* p){
 		exit(1);
 	}
 	
+	coinSheet = leonardo->loadTexture("graphics/coin.png");
+	if (coinSheet == NULL){
+		std::cout << "Error al cargar los gráficos de las moneditas. " << std::endl;
+		exit(1);
+	}
+	
 	//Creo un jugador nuevo
 	jugador = new player(playerSprites);
 	
@@ -125,6 +131,11 @@ juego::~juego(){
 	if (effectSheet != NULL){
 		leonardo->freeTexture(effectSheet);
 		effectSheet = NULL;
+	}
+	
+	if (coinSheet != NULL){
+		leonardo->freeTexture(coinSheet);
+		coinSheet = NULL;
 	}
 }
 
@@ -271,6 +282,10 @@ LTexture* juego::getEnemySprites(){
 
 LTexture* juego::getEffectSheet(){
 	return effectSheet;
+}
+
+LTexture* juego::getCoinSheet(){
+	return coinSheet;
 }
 
 int juego::getLevelNum(){

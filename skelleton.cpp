@@ -58,6 +58,7 @@ void skelleton::step(level* lvl){
 			if (spdY >= 0){
 				onGround = true;
 				y = colDisplace*32;
+				movingAnim->setSpeed(0.2);
 			} else {
 				y = colDisplace*32+33;
 			}

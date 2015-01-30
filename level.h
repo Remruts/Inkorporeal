@@ -11,6 +11,7 @@
 #include "player.h"
 #include "control.h"
 #include "particles.h"
+#include "pickups.h"
 
 #include <vector>
 #include <map>
@@ -29,6 +30,7 @@ class enemyBullet;
 class ghost;
 class skelleton;
 class emitter;
+class pickup;
 
 class level{
 public:
@@ -55,6 +57,7 @@ public:
 	void addBullet(bullet*); 	//agrega una bala del jugador a la escena
 	void addEnemyBullet(enemyBullet*); //agrega una bala de enemigo a la escena
 	void addEmitter(emitter*); //agrega un emisor de partículas a la escena
+	void addPickup(pickup*);	//agrega un pickup a la escena
 	
 	bool isFinished();
 	lvlState getState();
@@ -71,9 +74,12 @@ private:
 	void updateEnemies();
 	//rutina de actualización de partículas
 	void updateEmitters();
+	//rutina de actualización de pickups
+	void updatePickups();
 	
 	void checkBulletCollisions();
 	void checkPlayerEnemyCollisions();
+	void checkPlayerPickup();
 	
 	bool checkCollision(const SDL_Rect* A, const SDL_Rect* B);
 
@@ -94,6 +100,7 @@ private:
 	SDL_Surface *tileSheet;
 	LTexture *enemySprites;
 	LTexture *effectSheet;
+	LTexture *coinSheet;
 	
 	bool solid[420]; // mapa de 30x14 (=420). Determina si es sólido (true) o no (false)
 	player* jugador; //puntero al jugador
@@ -101,10 +108,13 @@ private:
 	vector<enemy*> enemyList; //vector a puntero de enemigos
 	vector<enemyBullet*> enemyBulletList; //vector a puntero de balas de enemigos
 	vector<emitter*> emitterList; //vector a puntero de emisores de partículas
+	vector<pickup*> pickupList; //vector a puntero de pickups
 	
 	LTexture* testText; //Texto de prueba
 	unsigned int levelnum;
 	LTexture* levelNumText;
+	
+	animation* monedita;
 	
 };
 

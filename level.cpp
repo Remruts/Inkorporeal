@@ -20,6 +20,7 @@ level::level(const string & filename, juego* game){
 	jugador = game->getPlayer(); 			// paso puntero a jugador
 	enemySprites = game->getEnemySprites();	// paso puntero a sprites de enemigos
 	effectSheet = game->getEffectSheet();	// paso puntero a sprites de effectos
+	coinSheet = game->getCoinSheet();		// paso puntero a sprites de monedita
 	
 	//Determino el número de nivel
 	int num = game->getLevelNum();
@@ -136,6 +137,18 @@ level::~level(){
 				itEmitter = emitterList.erase(itEmitter);
 		} else{
 			itEmitter = emitterList.erase(itEmitter);
+		}
+	}
+	
+	//pickups
+	vector<pickup*>::iterator itPickup = pickupList.begin();
+	while (itPickup != pickupList.end()){
+		if (*itPickup != NULL){
+				delete *itPickup;
+				(*itPickup) = NULL;
+				itPickup = pickupList.erase(itPickup);
+		} else{
+			itPickup = pickupList.erase(itPickup);
 		}
 	}
 
@@ -346,7 +359,13 @@ void level::updateEnemies(){
 				*/
 				colourExplosion* exp = new colourExplosion(effectSheet, x, y);
 				addEmitter(exp);
-				leonardo->resetRenderTarget();
+				//leonardo->resetRenderTarget()
+				
+				coin *c;
+				for (int i = 0; i<5; ++i){
+					c = new coin(coinSheet, x, y);
+					addPickup(c);
+				}
 				
 				delete *it;
 				*it = NULL;
@@ -373,6 +392,25 @@ void level::updateEmitters(){
 			}
 		} else{
 			itEmitter = emitterList.erase(itEmitter);
+		}
+	}
+}
+
+void level::updatePickups(){
+	//pickups
+	vector<pickup*>::iterator itPickup = pickupList.begin();
+	while (itPickup != pickupList.end()){
+		if (*itPickup != NULL){
+			if ((*itPickup)->isAlive()){
+				(*itPickup)->step(this);
+				itPickup++;
+			}else{
+				delete *itPickup;
+				(*itPickup) = NULL;
+				itPickup = pickupList.erase(itPickup);
+			}
+		} else{
+			itPickup = pickupList.erase(itPickup);
 		}
 	}
 }
@@ -428,11 +466,32 @@ void level::checkPlayerEnemyCollisions(){
 	
 }
 
+void level::checkPlayerPickup(){
+	if ((jugador != NULL) && (jugador->getLives()>0)){
+		
+		SDL_Rect* colBox = new SDL_Rect(jugador->getColBox());
+		
+		vector<pickup*>::iterator it = pickupList.begin();
+	
+		while (it !=  pickupList.end()){
+			if ((*it != NULL) && (*it)->isAlive() && checkCollision(colBox, (*it)->getColBox())){
+				(*it)->onCollisionWithPlayer(this);
+			}
+			it++;
+		}
+		delete colBox;
+	}
+}
+
 void level::update(control* c){
+	
 	checkBulletCollisions();
 	checkPlayerEnemyCollisions();
+	checkPlayerPickup();
+	
 	updateBullets();
 	updatePlayer(c);
+	updatePickups();
 	updateEnemies();
 	updateEmitters();
 	
@@ -462,6 +521,10 @@ void level::addEnemyBullet(enemyBullet* b){
 
 void level::addEmitter(emitter* e){
 	emitterList.push_back(e);
+}
+
+void level::addPickup(pickup* p){
+	pickupList.push_back(p);
 }
 
 void level::draw(){
@@ -497,6 +560,14 @@ void level::draw(){
 	// jugador
 	if (jugador!=NULL)
 		jugador->draw(leonardo);
+		
+	//pickups
+	vector<pickup*>::iterator itPickup = pickupList.begin();
+	while (itPickup != pickupList.end()){
+		if (*itPickup != NULL)
+			(*itPickup)->draw(leonardo);
+		itPickup++;
+	}
 	
 	//partículas
 	vector<emitter*>::iterator itEmitter = emitterList.begin();

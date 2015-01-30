@@ -35,6 +35,7 @@ public:
 	LTexture* getPlayerSprites();
 	LTexture* getEnemySprites();
 	LTexture* getEffectSheet();
+	LTexture* getCoinSheet();
 	int getLevelNum();
 	painter* getPainter();
 	player* getPlayer();
@@ -55,6 +56,7 @@ private:
 	LTexture* playerSprites; //puntero a Texture de spritesheet de MC
 	LTexture* enemySprites; //puntero a Texture de spritesheet de enemigos
 	LTexture* effectSheet; //puntero a texture de effectos
+	LTexture* coinSheet; //puntero a texture de moneditas
 	
 	level* currentLevel; //pointer al nivel actual
 	player* jugador;
