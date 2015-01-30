@@ -60,6 +60,7 @@ public:
 	void addPickup(pickup*);	//agrega un pickup a la escena
 	
 	void addPoints(int);
+	void addLife();
 	
 	bool isFinished();
 	lvlState getState();
@@ -84,6 +85,8 @@ private:
 	void checkPlayerPickup();
 	
 	bool checkCollision(const SDL_Rect* A, const SDL_Rect* B);
+	
+	void drawPoints(); //dibuja los puntos
 
 	
 	lvlState currentState; 	//indica si el nivel se está jugando, se ganó o se perdió
@@ -113,6 +116,7 @@ private:
 	vector<pickup*> pickupList; //vector a puntero de pickups
 	
 	LTexture* testText; //Texto de prueba
+	LTexture* pointsText; //texto de puntos
 	unsigned int levelnum;
 	LTexture* levelNumText;
 	

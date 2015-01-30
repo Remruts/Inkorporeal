@@ -1,5 +1,6 @@
 #include "pickups.h"
 
+//BEGIN PICKUP
 pickup::pickup(LTexture* sprt, int X, int Y, int Lives){
 	x = X;
 	y = Y;
@@ -155,6 +156,9 @@ bool pickup::isPickable(){
 	return pickable;
 }
 
+//END PICKUP
+
+//BEGIN COIN
 
 coin::coin(LTexture* sprt, int X, int Y) : pickup(sprt, X, Y, 400){
 	srand(time(NULL)+(X+Y)*(long int)(this));
@@ -260,4 +264,111 @@ void coin::draw(painter* disney){
 	pickup::draw(disney);
 }
 
+//END COIN
+
+//BEGIN HEART
+
+heart::heart(LTexture* sprt, int X, int Y) : pickup(sprt, X, Y, 600){
+	srand(time(NULL)+(X+Y)*(long int)(this));
+	
+	spdX = 0;
+	spdY = -2 - (rand()%200/100.0);
+	
+	accelY = 0.1;
+	accelX = 0.005;
+	
+	unsigned int frms[] = {3};
+	corazoncito = new animation(1, 0, false, sprt, frms, 32);
+	currentAnim = corazoncito;
+	
+	colBox.x = x+7;
+	colBox.y = y+7;
+	colBox.w = 19;
+	colBox.h = 19;
+}
+
+heart::~heart(){
+	if (corazoncito != NULL){
+		delete corazoncito;
+		corazoncito = NULL;
+	}
+}
+
+void heart::onCollisionWithPlayer(level* lvl){
+	lvl->addEmitter(new coinSparkle(spritesheet, x+8, y));
+	lvl->addPoints(1000);
+	lvl->addLife();
+	pickup::onCollisionWithPlayer(lvl);
+}
+
+void heart::step(level* lvl){
+	
+	int colDisplace;
+	if (spdY >= 0){
+		colDisplace = lvl->vRaySolid(colBox.y+colBox.h, colBox.y+colBox.h+spdY+1, colBox.x+colBox.w/2);
+	} else{
+		colDisplace = lvl->vRaySolid(colBox.y, colBox.y+spdY-1, colBox.x+colBox.w/2);
+	}
+	
+	if (colDisplace != -1){
+		
+		spdY *= -0.98;
+		
+		if (spdY <= 0.1 && spdY > -0.1){
+			onGround = true;
+			spdY = 0;
+		}
+		
+		if (spdY > 0){
+			spdY = 0;
+			y = colDisplace*32-colBox.h;
+		} else {
+			y = colDisplace*32+colBox.h-6;
+		}
+		
+		colBox.y = y+7;
+			
+	} else {
+		onGround = false;
+	}
+		
+	if (!onGround && spdY<2){
+		spdY=2;
+	}
+	
+	// Problemas con colisiones
+	// Con estas líneas espero se solucionen
+	if (lvl->isSolid(x, y)){
+		if (spdY<0)
+			y+=32;
+		else
+			y-=32;
+	}
+	
+	if (spdX>=0){
+		colDisplace = lvl->hRaySolid(colBox.x+colBox.w, colBox.x+colBox.w+spdX+1, colBox.y+colBox.h/2+spdY);
+	} else {
+		colDisplace = lvl->hRaySolid(colBox.x, colBox.x+spdX-1, colBox.y+colBox.h/2+spdY);
+	}
+	
+	
+	if (colDisplace != -1){
+		if (spdX>=0)
+			x = 192+colDisplace*32+(colBox.w+(colBox.x-x));
+		else
+			x = 192+colDisplace*32-(colBox.x-x);
+		
+		spdX *= -1;
+		colBox.x = x+7;
+	}
+	
+	pickup::step(lvl);
+}
+
+void heart::draw(painter* disney){
+	prevY = y;
+	y += 2*sin(lives/double(maxLives));
+	pickup::draw(disney);
+	y = prevY;
+}
 

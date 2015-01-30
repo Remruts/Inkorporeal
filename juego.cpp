@@ -211,6 +211,7 @@ void juego::step(control* c){
 
 void juego::draw(){
 	if (currentScreen == stPlaying){
+		leonardo->setColor(0x17, 0x17, 0x17, 255);
 		if (currentLevel!=NULL){
 			leonardo->clear();
 			currentLevel->draw();

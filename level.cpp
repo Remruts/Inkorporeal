@@ -75,6 +75,8 @@ level::level(const string & filename, juego* game){
 		levelNumText = leonardo->textureFromText("Level "+to_string(levelnum), 2, 255, 255, 255);
 	}
 	
+	pointsText = leonardo->textureFromText("0 1 2 3 4 5 6 7 8 9  ", 1, 255, 255, 255);
+	
 }
 
 level::~level(){
@@ -86,6 +88,11 @@ level::~level(){
 	if (testText != NULL){
 		leonardo->freeTexture(testText);
 		testText = NULL;
+	}
+	
+	if (pointsText != NULL){
+		leonardo->freeTexture(pointsText);
+		pointsText = NULL;
 	}
 	
 	if (background != NULL){
@@ -164,6 +171,10 @@ level::lvlState level::getState(){
 
 void level::addPoints(int p){
 	jugador->addPoints(p);
+}
+
+void level::addLife(){
+	jugador->addLives();
 }
 
 void level::updatePlayer(control *c){
@@ -371,6 +382,8 @@ void level::updateEnemies(){
 					c = new coin(coinSheet, x, y);
 					addPickup(c);
 				}
+				
+				addPoints((*it)->getMaxLives()*100);
 				
 				delete *it;
 				*it = NULL;
@@ -585,6 +598,17 @@ void level::draw(){
 	// texto/UI
 	leonardo->draw(testText, 0, 0, 0, 0, 24, 72);
 	leonardo->draw(levelNumText, 0, 0, 0, 0, 1175, 64);
+	drawPoints();
+}
+
+void level::drawPoints(){
+	long int points = jugador->getPoints();
+	int power;
+	for (int i = 0; i<10; i++){
+		power = points%10;
+		leonardo->drawEx(pointsText, 24*power+power-1, 0, 24, 32, 1330-18*i, 200, 24, 32, 0, 0);
+		points/=10;
+	}
 }
 
 
@@ -970,6 +994,35 @@ int level::load(std::istream& is, map<string, pair<int, int> >& posEnSheet){
 				enemyList.push_back(toSpawn);
 				ignore(is);
 			}
+		}
+		
+		if (str == "items"){
+			ignore(is);
+			pickup* item = NULL;
+			
+			while(is.peek() != '>' && is.good()){
+
+				getline(is, str, ' ');
+				cout << str << " ";
+				
+				is >> pos.x;
+				pos.x = pos.x*32+192;
+				cout << pos.x << " ";
+
+				is >> pos.y;
+				pos.y *= 32;
+				cout << pos.y << endl;
+			
+				if (str == "tomato"){
+					item = new heart(coinSheet, pos.x, pos.y);
+				} else {
+					std::cout << "Falla cargar items. Archivo corrupto.\n";
+					exit(1);
+				}
+				pickupList.push_back(item);
+				ignore(is);
+			}
+			
 		}
 		
 		if (str == "end"){

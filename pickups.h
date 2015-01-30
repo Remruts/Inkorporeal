@@ -67,4 +67,18 @@ private:
 	animation* monedita;	
 };
 
+class heart : public pickup{
+public:
+	heart(LTexture* sprt, int X, int Y);
+	~heart();
+	
+	void step(level*);
+	void draw(painter*);
+	
+	void onCollisionWithPlayer(level*);
+private:
+	animation* corazoncito;
+	int prevY;
+};
+
 #endif

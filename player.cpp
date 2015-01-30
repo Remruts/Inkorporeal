@@ -2,10 +2,11 @@
 
 player::player(LTexture* sprt){
 	lives = 3; //Tenemos 3 vidas
+	points = 0; //y cero puntos...
 	
 	//posición inicial
 	x = 288;
-	y = 384; //384
+	y = 384;
 	
 	//Velocidad inicial
 	spdX = 0;
@@ -96,9 +97,17 @@ int player::getLives(){
 
 void player::addPoints(int p){
 	points += p;
+	if (points>9999999999){
+		points = 9999999999;
+	}
 }
 
-int player::getPoints(){
+void player::addLives(){
+	if (lives<3)
+		lives++;
+}
+
+long int player::getPoints(){
 	return points;
 }
 	

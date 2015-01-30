@@ -21,8 +21,9 @@ public:
 	~player();
 	
 	int getLives();
+	void addLives();
 	void addPoints(int);
-	int getPoints();
+	long int getPoints();
 	
 	void setPos(int x, int y);
 	void getPos(int &x, int &y) const;
@@ -50,7 +51,7 @@ public:
 	
 private:
 	int lives; // vidas
-	int points; // puntos
+	long int points; // puntos
 	int x, y;
 	double spdX, spdY;
 	double maxSpeedX, maxSpeedY;
