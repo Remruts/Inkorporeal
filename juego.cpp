@@ -84,16 +84,22 @@ juego::juego(painter* p){
 		exit(1);
 	}
 	
+	doorSheet = leonardo->loadTexture("graphics/door.png");
+	if (doorSheet == NULL){
+		std::cout << "Error al cargar los gráficos de las puertas. " << std::endl;
+		exit(1);
+	}
+	
 	//Creo un jugador nuevo
 	jugador = new player(playerSprites);
 	
 	levelNum = 0;
 	maxLevel = 1;
-	transTimer = 4.0;
+	transTimer = 2.0;
 	//Cargo el nivel
 	currentLevel = new level("levels/level0.lvl", this);
-	//currentScreen = stTransition0;
-	currentScreen = stPlaying;
+	currentScreen = stTransition0;
+	//currentScreen = stPlaying;
 }
 
 juego::~juego(){
@@ -137,6 +143,11 @@ juego::~juego(){
 		leonardo->freeTexture(coinSheet);
 		coinSheet = NULL;
 	}
+	
+	if (doorSheet != NULL){
+		leonardo->freeTexture(doorSheet);
+		doorSheet = NULL;
+	}
 }
 
 bool juego::isRunning(){
@@ -165,7 +176,7 @@ void juego::step(control* c){
 					delete currentLevel;
 					currentLevel = new level(string("levels/level")+to_string(levelNum)+string(".lvl"), this);
 					
-					transTimer = 4.0;
+					transTimer = 3.0;
 					
 				} else {
 					delete currentLevel;
@@ -173,7 +184,7 @@ void juego::step(control* c){
 					jugador = NULL;
 					currentLevel = NULL;
 					currentScreen = stTransition1;
-					transTimer = 6.0;
+					transTimer = 3.0;
 				}
 			}else {
 				currentLevel->update(c);
@@ -182,18 +193,18 @@ void juego::step(control* c){
 	}
 	
 	if (currentScreen == stTransition0){
-		transTimer -= 0.02;
+		transTimer -= 0.03;
 		if (transTimer <= 0){
 			currentScreen = stPlaying;
-			transTimer = 4;
+			transTimer = 3;
 		}
 	}
 	
 	if (currentScreen == stTransition1){
-		transTimer -= 0.02;
+		transTimer -= 0.03;
 		if (transTimer <= 0){
 			currentScreen = stGameOver;
-			transTimer = 6;
+			transTimer = 3;
 		}
 	}
 	
@@ -220,7 +231,7 @@ void juego::draw(){
 	
 	if (currentScreen == stTransition1){
 		leonardo->setBlendMode(1);
-		leonardo->setColor(120, 0, 0, int(255*((6-transTimer)/6.0f)));
+		leonardo->setColor(120, 0, 0, int(255*((3-transTimer)/3.0f)));
 		
 		leonardo->drawRect(0, 0, 1366, 768, 1); //debería hacer algo con screen_width/screen_height, pero bue
 		
@@ -230,7 +241,7 @@ void juego::draw(){
 		
 	if ((transTimer > 2.0) && (currentScreen == stTransition0)){
 		leonardo->setBlendMode(1);
-		leonardo->setColor(0x17, 0x17, 0x17, int(255*((2-transTimer)/2.0f)));
+		leonardo->setColor(0x17, 0x17, 0x17, int(255*((1.5-transTimer)/1.5f)));
 		
 		leonardo->drawRect(0, 0, 1366, 768, 1); //debería hacer algo con screen_width/screen_height, pero bue
 		
@@ -240,11 +251,11 @@ void juego::draw(){
 	
 	if (currentScreen == stTransition0){
 		
-		if ((currentLevel!=NULL) && (transTimer <= 2.5)){
+		if ((currentLevel!=NULL) && (transTimer <= 1.5)){
 			currentLevel->draw();
 			
 			leonardo->setBlendMode(1);
-			leonardo->setColor(0x17, 0x17, 0x17, int(255*(transTimer/2.5f)));
+			leonardo->setColor(0x17, 0x17, 0x17, int(255*(transTimer/1.5f)));
 			
 			leonardo->drawRect(0, 0, 1366, 768, 1); //debería hacer algo con screen_width/screen_height, pero bue
 			
@@ -287,6 +298,10 @@ LTexture* juego::getEffectSheet(){
 
 LTexture* juego::getCoinSheet(){
 	return coinSheet;
+}
+
+LTexture* juego::getDoorSheet(){
+	return doorSheet;
 }
 
 int juego::getLevelNum(){

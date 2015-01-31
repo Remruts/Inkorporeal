@@ -12,6 +12,7 @@
 #include "control.h"
 #include "particles.h"
 #include "pickups.h"
+#include "door.h"
 
 #include <vector>
 #include <map>
@@ -31,6 +32,8 @@ class ghost;
 class skelleton;
 class emitter;
 class pickup;
+class door;
+class key;
 
 class level{
 public:
@@ -79,6 +82,10 @@ private:
 	void updateEmitters();
 	//rutina de actualización de pickups
 	void updatePickups();
+	//rutina de actualización de puerta
+	void updateDoor();
+	//rutina de actualización de la llave
+	void updateKey();
 	
 	void checkBulletCollisions();
 	void checkPlayerEnemyCollisions();
@@ -106,6 +113,7 @@ private:
 	LTexture *enemySprites;
 	LTexture *effectSheet;
 	LTexture *coinSheet;
+	LTexture *doorSheet;
 	
 	bool solid[420]; // mapa de 30x14 (=420). Determina si es sólido (true) o no (false)
 	player* jugador; //puntero al jugador
@@ -114,6 +122,9 @@ private:
 	vector<enemyBullet*> enemyBulletList; //vector a puntero de balas de enemigos
 	vector<emitter*> emitterList; //vector a puntero de emisores de partículas
 	vector<pickup*> pickupList; //vector a puntero de pickups
+	
+	door* puerta;
+	key* llave;
 	
 	LTexture* testText; //Texto de prueba
 	LTexture* pointsText; //texto de puntos

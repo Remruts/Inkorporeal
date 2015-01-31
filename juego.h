@@ -36,6 +36,8 @@ public:
 	LTexture* getEnemySprites();
 	LTexture* getEffectSheet();
 	LTexture* getCoinSheet();
+	LTexture* getDoorSheet();
+	
 	int getLevelNum();
 	painter* getPainter();
 	player* getPlayer();
@@ -57,6 +59,7 @@ private:
 	LTexture* enemySprites; //puntero a Texture de spritesheet de enemigos
 	LTexture* effectSheet; //puntero a texture de effectos
 	LTexture* coinSheet; //puntero a texture de moneditas
+	LTexture* doorSheet; //puntero a texture de puerta
 	
 	level* currentLevel; //pointer al nivel actual
 	player* jugador;

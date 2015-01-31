@@ -21,6 +21,7 @@ level::level(const string & filename, juego* game){
 	enemySprites = game->getEnemySprites();	// paso puntero a sprites de enemigos
 	effectSheet = game->getEffectSheet();	// paso puntero a sprites de effectos
 	coinSheet = game->getCoinSheet();		// paso puntero a sprites de monedita
+	doorSheet = game->getDoorSheet();		// paso puntero a sprites de puerta
 	
 	//Determino el número de nivel
 	int num = game->getLevelNum();
@@ -76,6 +77,9 @@ level::level(const string & filename, juego* game){
 	}
 	
 	pointsText = leonardo->textureFromText("0 1 2 3 4 5 6 7 8 9  ", 1, 255, 255, 255);
+	
+	puerta = new door(doorSheet, 992, 352); //default
+	llave = NULL;
 	
 }
 
@@ -157,6 +161,16 @@ level::~level(){
 		} else{
 			itPickup = pickupList.erase(itPickup);
 		}
+	}
+	
+	if (puerta != NULL){
+		delete puerta;
+		puerta = NULL;
+	}
+	
+	if (llave != NULL){
+		delete llave;
+		llave = NULL;
 	}
 
 }
@@ -385,6 +399,10 @@ void level::updateEnemies(){
 				
 				addPoints((*it)->getMaxLives()*100);
 				
+				if ((llave == NULL) && (rand()%enemyList.size() == 0)){
+					llave = new key(doorSheet, x, y);
+				}
+				
 				delete *it;
 				*it = NULL;
 				it = enemyList.erase(it);
@@ -430,6 +448,46 @@ void level::updatePickups(){
 		} else{
 			itPickup = pickupList.erase(itPickup);
 		}
+	}
+}
+
+void level::updateDoor(){
+	if (puerta != NULL){
+		puerta->step();
+		
+		if ((jugador != NULL) && (jugador->getLives()>0) 
+			&& (checkCollision(&jugador->getColBox(), puerta->getColBox()))){
+			if (puerta->isOpened()){
+				currentState = stWin;
+			} else {
+				if (llave != NULL && llave->wasPicked() && !llave->wasUsed()){
+					puerta->unlock();
+					llave->use();
+				}
+				puerta->open();
+			}
+		}
+	}
+}
+
+void level::updateKey(){
+	if (llave!=NULL){
+		llave->step(this);
+		
+		if (jugador != NULL){
+			int playerX, playerY;
+			jugador->getPos(playerX, playerY);
+			
+			if (llave->wasPicked()){
+				llave->setPos(playerX-16, playerY-32);
+			} else {
+				SDL_Rect* pos = llave->getColBox();
+				if ((abs(pos->x+pos->w/2-playerX) <= 48) && (abs(pos->y+pos->h/2-playerY) <= 48)){
+					llave->pick();
+				}
+			}
+		}
+		
 	}
 }
 
@@ -506,6 +564,8 @@ void level::update(control* c){
 	checkBulletCollisions();
 	checkPlayerEnemyCollisions();
 	checkPlayerPickup();
+	updateDoor();
+	updateKey();
 	
 	updateBullets();
 	updatePlayer(c);
@@ -516,7 +576,7 @@ void level::update(control* c){
 	if (jugador->getLives() <= 0){
 		currentState = stLose;
 	} else if (enemyList.size() == 0){
-		currentState = stWin;
+		//currentState = stWin;
 	}
 	if ((currentState == stWin) ||(currentState == stLose)){
 		finished = true;
@@ -551,6 +611,10 @@ void level::draw(){
 	// background espejado
 	leonardo->drawEx(background, 0, 0, 960, 448, 192, 448, 960, 320, 0, 2);
 	
+	if (puerta!=NULL){
+		puerta->draw(leonardo);
+	}
+	
 	// disparos jugador
 	vector<bullet*>::iterator it = bulletList.begin();
 	while (it != bulletList.end()){
@@ -573,6 +637,10 @@ void level::draw(){
 		if (*it3 != NULL)
 			(*it3)->draw(leonardo);
 		it3++;
+	}
+	
+	if (llave != NULL){
+		llave->draw(leonardo);
 	}
 	
 	// jugador
