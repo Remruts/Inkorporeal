@@ -82,6 +82,7 @@ level::level(const string & filename, juego* game){
 	puerta = new door(doorSheet, 992, 352); //default
 	llave = NULL;
 	
+	
 }
 
 level::~level(){
@@ -387,7 +388,7 @@ void level::updateEnemies(){
 						x+rand()%32-16 - 192, y+rand()%32-16, scale, scale, rand()%360, rand()%4);
 				}
 				*/
-				colourExplosion* exp = new colourExplosion(effectSheet, x, y);
+				colourExplosion* exp = new colourExplosion(effectSheet, x, y, leonardo);
 				addEmitter(exp);
 				//leonardo->resetRenderTarget()
 				

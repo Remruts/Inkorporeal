@@ -26,6 +26,11 @@ painter::painter(SDL_Renderer *screen){
 		std::cout <<  "Failed to load font 48! SDL_ttf Error: " << TTF_GetError() << std::endl;
 		exit(1);
 	}
+	
+	//Empezamos con un color random
+	randomHue = (rand()%360)/double(360);
+	randomSaturation = 0.8;
+	randomValue = 0.9;
 }
 
 painter::~painter(){
@@ -255,4 +260,76 @@ void painter::drawLine(int x1, int y1, int x2, int y2){
 
 void painter::clear(){
 	SDL_RenderClear(canvas);
+}
+
+void painter::setSaturation(unsigned int S){
+	randomSaturation = S%101;
+}
+
+void painter::setValue(unsigned int V){
+	randomValue = V%101;
+}
+
+void painter::getRandomColor(unsigned int &R, unsigned int &G, unsigned int &B){
+	randomHue += GOLDEN_RATIO_CONJUGATE;
+	randomHue = fmod(randomHue, 1);
+	hsvToRgb((unsigned int)(randomHue*359), randomSaturation, randomValue, R, G, B);
+}
+
+//conversión hsv a rgb, porque sí
+//sacado de Wikipedia
+void painter::hsvToRgb(unsigned int H, double S, double V, 
+						unsigned int &R, unsigned int &G, unsigned int &B){
+	
+	//gris;
+	if(S == 0) {
+		R = V;
+		G = V;
+		B = V;
+		return;
+	}
+	
+	unsigned int Hi = (H/60)%6;
+	double f = fmod((double(H)/60), 6) - Hi;
+	unsigned int p = (V*(1-S))*255.0;
+	unsigned int q = (V*(1-f*S))*255.0;
+	unsigned int t = (V*(1-(1-f)*S))*255.0;
+	
+	switch (Hi){
+	case 0:
+		R = V*255;
+		G = t;
+		B = p;
+	break;
+	
+	case 1:
+		R = q;
+		G = V*255;
+		B = p;
+	break;
+	
+	case 2:
+		R = p;
+		G = V*255;
+		B = t;
+	break;
+	
+	case 3:
+		R = p;
+		G = q;
+		B = V*255;
+	break;
+	
+	case 4:
+		R = t;
+		G = p;
+		B = V*255;
+	break;
+	
+	case 5:
+		R = V*255;
+		G = p;
+		B = q;
+	break;
+	}
 }

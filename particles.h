@@ -99,14 +99,14 @@ protected:
 
 class colourExplosion : public emitter{
 public:
-	colourExplosion(LTexture* sprt, int x, int y);
+	colourExplosion(LTexture* sprt, int x, int y, painter* p);
 	~colourExplosion();
 	
 	void emit();
 	void step(level*);
 	
 private:
-	int r, g, b;
+	unsigned int r, g, b;
 };
 
 class coinSparkle : public emitter{

@@ -8,6 +8,8 @@
 #include <string>
 #include "LTexture.h"
 
+#define GOLDEN_RATIO_CONJUGATE 0.618033988749895
+
 using namespace std;
 
 class painter{
@@ -43,6 +45,12 @@ public:
 	void drawLine(int x1, int y1, int x2, int y2);			//dibuja una línea
 	
 	void clear(); //limpia la pantalla
+	
+	//generador de colores aleatorio
+	void setSaturation(unsigned int S);
+	void setValue(unsigned int V);
+	void getRandomColor(unsigned int &R, unsigned int &G, unsigned int &B);
+	void hsvToRgb(unsigned int H, double V, double S, unsigned int &R, unsigned int &G, unsigned int &B);
 
 private:
 	SDL_Renderer *canvas;
@@ -54,6 +62,10 @@ private:
 	TTF_Font* ubuntuFont32;
 	TTF_Font* ubuntuFont48;
 	SDL_Color textColor;
+	
+	double randomHue;
+	double randomValue;
+	double randomSaturation;
 	
 };
 

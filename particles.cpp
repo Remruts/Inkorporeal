@@ -267,13 +267,20 @@ void emitter::setPos(int X, int Y){
 
 
 
-colourExplosion::colourExplosion(LTexture* sprt, int X, int Y) : emitter(sprt, 1, X, Y){
+colourExplosion::colourExplosion(LTexture* sprt, int X, int Y, painter* p) : emitter(sprt, 1, X, Y){
 	timer = 0;
 	maxTimer = 1;
 	rate = 10+rand()%2;
+	
+	p->getRandomColor(r, g, b); //Distribuido por número de oro
+	
+	//Randomnes es mejor?
+	/*
 	r = rand()%256;
 	g = rand()%256;
 	b = rand()%256;
+	*/
+	
 }
 
 colourExplosion::~colourExplosion(){
