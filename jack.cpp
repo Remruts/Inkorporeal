@@ -130,7 +130,7 @@ jackFire::jackFire(LTexture* sprt, int X, int Y, double SPDX, double SPDY) : ene
 	currentAnim = fireAnim;
 	
 	visible = 1;
-	angle = atan2(SPDY, SPDX)*180/3.1415;
+	angle = (SPDX<0)*180;
 	
 	life = 180;
 	
