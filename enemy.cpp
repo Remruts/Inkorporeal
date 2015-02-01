@@ -150,6 +150,8 @@ void enemy::draw(painter* disney){
 			hurtTimer = 2;
 		}
 	}
+	spritesheet->setAlpha(255);
+	spritesheet->setColor(255, 255, 255);
 }
 
 bool enemy::isAlive(){
@@ -188,6 +190,7 @@ enemyBullet::enemyBullet(LTexture* sprt, int X, int Y, double SPDX, double SPDY)
 	spritesheet = sprt;
 	
 	alive = true;
+	life = -1;
 	
 	spdX = SPDX;
 	spdY = SPDY;
@@ -211,6 +214,12 @@ enemyBullet::~enemyBullet(){
 }
 	
 void enemyBullet::step(level* lvl){
+	
+	
+	if (life == 0){
+		alive = false;
+	}
+	life -= 1;
 	
 	if (angle>360){
 		angle = angle % 360;
@@ -252,6 +261,7 @@ void enemyBullet::step(level* lvl){
 			spdY = 15;
 		
 		y += int(spdY);
+		
 
 	}
 	if (currentAnim != NULL)
@@ -306,5 +316,5 @@ SDL_Rect* enemyBullet::getColBox(){
 }
 
 void enemyBullet::die(){
-	alive = false;
+	life = 0;
 }

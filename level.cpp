@@ -5,6 +5,7 @@
 #include "demobat.h"
 #include "imp.h"
 #include "mask.h"
+#include "jack.h"
 #include <iostream> //debug
 
 using namespace std;
@@ -666,7 +667,7 @@ void level::draw(){
 	}
 	
 	// texto/UI
-	leonardo->draw(testText, 0, 0, 0, 0, 24, 120);
+	leonardo->draw(testText, 0, 0, 0, 0, 24, 108);
 	leonardo->draw(levelNumText, 0, 0, 0, 0, 1175, 64);
 	drawPoints();
 }
@@ -1064,6 +1065,8 @@ int level::load(std::istream& is, map<string, pair<int, int> >& posEnSheet){
 					toSpawn = new demobat(enemySprites, pos.x, pos.y);
 				}else if (str == "mask"){
 					toSpawn = new mask(enemySprites, pos.x, pos.y);
+				} else if (str == "jack"){
+					toSpawn = new jack(enemySprites, pos.x, pos.y);
 				} else {
 					std::cout << "Falla cargar enemigos. Archivo corrupto.\n";
 					exit(1);

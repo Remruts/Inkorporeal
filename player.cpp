@@ -316,13 +316,13 @@ void player::draw(painter* pintor){
 	}
 	
 	if (lives > 0){
-		pintor->draw(spritesheet, 64, 160, 64, 64, 0, 62);
+		pintor->draw(spritesheet, 64, 160, 64, 64, 0, 50);
 	}
 	if (lives > 1){
-		pintor->draw(spritesheet, 64, 160, 64, 64, 64, 62);
+		pintor->draw(spritesheet, 64, 160, 64, 64, 64, 50);
 	}
 	if (lives > 2){
-		pintor->draw(spritesheet, 64, 160, 64, 64, 128, 62);
+		pintor->draw(spritesheet, 64, 160, 64, 64, 128, 50);
 	}
 }
 

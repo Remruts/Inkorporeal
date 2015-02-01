@@ -71,6 +71,7 @@ protected:
 	int visible;
 	int alpha;
 	int angle;
+	int life;
 	bool alive;
 	SDL_Rect colBox;
 	LTexture* spritesheet;
