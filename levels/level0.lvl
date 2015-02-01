@@ -38,19 +38,19 @@ mesa0 192 192  // una mesa
 
 >enemies
 // name x/32 y/32
-ghost 25 5
-ghost 5 5
-ghost 23 10
-ghost 10 12
-skelleton 17 6
-skelleton 5 6
-skelleton 22 6
-skelleton 15 3
-imp 10 6
-imp 5 2
-imp 12 2
-demobat 14 12
-//ghost 17 12
+//ghost 25 5
+//ghost 5 5
+//ghost 23 10
+//ghost 10 12
+//skelleton 17 6
+//skelleton 5 6
+//skelleton 22 6
+//skelleton 15 3
+//imp 10 6
+//imp 5 2
+//imp 12 2
+//demobat 14 12
+mask 17 12
 
 >items
 // name x/32 y/32

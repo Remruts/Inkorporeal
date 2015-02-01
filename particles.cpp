@@ -260,10 +260,20 @@ bool emitter::isAlive(){
 	return alive;
 }
 
+void emitter::setPos(int X, int Y){
+	x = X;
+	y = Y;
+}
+
+
+
 colourExplosion::colourExplosion(LTexture* sprt, int X, int Y) : emitter(sprt, 1, X, Y){
 	timer = 0;
 	maxTimer = 1;
-	rate = 5+rand()%2;
+	rate = 10+rand()%2;
+	r = rand()%256;
+	g = rand()%256;
+	b = rand()%256;
 }
 
 colourExplosion::~colourExplosion(){
@@ -276,7 +286,7 @@ void colourExplosion::emit(){
 	particle* part = NULL;
 	double spdX, spdY, speed;
 	for (int i = 0; i < rate; i++){
-		speed = (rand()%50-25)/10;
+		speed = (rand()%50-25)/5;
 		spdX = cos((i/double(rate))*2*3.1415)*speed;
 		spdY = sin((i/double(rate))*2*3.1415)*speed;
 		
@@ -287,7 +297,8 @@ void colourExplosion::emit(){
 		part->setAlpha(90);
 		part->setBlend(1);
 		part->setAngle(rand()%360);
-		part->setColor(rand()%256, rand()%256, rand()%256);
+		part->setColor(r, g, b);
+		//part->setColor(rand()%256, rand()%256, rand()%256);
 		part->setFriction(0.98);
 		part->setPermanence(true);
 		particles.push_back(part);
@@ -298,7 +309,7 @@ void colourExplosion::step(level* lvl){
 	vector<particle*>::iterator it = particles.begin();
 	while(it != particles.end()){
 		if ((*it) != NULL && (*it)->isAlive()){
-			(*it)->setScale((*it)->getScale()*1.08);
+			(*it)->setScale((*it)->getScale()*1.02);
 			it++;
 		} else {
 			if (*it != NULL)

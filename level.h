@@ -48,6 +48,7 @@ public:
 	
 	//determina si un punto está sobre el jugador
 	bool isPlayer(int x, int y) const;
+	void getPlayerPos(int &x, int &y);
 	//determina si un punto está sobre algo sólido
 	bool isSolid(int x, int y) const;
 	// Determina si hay algo sólido en una línea horizontal del punto x1 al x2

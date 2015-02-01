@@ -37,9 +37,9 @@ void ghost::step(level* lvl){
 		
 		if (timer <= 0){
 			srand(time(NULL)+(long int)(this));
-			spdX += (rand()%10-5)/2.0;
+			spdX += (rand()%10-4.5)/2.0;
 			srand(time(NULL)+(long int)(this));
-			spdY += (rand()%10-5)/2.0;
+			spdY += (rand()%10-4.5)/2.0;
 			timer = rand()%2+1;
 		}
 	

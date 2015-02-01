@@ -4,6 +4,7 @@
 #include "skelleton.h"
 #include "demobat.h"
 #include "imp.h"
+#include "mask.h"
 #include <iostream> //debug
 
 using namespace std;
@@ -688,6 +689,11 @@ bool level::isPlayer(int x, int y) const{
 		(y >= colBox->y) && (y <= colBox->y+colBox->h));
 	
 }
+
+void level::getPlayerPos(int &x, int &y){
+	jugador->getPos(x, y);
+}
+
 //determina si un punto está sobre algo sólido
 bool level::isSolid(int x, int y) const{
 	
@@ -1055,6 +1061,8 @@ int level::load(std::istream& is, map<string, pair<int, int> >& posEnSheet){
 					toSpawn = new imp(enemySprites, pos.x, pos.y);
 				} else if (str == "demobat"){
 					toSpawn = new demobat(enemySprites, pos.x, pos.y);
+				}else if (str == "mask"){
+					toSpawn = new mask(enemySprites, pos.x, pos.y);
 				} else {
 					std::cout << "Falla cargar enemigos. Archivo corrupto.\n";
 					exit(1);

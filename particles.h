@@ -80,6 +80,7 @@ public:
 	
 	virtual void emit();
 	virtual void step(level*);
+	void setPos(int X, int Y);
 	void draw(painter*, LTexture*);
 	
 	bool isAlive();
@@ -105,7 +106,7 @@ public:
 	void step(level*);
 	
 private:
-	
+	int r, g, b;
 };
 
 class coinSparkle : public emitter{
