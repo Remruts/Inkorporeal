@@ -3,9 +3,13 @@
 
 int main(){
 	
-	Engine *eng = new Engine(1366, 768, true);
+	Engine *eng = NULL;
+	eng = new Engine(1366, 768, true);
 	
 	eng->run();
+	
+	if (eng != NULL)
+		delete eng;
 	
 	return 0;
 

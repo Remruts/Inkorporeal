@@ -1,4 +1,5 @@
 #include "LTexture.h"
+#include <iostream> //debug
 //Implementación de LTexture.h
 
 LTexture::LTexture(int width, int height, SDL_Texture* texture){
