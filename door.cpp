@@ -1,6 +1,6 @@
 #include "door.h"
 
-door::door(LTexture* sprt, int X, int Y){
+door::door(LTexture* sprt, int X, int Y, bool Locked){
 	
 	x = X;
 	y = Y;
@@ -15,7 +15,7 @@ door::door(LTexture* sprt, int X, int Y){
 	colBox.w = 32;
 	colBox.w = 32;
 	
-	locked = true;
+	locked = Locked;
 	timer = 90;
 }
 

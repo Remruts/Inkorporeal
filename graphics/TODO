@@ -8,9 +8,7 @@
 > SPRITES
 	- Animación de muerte
 	- Enemigos
-	- Puerta [desapareciendo, abriendose]
 	- Candado [rompiéndose/cayendo]
-	- Llave
 
 > UI
 	- Barra de vida enemigo
@@ -25,6 +23,7 @@
 > PROGRAMACIÓN
 	- melee
 	- power-ups?
+	- jefe
 	
 >DONE [sort of]:
 -loader de niveles
@@ -34,3 +33,5 @@
 - colisiones
 - sistema de partículas
 - disparos enemigo 
+- Puerta [desapareciendo, abriendose]
+- Llave

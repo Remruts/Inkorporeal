@@ -90,12 +90,32 @@ juego::juego(painter* p){
 		exit(1);
 	}
 	
+	titleScreen = leonardo->loadTexture("graphics/title.png");
+	if (titleScreen == NULL){
+		std::cout << "Error al cargar los gráficos del título. " << std::endl;
+		exit(1);
+	}
+	
+	invertedTitle = leonardo->loadTexture("graphics/title_inverted.png");
+	if (invertedTitle == NULL){
+		std::cout << "Error al cargar los gráficos del título. " << std::endl;
+		exit(1);
+	}
+	
+	pressStart = leonardo->loadTexture("graphics/press_start.png");
+	if (pressStart == NULL){
+		std::cout << "Error al cargar los gráficos del título. " << std::endl;
+		exit(1);
+	}
+	
 	//Creo un jugador nuevo
 	jugador = new player(playerSprites);
 	
 	levelNum = 0;
 	maxLevel = 1;
 	transTimer = 2.0;
+	effectTimer = 0;
+	currentScreen = stMainMenu;	
 	//Cargo el nivel
 	currentLevel = new level("levels/level0.lvl", this);
 	currentScreen = stTransition0;
@@ -148,6 +168,21 @@ juego::~juego(){
 		leonardo->freeTexture(doorSheet);
 		doorSheet = NULL;
 	}
+	
+	if (titleScreen != NULL){
+		leonardo->freeTexture(titleScreen);
+		titleScreen = NULL;
+	}
+	
+	if (invertedTitle != NULL){
+		leonardo->freeTexture(invertedTitle);
+		invertedTitle = NULL;
+	}
+	
+	if (pressStart != NULL){
+		leonardo->freeTexture(pressStart);
+		pressStart = NULL;
+	}
 }
 
 bool juego::isRunning(){
@@ -160,6 +195,12 @@ void juego::step(control* c){
 		running = false;
 		return;
 	}
+	
+	if (currentScreen == stMainMenu){
+		effectTimer += 2;
+		effectTimer = int(effectTimer)%360;
+	}
+	
 	if (currentScreen == stPlaying){
 		if (currentLevel != NULL){
 			if(currentLevel->isFinished()){
@@ -221,6 +262,17 @@ void juego::step(control* c){
 }
 
 void juego::draw(){
+
+	if (currentScreen == stMainMenu){
+		leonardo->setColor(0, 0, 0, 255);
+		leonardo->clear();
+		invertedTitle->setAlpha(((sin(effectTimer/180*3.1415)+1)/2)*255);
+		leonardo->draw(invertedTitle, 0, 0, 0, 0, 220, 283);
+		leonardo->draw(titleScreen, 0, 0, 0, 0, 220, 64);
+		pressStart->setAlpha(((sin(effectTimer/180*3.1415)+1)/2)*255);
+		leonardo->draw(pressStart, 0, 0, 0, 0, 530, 590);
+	}
+	
 	if (currentScreen == stPlaying){
 		leonardo->setColor(0x17, 0x17, 0x17, 255);
 		if (currentLevel!=NULL){

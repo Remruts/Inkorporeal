@@ -61,6 +61,10 @@ private:
 	LTexture* coinSheet; //puntero a texture de moneditas
 	LTexture* doorSheet; //puntero a texture de puerta
 	
+	LTexture* titleScreen; //puntero a texture de título
+	LTexture* invertedTitle; //puntero a texture de título invertido. Podría haberlo dibujado invertido y con otro color.
+	LTexture* pressStart;	//puntero a texture de texto "press start"
+	
 	level* currentLevel; //pointer al nivel actual
 	player* jugador;
 	
@@ -68,6 +72,7 @@ private:
 	int maxLevel;
 	
 	double transTimer; //transition timer
+	double effectTimer;
 	
 };
 

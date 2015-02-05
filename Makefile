@@ -1,4 +1,4 @@
-CXX = g++
+CXX = g++ #i586-mingw32msvc-c++ #compilar en windows?
 CXXFLAGS = -Wall -g -std=c++11 #-O3
 LDFLAGS = -lSDL2 -lSDL2_image -lSDL2_ttf
 

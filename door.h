@@ -11,7 +11,7 @@
 
 class door{
 public:
-	door(LTexture*, int X, int Y);
+	door(LTexture*, int X, int Y, bool Locked);
 	~door();
 	
 	void step();
