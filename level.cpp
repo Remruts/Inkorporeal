@@ -1,11 +1,11 @@
 //Implementación del level de niveles
 #include "level.h"
-#include "ghost.h"
-#include "skelleton.h"
-#include "demobat.h"
-#include "imp.h"
-#include "mask.h"
-#include "jack.h"
+#include "enemies/ghost.h"
+#include "enemies/skelleton.h"
+#include "enemies/demobat.h"
+#include "enemies/imp.h"
+#include "enemies/mask.h"
+#include "enemies/jack.h"
 #include <iostream> //debug
 
 using namespace std;
@@ -71,14 +71,15 @@ level::level(const string & filename, juego* game){
 	leonardo->freeImage(backSurface); //ya no me sirve la superficie anterior...
 	
 	//Creo diversas texturas de textos
-	testText = leonardo->textureFromText("{LIVES}", 2, 255, 255, 255);
+	testText = leonardo->textureFromText("{LIVES}", 3, 255, 255, 255);
 	if (levelnum<10){
-		levelNumText = leonardo->textureFromText("Level 0"+to_string(levelnum), 2, 255, 255, 255);
+		levelNumText = leonardo->textureFromText("Level 0"+to_string(levelnum), 3, 255, 255, 255);
 	} else{
-		levelNumText = leonardo->textureFromText("Level "+to_string(levelnum), 2, 255, 255, 255);
+		levelNumText = leonardo->textureFromText("Level "+to_string(levelnum), 3, 255, 255, 255);
 	}
 	
-	pointsText = leonardo->textureFromText("0 1 2 3 4 5 6 7 8 9  ", 1, 255, 255, 255);
+	pointsText = leonardo->textureFromText("0 1 2 3 4 5 6 7 8 9  ", 2, 255, 255, 255);
+	pointsText2 = leonardo->textureFromText("0123456789", 0, 255, 255, 255);
 	
 	puerta = new door(doorSheet, 992, 352); //default
 	llave = NULL;
@@ -166,6 +167,18 @@ level::~level(){
 		}
 	}
 	
+	//points
+	vector<movingPoints*>::iterator itPoints = pointsList.begin();
+	while (itPoints != pointsList.end()){
+		if (*itPoints != NULL){
+			delete *itPoints;
+			(*itPoints) = NULL;
+			itPoints = pointsList.erase(itPoints);
+		} else{
+			itPoints = pointsList.erase(itPoints);
+		}
+	}
+	
 	if (puerta != NULL){
 		delete puerta;
 		puerta = NULL;
@@ -186,8 +199,9 @@ level::lvlState level::getState(){
 	return currentState;
 }
 
-void level::addPoints(int p){
+void level::addPoints(int p, int x, int y){
 	jugador->addPoints(p);
+	pointsList.push_back(new movingPoints(pointsText2, x, y-16, p));
 }
 
 void level::addLife(){
@@ -400,7 +414,7 @@ void level::updateEnemies(){
 					addPickup(c);
 				}
 				
-				addPoints((*it)->getMaxLives()*100);
+				addPoints((*it)->getMaxLives()*100, x, y);
 				
 				if ((llave == NULL) && (rand()%enemyList.size() == 0)){
 					llave = new key(doorSheet, x, y);
@@ -450,6 +464,25 @@ void level::updatePickups(){
 			}
 		} else{
 			itPickup = pickupList.erase(itPickup);
+		}
+	}
+}
+
+void level::updatePoints(){
+	//points
+	vector<movingPoints*>::iterator it = pointsList.begin();
+	while (it != pointsList.end()){
+		if ((*it) != NULL){
+			if ((*it)->isAlive()){
+				(*it)->step();
+				it++;
+			}else{
+				delete *it;
+				(*it) = NULL;
+				it = pointsList.erase(it);
+			}
+		} else{
+			it = pointsList.erase(it);
 		}
 	}
 }
@@ -575,6 +608,8 @@ void level::update(control* c){
 	updatePickups();
 	updateEnemies();
 	updateEmitters();
+	updatePoints();
+	
 	
 	if (jugador->getLives() <= 0){
 		currentState = stLose;
@@ -680,6 +715,15 @@ void level::drawPoints(){
 		leonardo->drawEx(pointsText, 24*power+power-1, 0, 24, 32, 1330-18*i, 120, 24, 32, 0, 0);
 		points/=10;
 	}
+	
+	//puntos
+	vector<movingPoints*>::iterator it = pointsList.begin();
+	while (it != pointsList.end()){
+		if (*it != NULL)
+			(*it)->draw(leonardo);
+		it++;
+	}
+	
 }
 
 

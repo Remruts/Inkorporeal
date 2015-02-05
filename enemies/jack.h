@@ -2,7 +2,7 @@
 #define _JACKO_DARKO_
 
 #include "enemy.h"
-#include "particles.h"
+#include "../particles.h"
 #include <cmath>
 
 class jack : public enemy{

@@ -58,6 +58,7 @@ private:
 	SDL_Rect screen_rect;
 	
 	//Fuente Ubuntu
+	TTF_Font* eightbit8;
 	TTF_Font* ubuntuFont24;
 	TTF_Font* ubuntuFont32;
 	TTF_Font* ubuntuFont48;

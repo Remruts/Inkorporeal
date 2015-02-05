@@ -2,8 +2,8 @@ CXX = g++
 CXXFLAGS = -Wall -g -std=c++11 #-O3
 LDFLAGS = -lSDL2 -lSDL2_image -lSDL2_ttf
 
-DEPS = engine.h painter.h juego.h control.h level.h LTexture.h animation.h player.h enemy.h ghost.h skelleton.h demobat.h imp.h particles.h door.h pickups.h mask.h jack.h
-OBJ = main.o engine.o painter.o juego.o control.o level.o LTexture.o animation.o player.o enemy.o ghost.o skelleton.o demobat.o imp.o particles.o door.o pickups.o mask.o jack.o
+DEPS = engine.h painter.h juego.h control.h level.h LTexture.h animation.h player.h enemies/enemy.h enemies/ghost.h enemies/skelleton.h enemies/demobat.h enemies/imp.h enemies/mask.h enemies/jack.h particles.h door.h pickups.h points.h
+OBJ = main.o engine.o painter.o juego.o control.o level.o LTexture.o animation.o player.o enemies/enemy.o enemies/ghost.o enemies/skelleton.o enemies/demobat.o enemies/imp.o particles.o door.o pickups.o enemies/mask.o enemies/jack.o points.o
 
 %.o: %.cpp $(DEPS)
 	$(CXX) -c -o $@ $< $(CXXFLAGS)

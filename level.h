@@ -13,6 +13,7 @@
 #include "particles.h"
 #include "pickups.h"
 #include "door.h"
+#include "points.h"
 
 #include <vector>
 #include <map>
@@ -63,7 +64,7 @@ public:
 	void addEmitter(emitter*); //agrega un emisor de partículas a la escena
 	void addPickup(pickup*);	//agrega un pickup a la escena
 	
-	void addPoints(int);
+	void addPoints(int points, int x, int y);
 	void addLife();
 	
 	bool isFinished();
@@ -87,6 +88,8 @@ private:
 	void updateDoor();
 	//rutina de actualización de la llave
 	void updateKey();
+	//rutina de actualización de los puntos que se dibujan
+	void updatePoints();
 	
 	void checkBulletCollisions();
 	void checkPlayerEnemyCollisions();
@@ -123,12 +126,14 @@ private:
 	vector<enemyBullet*> enemyBulletList; //vector a puntero de balas de enemigos
 	vector<emitter*> emitterList; //vector a puntero de emisores de partículas
 	vector<pickup*> pickupList; //vector a puntero de pickups
+	vector<movingPoints*> pointsList; //vector a puntero de puntos que se ven
 	
 	door* puerta;
 	key* llave;
 	
 	LTexture* testText; //Texto de prueba
 	LTexture* pointsText; //texto de puntos
+	LTexture* pointsText2; //texto de puntos2
 	unsigned int levelnum;
 	LTexture* levelNumText;
 	

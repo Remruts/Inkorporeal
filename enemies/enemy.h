@@ -4,10 +4,10 @@
 #include <SDL2/SDL.h>
 #include <stdlib.h>
 #include <time.h>
-#include "LTexture.h"
-#include "painter.h"
-#include "animation.h"
-#include "level.h"
+#include "../LTexture.h"
+#include "../painter.h"
+#include "../animation.h"
+#include "../level.h"
 
 //class level; // fd ftw
 

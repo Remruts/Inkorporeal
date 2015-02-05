@@ -9,6 +9,12 @@ painter::painter(SDL_Renderer *screen){
 	textColor.g = 0;
 	textColor.b = 0;
 	
+	eightbit8 = TTF_OpenFont( "fonts/PressStart2P.ttf", 8 ); 
+	if (eightbit8 == NULL) { 
+		std::cout <<  "Failed to load font 8! SDL_ttf Error: " << TTF_GetError() << std::endl;
+		exit(1);
+	}
+	
 	ubuntuFont24 = TTF_OpenFont( "fonts/Ubuntu-L.ttf", 24 ); 
 	if (ubuntuFont24 == NULL) { 
 		std::cout <<  "Failed to load font 24! SDL_ttf Error: " << TTF_GetError() << std::endl;
@@ -34,12 +40,26 @@ painter::painter(SDL_Renderer *screen){
 }
 
 painter::~painter(){
-	TTF_CloseFont(ubuntuFont24);
-	ubuntuFont24 = NULL; 
-	TTF_CloseFont(ubuntuFont32);
-	ubuntuFont32 = NULL; 
-	TTF_CloseFont(ubuntuFont48);
-	ubuntuFont48 = NULL;
+	if (eightbit8 != NULL){
+		TTF_CloseFont(eightbit8);
+		eightbit8 = NULL;
+	}
+	
+	if (ubuntuFont24 != NULL){
+		TTF_CloseFont(ubuntuFont24);
+		ubuntuFont24 = NULL; 
+	}
+	
+	if (ubuntuFont32 != NULL){
+		TTF_CloseFont(ubuntuFont32);
+		ubuntuFont32 = NULL; 
+	}
+	
+	if (ubuntuFont48 != NULL){
+		TTF_CloseFont(ubuntuFont48);
+		ubuntuFont48 = NULL;
+	}
+	
 }
 
 void painter::draw(LTexture *tex, int srcX, int srcY, int srcW, int srcH, int screenX, int screenY){
@@ -149,8 +169,10 @@ LTexture* painter::textureFromText(const string& textureText, int size, unsigned
 	
 	//Render text surface 
 	if (size == 0){
-		textSurface = TTF_RenderUTF8_Blended( ubuntuFont24, textureText.c_str(), textColor); 
+		textSurface = TTF_RenderUTF8_Blended( eightbit8, textureText.c_str(), textColor); 
 	} else if (size == 1){
+		textSurface = TTF_RenderUTF8_Blended( ubuntuFont24, textureText.c_str(), textColor); 
+	} else if (size == 2){
 		textSurface = TTF_RenderUTF8_Blended( ubuntuFont32, textureText.c_str(), textColor); 
 	} else{
 		textSurface = TTF_RenderUTF8_Blended( ubuntuFont48, textureText.c_str(), textColor); 

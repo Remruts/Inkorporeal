@@ -315,15 +315,35 @@ void player::draw(painter* pintor){
 		
 	}
 	
+	spritesheet->setAlpha(100);
+	spritesheet->setColor(30, 30, 30);
+	
 	if (lives > 0){
-		pintor->draw(spritesheet, 64, 160, 64, 64, 0, 50);
+		spritesheet->setColor(255, 255, 255);
+		spritesheet->setAlpha(255);
 	}
+	pintor->draw(spritesheet, 64, 160, 64, 64, 0, 50);
+	
+	spritesheet->setAlpha(100);
+	spritesheet->setColor(30, 30, 30);
 	if (lives > 1){
-		pintor->draw(spritesheet, 64, 160, 64, 64, 64, 50);
+		spritesheet->setColor(255, 255, 255);
+		spritesheet->setAlpha(255);
 	}
+	pintor->draw(spritesheet, 64, 160, 64, 64, 64, 50);
+	
+	spritesheet->setAlpha(100);
+	spritesheet->setColor(30, 30, 30);
 	if (lives > 2){
-		pintor->draw(spritesheet, 64, 160, 64, 64, 128, 50);
+		spritesheet->setColor(255, 255, 255);
+		spritesheet->setAlpha(255);
 	}
+	pintor->draw(spritesheet, 64, 160, 64, 64, 128, 50);
+	
+	
+	spritesheet->setColor(255, 255, 255);
+	spritesheet->setAlpha(255);
+	
 }
 
 void player::shoot(){

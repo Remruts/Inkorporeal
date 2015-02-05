@@ -191,7 +191,7 @@ coin::~coin(){
 
 void coin::onCollisionWithPlayer(level* lvl){
 	lvl->addEmitter(new coinSparkle(spritesheet, x+8, y));
-	lvl->addPoints(5);
+	lvl->addPoints(5, x, y);
 	pickup::onCollisionWithPlayer(lvl);
 }
 
@@ -296,7 +296,7 @@ heart::~heart(){
 
 void heart::onCollisionWithPlayer(level* lvl){
 	lvl->addEmitter(new coinSparkle(spritesheet, x+8, y));
-	lvl->addPoints(1000);
+	lvl->addPoints(1000, x, y);
 	lvl->addLife();
 	pickup::onCollisionWithPlayer(lvl);
 }

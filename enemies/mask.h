@@ -2,7 +2,7 @@
 #define _THE_MASKED_MAN_WHITHOUT_THE_MAN_
 
 #include "enemy.h"
-#include "particles.h"
+#include "../particles.h"
 
 class mask : public enemy{
 public:
