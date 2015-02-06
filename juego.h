@@ -34,6 +34,7 @@ public:
 	SDL_Surface* getTilesheet();
 	LTexture* getPlayerSprites();
 	LTexture* getEnemySprites();
+	LTexture* getVladSprites();
 	LTexture* getEffectSheet();
 	LTexture* getCoinSheet();
 	LTexture* getDoorSheet();
@@ -57,6 +58,7 @@ private:
 	
 	LTexture* playerSprites; //puntero a Texture de spritesheet de MC
 	LTexture* enemySprites; //puntero a Texture de spritesheet de enemigos
+	LTexture* vladSprites; //puntero a Texture de spritesheet de vlad
 	LTexture* effectSheet; //puntero a texture de effectos
 	LTexture* coinSheet; //puntero a texture de moneditas
 	LTexture* doorSheet; //puntero a texture de puerta

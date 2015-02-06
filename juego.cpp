@@ -72,6 +72,13 @@ juego::juego(painter* p){
 		exit(1);
 	}
 	
+	//cargar spritesheet de enemigos
+	vladSprites = leonardo->loadTexture("graphics/vlad_sprites.png");
+	if (vladSprites == NULL){
+		std::cout << "Error al cargar los gráficos de Vlad. " << std::endl;
+		exit(1);
+	}
+	
 	effectSheet = leonardo->loadTexture("graphics/effects.png");
 	if (effectSheet == NULL){
 		std::cout << "Error al cargar los gráficos de los efectos. " << std::endl;
@@ -152,6 +159,11 @@ juego::~juego(){
 	if (enemySprites != NULL){
 		leonardo->freeTexture(enemySprites);
 		enemySprites = NULL;
+	}
+	
+	if (vladSprites != NULL){
+		leonardo->freeTexture(vladSprites);
+		vladSprites = NULL;
 	}
 	
 	if (effectSheet != NULL){
@@ -342,6 +354,10 @@ LTexture* juego::getPlayerSprites(){
 
 LTexture* juego::getEnemySprites(){
 	return enemySprites;
+}
+
+LTexture* juego::getVladSprites(){
+	return vladSprites;
 }
 
 LTexture* juego::getEffectSheet(){

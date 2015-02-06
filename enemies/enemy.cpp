@@ -101,6 +101,14 @@ void enemy::step(level*){
 	}
 	if (currentAnim != NULL)
 		currentAnim->step();
+		
+	if (hurt){
+		hurtTimer-=0.2;
+		if (hurtTimer<=0){
+			hurt = false;
+			hurtTimer = 2;
+		}
+	}
 }
 
 void enemy::draw(painter* disney){
@@ -143,13 +151,6 @@ void enemy::draw(painter* disney){
 		}
 	}
 	
-	if (hurt){
-		hurtTimer-=0.2;
-		if (hurtTimer<=0){
-			hurt = false;
-			hurtTimer = 2;
-		}
-	}
 	spritesheet->setAlpha(255);
 	spritesheet->setColor(255, 255, 255);
 }

@@ -6,6 +6,7 @@
 #include "enemies/imp.h"
 #include "enemies/mask.h"
 #include "enemies/jack.h"
+#include "enemies/vlad.h"
 #include <iostream> //debug
 
 using namespace std;
@@ -21,6 +22,7 @@ level::level(const string & filename, juego* game){
 	leonardo = game->getPainter();			// paso puntero a painter
 	jugador = game->getPlayer(); 			// paso puntero a jugador
 	enemySprites = game->getEnemySprites();	// paso puntero a sprites de enemigos
+	vladSprites = game->getVladSprites();	// paso puntero a sprites de Vlad
 	effectSheet = game->getEffectSheet();	// paso puntero a sprites de effectos
 	coinSheet = game->getCoinSheet();		// paso puntero a sprites de monedita
 	doorSheet = game->getDoorSheet();		// paso puntero a sprites de puerta
@@ -1111,6 +1113,8 @@ int level::load(std::istream& is, map<string, pair<int, int> >& posEnSheet){
 					toSpawn = new mask(enemySprites, pos.x, pos.y);
 				} else if (str == "jack"){
 					toSpawn = new jack(enemySprites, pos.x, pos.y);
+				} else if (str == "vlad"){
+					toSpawn = new vlad(vladSprites, pos.x, pos.y);
 				} else {
 					std::cout << "Falla cargar enemigos. Archivo corrupto.\n";
 					exit(1);

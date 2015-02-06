@@ -288,13 +288,13 @@ void player::draw(painter* pintor){
 	
 	if ((!hurt) || (int(timeToBlink)%4 == 0)){
 		bool up = !runSpriteBot->getCurrentFrame();
-		blinkSprite->draw(pintor, x+!facingRight, y-7-up+shooting);
 		runSpriteBot->draw(pintor, x, y+12-up);
 	
 		bool shootTime = (int(timeToBlink)%2 == 0);
 	
 		if (shooting){
 			pintor->drawEx(spritesheet, 128, 32, 32, 32, x, y+8-up, 32, 32, 0, !facingRight);
+			blinkSprite->draw(pintor, x+!facingRight, y-6-up+shooting);
 			if (facingRight){
 				//dibujar arma
 				pintor->drawEx(spritesheet, 64, 64, 32, 32, x+8+shootTime, y+6-up, 32, 32, 0, 0);
@@ -311,7 +311,9 @@ void player::draw(painter* pintor){
 			}
 		} else {
 			runSpriteTop->draw(pintor, x, y+7-up);
+			blinkSprite->draw(pintor, x+!facingRight, y-6-up+shooting);
 		}
+		
 		
 	}
 	
