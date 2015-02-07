@@ -26,7 +26,7 @@ vlad::vlad(LTexture* sprt, int X, int Y) : enemy(sprt, X, Y){
 	visible = 0;
 	alpha = 255;
 	
-	spdX = -2;
+	spdX = 0;
 	facingRight = false;
 	onGround = true;
 	
@@ -35,10 +35,12 @@ vlad::vlad(LTexture* sprt, int X, int Y) : enemy(sprt, X, Y){
 	colBox.w = 20;
 	colBox.h = 32;
 	
-	lives = 50;
+	lives = 30;
 	maxLives = 100;
 	
 	state = stPrepare;
+	swordSprite->setCurrentFrame(0);
+	nextState = stQuake;
 	currentAnim = NULL;
 }
 
@@ -85,6 +87,8 @@ void vlad::step(level* lvl){
 			if (spdY >= 0){
 				onGround = true;
 				y = colDisplace*32;
+				if (state == stJump)
+					state = stRun;
 			} else {
 				y = colDisplace*32+33;
 			}
@@ -96,30 +100,37 @@ void vlad::step(level* lvl){
 			runSpriteBot->setSpeed(0);
 			runSpriteBot->setCurrentFrame(1);
 			onGround = false;
+			if (state == stRun || state == stIdle)
+				state = stJump;
 		}
 		
 		lvl->getPlayerPos(playerX, playerY);
 		playerX = playerX - x;
 		playerY = playerY - y;
 		normalized = sqrt(playerX*playerX + playerY*playerY);
-			
+		
 		timer -= 1;
 		timeFactor = lives/(double(maxLives)/2);
 		
-		if (state == stRun){
+		if (state == stRun || state == stJump){
 		
 			spdX += (2*facingRight-1)*0.2;
 			
 			if (timer <= 0){
 				if (rand()%2==0){
-					state = stPrepare;
 					timer = 20;
+					state = stPrepare;
+					if (abs(playerX) < 150 && playerY < 0 && onGround){
+						nextState = stUppercut;
+					} else {
+						nextState = stDash;
+					}
 					
 				} else if (rand()%10==0){
 					state = stIdle;
-					timer = 60*timeFactor+rand()%30;
+					timer = timeFactor*(60+rand()%30);
 				} else{
-					timer = 60*timeFactor+rand()%30;
+					timer = timeFactor*(60+rand()%30);
 					if (onGround){
 						spdY = -12;
 						onGround = false;
@@ -135,7 +146,7 @@ void vlad::step(level* lvl){
 			}
 			
 			if (timer <= 0){
-				timer = 60+rand()%120;
+				timer = (60+rand()%120)*timeFactor;
 				state = stRun;
 			}
 		} else if (state == stDash) {
@@ -146,25 +157,90 @@ void vlad::step(level* lvl){
 			
 			if (timer <= 0){
 				if (abs(spdX) > 0){
-					timer = 30+rand()%30;
+					timer = 60*timeFactor;
 					spdX = 0;
 				} else {
-					timer = 30+rand()%30;
-					state = stIdle;
+					
+					if (lives <= maxLives/4 && onGround){
+						state = stPrepare;
+						nextState = stUppercut;
+						timer = 30*timeFactor;
+					} else{
+						if (!onGround && rand()%3 == 0){
+							nextState = stQuake;
+							state = stPrepare;
+							timer = 20;
+						} else {
+							timer = (30+rand()%30)*timeFactor;
+							state = stIdle;
+						}
+					}
 					maxSpeedX = 2;
 				}
 			}
+		} else if (state == stUppercut){
+			swordSprite->setSpeed(0.5);
+			swordSprite->step();
+			if (timer<= 0){
+				if (rand()%100 >= timeFactor*100){
+					nextState = stQuake;
+					state = stPrepare;
+					timer = 20;
+				} else {
+					timer = (30+rand()%30)*timeFactor;
+					state = stIdle;
+				}
+			}
+			
 		} else if (state == stPrepare){
-			swordSprite->setCurrentFrame(1);
-			spdX = 0;
-			spdY = 0;
-			facingRight = playerX > 0;
-			if (timer <= 0){
-				state = stDash;
-				timer = abs(playerX)/20;
-				spdX = (2*(playerX>0)-1)*20;
+			if (nextState == stDash){
+				
+				swordSprite->setCurrentFrame(1);
+				spdX = 0;
 				spdY = 0;
-				maxSpeedX = 20;
+				facingRight = playerX > 0;
+				
+				if (timer <= 0){
+					state = stDash;
+					timer = abs(playerX)/20;
+					spdX = (2*(playerX>0)-1)*20;
+					spdY = 0;
+					maxSpeedX = 20;
+				}
+			} else if (nextState == stUppercut){
+				
+				swordSprite->setCurrentFrame(1);
+				spdY = 0;
+				facingRight = playerX < 0;
+				
+				if (timer <= 0){
+					state = stUppercut;
+					timer = abs(playerY)/20;
+					if (timer < 10);
+						timer = 30;
+					spdY = -15;
+				}
+			} else if (nextState == stQuake){
+				swordSprite->setCurrentFrame(0);
+				spdY = 0;
+				spdX = 0;
+				
+				if (timer <= 0){
+					state = stQuake;
+					timer = 80*timeFactor+10;
+					spdY = 20;
+				}
+			}
+			
+		} else if (state == stQuake){
+			swordSprite->setCurrentFrame(0);
+			if (!onGround){
+				spdY = 20;
+			}
+			
+			if (timer <= 0 && onGround){
+				timer = (60+rand()%30)*timeFactor;
+				state = stIdle;
 			}
 		}
 		
@@ -197,12 +273,8 @@ void vlad::step(level* lvl){
 		if (((colBox.x+colBox.w >= 1120) && (spdX > 0)) || ((colBox.x <= 224) && (spdX < 0))){
 			spdX = -spdX;
 		}
-		/*
-		if (((colBox.y+colBox.h >= 416) && (spdY > 0)) || ((y <= 32) && (spdY < 0))){
-			spdY = -spdY;
-		}
-		*/
 		
+				
 		enemy::step(lvl);
 		
 		colBox.x = x+6;
@@ -257,10 +329,39 @@ void vlad::draw(painter* pintor){
 			swordSprite->setFlip(!facingRight);
 			pintor->drawEx(spritesheet, 96, 32, 32, 32, x, y+7-up, 32, 32, 0, !facingRight);
 			swordSprite->draw(pintor, (facingRight) ? x+10 : x-41, y-11-up);
-		} else if (state == stPrepare){
-			swordSprite->setFlip(facingRight);
-			pintor->drawEx(spritesheet, 64, 32, 32, 32, x, y+7-up, 32, 32, 0, !facingRight);
-			swordSprite->draw(pintor, (facingRight) ? x-25 : x-7, y+4-up);
+		} else if ((state == stPrepare) || (state == stQuake)){
+			
+			if (swordSprite->getCurrentFrame() == 0){
+				swordSprite->setFlip(!facingRight);
+				pintor->drawEx(spritesheet, 128, 32, 32, 32, x, y+7-up, 32, 32, 0, !facingRight);
+				swordSprite->draw(pintor, (facingRight) ? x-10 : x-22, y+8-up);
+			} else {
+				swordSprite->setFlip(facingRight);
+				pintor->drawEx(spritesheet, 64, 32, 32, 32, x, y+7-up, 32, 32, 0, !facingRight);
+				swordSprite->draw(pintor, (facingRight) ? x-25 : x-7, y+4-up);
+			}
+		} else if (state == stUppercut){
+			int cFrame = swordSprite->getCurrentFrame();
+			swordSprite->setFlip(!facingRight);
+			
+			switch (cFrame){
+			case 1:
+				pintor->drawEx(spritesheet, 64, 32, 32, 32, x, y+7-up, 32, 32, 0, !facingRight);
+				swordSprite->draw(pintor, (!facingRight) ? x-32 : x, y+4-up);
+			break;
+			case 2:
+				pintor->drawEx(spritesheet, 96, 32, 32, 32, x, y+7-up, 32, 32, 0, !facingRight);
+				swordSprite->draw(pintor, (facingRight) ? x+10 : x-41, y-11-up);
+			break;
+			case 3:
+				pintor->drawEx(spritesheet, 96, 32, 32, 32, x, y+7-up, 32, 32, 0, !facingRight);
+				swordSprite->draw(pintor, (facingRight) ? x+4 : x-36, y-19-up);
+			break;
+			default:
+				pintor->drawEx(spritesheet, 64, 32, 32, 32, x, y+7-up, 32, 32, 0, !facingRight);
+			break;
+			}	
+			
 		} else {
 			runSpriteTop->draw(pintor, x, y+7-up);
 		}

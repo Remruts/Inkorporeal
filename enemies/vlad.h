@@ -14,7 +14,7 @@ public:
 	
 private:
 
-	enum VState {stRun, stIdle, stDash, stJump, stPrepare};
+	enum VState {stRun, stIdle, stDash, stJump, stPrepare, stUppercut, stQuake};
 	
 	animation* faceSprite;
 	animation* runSpriteTop;
@@ -30,6 +30,7 @@ private:
 	int playerX, playerY;
 	double normalized; //meh
 	VState state;
+	VState nextState;
 };
 
 /*
