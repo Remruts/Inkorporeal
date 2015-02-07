@@ -22,8 +22,10 @@ private:
 	animation* swordSprite;
 	
 	double timer;
+	double timeFactor;
+	
 	bool onGround;
-	bool shooting;
+	//bool shooting;
 	
 	int playerX, playerY;
 	double normalized; //meh

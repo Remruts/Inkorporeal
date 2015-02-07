@@ -16,12 +16,13 @@ vlad::vlad(LTexture* sprt, int X, int Y) : enemy(sprt, X, Y){
 	unsigned int frms3[] = {3, 4, 5, 6};
 	swordSprite = new animation(4, 0.1, false, spritesheet, frms3, 64);
 	
-	swordSprite->setCurrentFrame(2);
 	
 	timer = 30.0;
+	timeFactor = 1;
+	
 	accel = 0.04;
 	maxSpeedX = 2;
-	maxSpeedY = 12;
+	maxSpeedY = 20;
 	visible = 0;
 	alpha = 255;
 	
@@ -37,7 +38,7 @@ vlad::vlad(LTexture* sprt, int X, int Y) : enemy(sprt, X, Y){
 	lives = 50;
 	maxLives = 100;
 	
-	state = stRun;
+	state = stPrepare;
 	currentAnim = NULL;
 }
 
@@ -90,7 +91,8 @@ void vlad::step(level* lvl){
 			colBox.y = y+9;
 				
 		} else {
-			spdY += 0.5;
+			if (state != stDash)
+				spdY += 0.5;
 			runSpriteBot->setSpeed(0);
 			runSpriteBot->setCurrentFrame(1);
 			onGround = false;
@@ -102,23 +104,22 @@ void vlad::step(level* lvl){
 		normalized = sqrt(playerX*playerX + playerY*playerY);
 			
 		timer -= 1;
+		timeFactor = lives/(double(maxLives)/2);
 		
 		if (state == stRun){
 		
 			spdX += (2*facingRight-1)*0.2;
 			
 			if (timer <= 0){
-				// jumping
 				if (rand()%2==0){
-					state = stDash;
-					timer = abs(playerX)/20;
-					spdX = (2*(playerX>0)-1)*20;
-					maxSpeedX = 20;
-				} else if (rand()%5==0){
+					state = stPrepare;
+					timer = 20;
+					
+				} else if (rand()%10==0){
 					state = stIdle;
-					timer = 60+rand()%60;
+					timer = 60*timeFactor+rand()%30;
 				} else{
-					timer = 60+rand()%30;
+					timer = 60*timeFactor+rand()%30;
 					if (onGround){
 						spdY = -12;
 						onGround = false;
@@ -138,6 +139,8 @@ void vlad::step(level* lvl){
 				state = stRun;
 			}
 		} else if (state == stDash) {
+			swordSprite->setCurrentFrame(2);
+			
 			if (spdX != 0)
 				facingRight = spdX>0;
 			
@@ -150,6 +153,18 @@ void vlad::step(level* lvl){
 					state = stIdle;
 					maxSpeedX = 2;
 				}
+			}
+		} else if (state == stPrepare){
+			swordSprite->setCurrentFrame(1);
+			spdX = 0;
+			spdY = 0;
+			facingRight = playerX > 0;
+			if (timer <= 0){
+				state = stDash;
+				timer = abs(playerX)/20;
+				spdX = (2*(playerX>0)-1)*20;
+				spdY = 0;
+				maxSpeedX = 20;
 			}
 		}
 		
@@ -224,7 +239,6 @@ void vlad::draw(painter* pintor){
 		runSpriteTop->setFlip(!facingRight);
 		runSpriteBot->setFlip(!facingRight);
 		faceSprite->setFlip(!facingRight);
-		swordSprite->setFlip(!facingRight);
 		
 		
 		if (hurt){
@@ -235,13 +249,18 @@ void vlad::draw(painter* pintor){
 		
 		bool up = !runSpriteBot->getCurrentFrame();
 		
-		faceSprite->draw(pintor, x+!facingRight, y-7-up);
+		faceSprite->draw(pintor, x+2*(!facingRight)-1, y-7-up);
 		
-		runSpriteBot->draw(pintor, x, y+12-up);
+		runSpriteBot->draw(pintor, x + (facingRight ? 2 : -2), y+12-up + ((state == stDash) || (state == stPrepare)));
 		
 		if (state == stDash){
+			swordSprite->setFlip(!facingRight);
 			pintor->drawEx(spritesheet, 96, 32, 32, 32, x, y+7-up, 32, 32, 0, !facingRight);
 			swordSprite->draw(pintor, (facingRight) ? x+10 : x-41, y-11-up);
+		} else if (state == stPrepare){
+			swordSprite->setFlip(facingRight);
+			pintor->drawEx(spritesheet, 64, 32, 32, 32, x, y+7-up, 32, 32, 0, !facingRight);
+			swordSprite->draw(pintor, (facingRight) ? x-25 : x-7, y+4-up);
 		} else {
 			runSpriteTop->draw(pintor, x, y+7-up);
 		}
