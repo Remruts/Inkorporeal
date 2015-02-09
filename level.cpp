@@ -742,6 +742,10 @@ void level::getPlayerPos(int &x, int &y){
 	jugador->getPos(x, y);
 }
 
+LTexture* level::getEffectSheet(){
+	return effectSheet;
+}
+
 //determina si un punto está sobre algo sólido
 bool level::isSolid(int x, int y) const{
 	

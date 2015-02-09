@@ -59,10 +59,17 @@ public:
 	// Si hubiese, devuelve la posición de contacto (en y), sino -1
 	int vRaySolid(int y1, int y2, int x) const;
 	
+	// Estas funciones deberían haber tenido un parámetro "tipo" y que acá se creen, 
+	// en vez de que se les pase un puntero. Así el nivel maneja los recursos y no las otras cosas... 
+	// Soy un idiota.
 	void addBullet(bullet*); 	//agrega una bala del jugador a la escena
 	void addEnemyBullet(enemyBullet*); //agrega una bala de enemigo a la escena
 	void addEmitter(emitter*); //agrega un emisor de partículas a la escena
 	void addPickup(pickup*);	//agrega un pickup a la escena
+	
+	// No lo pienso arreglar.
+	// En vez de eso, vamos a crear una función que me devuelva el spritesheet de efectos.
+	LTexture* getEffectSheet();
 	
 	void addPoints(int points, int x, int y);
 	void addLife();

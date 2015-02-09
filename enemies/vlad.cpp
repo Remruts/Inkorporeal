@@ -35,7 +35,7 @@ vlad::vlad(LTexture* sprt, int X, int Y) : enemy(sprt, X, Y){
 	colBox.w = 20;
 	colBox.h = 32;
 	
-	lives = 30;
+	lives = 100;
 	maxLives = 100;
 	
 	state = stPrepare;
@@ -85,10 +85,16 @@ void vlad::step(level* lvl){
 			
 			spdY = 0;
 			if (spdY >= 0){
-				onGround = true;
 				y = colDisplace*32;
+				
 				if (state == stJump)
 					state = stRun;
+				
+				if ((state == stQuake) && !onGround){
+					lvl->addEmitter(new upSmoke(lvl->getEffectSheet(), x+colBox.w/2, y+colBox.h));
+				}
+				
+				onGround = true;
 			} else {
 				y = colDisplace*32+33;
 			}
@@ -110,7 +116,8 @@ void vlad::step(level* lvl){
 		normalized = sqrt(playerX*playerX + playerY*playerY);
 		
 		timer -= 1;
-		timeFactor = lives/(double(maxLives)/2);
+		//timeFactor = lives/(double(maxLives)/2);
+		timeFactor = lives/double(maxLives);
 		
 		if (state == stRun || state == stJump){
 		
@@ -132,6 +139,7 @@ void vlad::step(level* lvl){
 				} else{
 					timer = timeFactor*(60+rand()%30);
 					if (onGround){
+						//lvl->addEmitter(new upSmoke(lvl->getEffectSheet(), x+colBox.w/2, y+colBox.h));
 						spdY = -12;
 						onGround = false;
 					}
@@ -150,23 +158,34 @@ void vlad::step(level* lvl){
 				state = stRun;
 			}
 		} else if (state == stDash) {
+			
+			//if (onGround && abs(spdX) > 0)
+			//	lvl->addEmitter(new upSmoke(lvl->getEffectSheet(), x+colBox.w/2, y+colBox.h));
 			swordSprite->setCurrentFrame(2);
 			
-			if (spdX != 0)
+			if (spdX != 0){
 				facingRight = spdX>0;
+				if (int(timer)%10 == 0)
+					lvl->addEmitter(new circleEmitter(lvl->getEffectSheet(), x+ (facingRight ? 0 : colBox.w ), y+colBox.h/2, facingRight));
+				
+				//if (onGround)
+				//	lvl->addEmitter(new upSmoke(lvl->getEffectSheet(), x+colBox.w/2, y+colBox.h));
+			}
 			
 			if (timer <= 0){
 				if (abs(spdX) > 0){
 					timer = 60*timeFactor;
 					spdX = 0;
 				} else {
+					colBox.x = x+6;
+					colBox.w = 20;
 					
 					if (lives <= maxLives/4 && onGround){
 						state = stPrepare;
 						nextState = stUppercut;
 						timer = 30*timeFactor;
 					} else{
-						if (!onGround && rand()%3 == 0){
+						if (!onGround && (rand()%3 == 0 || colBox.y > 320)){
 							nextState = stQuake;
 							state = stPrepare;
 							timer = 20;
@@ -201,6 +220,7 @@ void vlad::step(level* lvl){
 				facingRight = playerX > 0;
 				
 				if (timer <= 0){
+					lvl->addEmitter(new circleEmitter(lvl->getEffectSheet(), x+ (facingRight ? 0 : colBox.w ), y+colBox.h/2, facingRight));
 					state = stDash;
 					timer = abs(playerX)/20;
 					spdX = (2*(playerX>0)-1)*20;
@@ -211,9 +231,11 @@ void vlad::step(level* lvl){
 				
 				swordSprite->setCurrentFrame(1);
 				spdY = 0;
-				facingRight = playerX < 0;
+				spdX = 0;
+				facingRight = playerX > 0;
 				
 				if (timer <= 0){
+					lvl->addEmitter(new upSmoke(lvl->getEffectSheet(), x+colBox.w/2, y+colBox.h));
 					state = stUppercut;
 					timer = abs(playerY)/20;
 					if (timer < 10);
@@ -262,14 +284,7 @@ void vlad::step(level* lvl){
 			colBox.x = x+12;
 		}
 		
-		if (onGround){
-			if ((facingRight && !lvl->isSolid(colBox.x+colBox.w+spdX+1, colBox.y+colBox.h+spdY+1)) || 
-				(!facingRight && !lvl->isSolid(colBox.x+spdX-1, colBox.y+colBox.h+spdY+1))){
-				facingRight = !facingRight;
-				spdX *= -1;
-			}
-		}
-	
+			
 		if (((colBox.x+colBox.w >= 1120) && (spdX > 0)) || ((colBox.x <= 224) && (spdX < 0))){
 			spdX = -spdX;
 		}
@@ -277,8 +292,34 @@ void vlad::step(level* lvl){
 				
 		enemy::step(lvl);
 		
-		colBox.x = x+6;
-		colBox.y = y;
+		if (state == stDash){
+			if (facingRight){
+				colBox.x = x+6;
+			} else{
+				colBox.x = x-22;
+			}
+			
+			colBox.y = y+10;
+			
+			colBox.w = 48;
+			colBox.h = 22;
+			
+		} else if (state == stUppercut){
+			if (facingRight){
+				colBox.x = x+6;
+			} else{
+				colBox.x = x-14;
+			}
+			
+			colBox.w = 40;
+			colBox.h = 32;
+			
+		} else {
+			colBox.x = x+6;
+			colBox.y = y;
+			colBox.w = 20;
+			colBox.h = 32;
+		}	
 		
 		if (state == stRun){
 			if (runSpriteTop->getSpeed() == 0){
@@ -370,7 +411,134 @@ void vlad::draw(painter* pintor){
 		spritesheet->setAlpha(255);
 	}
 	//enemy::draw(pintor);
+	
+	//debug
+	//pintor->setColor(255, 0, 0, 255);
+	//pintor->drawRect(colBox.x, colBox.y, colBox.w, colBox.h, 0);
+	//pintor->setColor(0x7F, 0x7F, 0x7F, 255);
 }
+
+
+// "upSmoke" emitter
+upSmoke::upSmoke(LTexture* sprt, int X, int Y) : emitter(sprt, 1, X, Y){
+	timer = 1;
+	maxTimer = 1;
+	rate = 10+rand()%2;
+}
+
+upSmoke::~upSmoke(){
+	
+}
+	
+void upSmoke::emit(){
+	srand(time(NULL)*(x+y));
+	
+	particle* part = NULL;
+	double spdX, spdY, speed;
+	for (int i = 0; i < rate; i++){
+		speed = (rand()%31-15)/10;
+		spdX = cos((i/double(rate))*2*3.1415)*speed*1.1;
+		spdY = sin((i/double(rate))*2*3.1415)*speed;
+		
+		part = new particle(spritesheet, x, y, rand()%3+12);
+		part->setSpeed(spdX, spdY);
+		part->setSpriteSize(64);
+		part->setSprite(3);
+		part->setGravity(true);
+		part->setGravityDir(270);
+		part->setScale(0.3);
+		part->setAlpha(255);
+		part->setBlend(0);
+		//part->setAngle(rand()%360);
+		//part->setColor(255, 255, 255);
+		part->setFriction(1);
+		part->setPermanence(false);
+		particles.push_back(part);
+	}
+}
+
+void upSmoke::step(level* lvl){
+	vector<particle*>::iterator it = particles.begin();
+	double lifeScale;
+	while(it != particles.end()){
+		if ((*it) != NULL && (*it)->isAlive()){
+			lifeScale = (*it)->getLife()/double((*it)->getMaxLife());
+			(*it)->setAlpha(lifeScale*255);
+			(*it)->setScale(lifeScale*0.3);
+			it++;
+		} else {
+			if (*it != NULL)
+				delete *it;
+			*it = NULL;
+			
+			it = particles.erase(it);
+		}
+	}
+	emitter::step(lvl);
+}
+//end "upSmoke" emitter
+
+
+//circleEmitter
+circleEmitter::circleEmitter(LTexture* sprt, int X, int Y, bool IZQ) : emitter(sprt, 1, X, Y){
+	timer = 1;
+	maxTimer = 1;
+	rate = 5;
+	izq = IZQ;
+}
+
+circleEmitter::~circleEmitter(){
+	
+}
+	
+void circleEmitter::emit(){
+	srand(time(NULL)*(x+y));
+	
+	particle* part = NULL;
+	//double spdX, spdY, speed;
+	for (int i = 0; i < rate; i++){
+		//speed = (rand()%31-15)/10;
+		//spdX = cos((i/double(rate))*2*3.1415)*speed*1.1;
+		//spdY = sin((i/double(rate))*2*3.1415)*speed;
+		
+		part = new particle(spritesheet, x, y, 15);
+		part->setSpeed((izq*(-2)+1), -2);
+		part->setSpriteSize(64);
+		part->setSprite(4);
+		part->setGravity(false);
+		//part->setGravityDir(270);
+		part->setScaleX(0.1);
+		part->setScaleY(0.1);
+		part->setAlpha(255);
+		part->setBlend(1);
+		//part->setAngle(rand()%360);
+		part->setColor(0, 100, 200);
+		part->setFriction(1);
+		part->setPermanence(false);
+		particles.push_back(part);
+	}
+}
+
+void circleEmitter::step(level* lvl){
+	vector<particle*>::iterator it = particles.begin();
+	double lifeScale;
+	while(it != particles.end()){
+		if ((*it) != NULL && (*it)->isAlive()){
+			lifeScale = (*it)->getLife()/double((*it)->getMaxLife());
+			(*it)->setAlpha(lifeScale*255);
+			(*it)->setScaleY((1.1-lifeScale));
+			it++;
+		} else {
+			if (*it != NULL)
+				delete *it;
+			*it = NULL;
+			
+			it = particles.erase(it);
+		}
+	}
+	emitter::step(lvl);
+}
+//end circleEmitter
 
 //thrownbone
 /*

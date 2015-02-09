@@ -2,6 +2,7 @@
 #define _VAMPIRE_
 
 #include "enemy.h"
+#include "../particles.h"
 #include <deque>
 
 class vlad : public enemy{
@@ -31,6 +32,28 @@ private:
 	double normalized; //meh
 	VState state;
 	VState nextState;
+};
+
+class upSmoke: public emitter{
+public:
+	upSmoke(LTexture* sprt, int x, int y);
+	~upSmoke();
+	
+	void emit();
+	void step(level*);
+private:
+	
+};
+
+class circleEmitter : public emitter{
+public:
+	circleEmitter(LTexture* sprt, int x, int y, bool izq);
+	~circleEmitter();
+	
+	void emit();
+	void step(level*);
+private:
+	bool izq;
 };
 
 /*

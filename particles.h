@@ -17,8 +17,12 @@ public:
 	~particle();
 	
 	void setSprite(int);
+	
 	void setScale(double);
-	double getScale();
+	void setScaleX(double);
+	void setScaleY(double);
+	double getScaleX();
+	double getScaleY();
 	
 	void setSpeed(double spdX, double spdY);
 	double getSpeedX();
@@ -48,7 +52,7 @@ public:
 private:
 	int x, y;
 	double spdX, spdY;
-	double scale;
+	double scaleX, scaleY;
 	int sprite;
 	
 	bool gravity;

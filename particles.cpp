@@ -17,7 +17,9 @@ particle::particle(LTexture* sprt, int X, int Y, int Life){
 	
 	spdX = 0;
 	spdY = 0;
-	scale = 1;
+	
+	scaleX = 1;
+	scaleY = 1;
 	
 	alpha = 255;
 	angle = 0;
@@ -52,8 +54,18 @@ void particle::setBounce(bool b){
 void particle::setSprite(int sprNum){
 	sprite = sprNum;
 }
+
 void particle::setScale(double s){
-	scale = s;
+	scaleX = s;
+	scaleY = s;
+}
+
+void particle::setScaleX(double s){
+	scaleX = s;
+}
+
+void particle::setScaleY(double s){
+	scaleY = s;
 }
 	
 void particle::setSpeed(double SPDX, double SPDY){
@@ -121,8 +133,12 @@ void particle::setColor(unsigned int R, unsigned int G, unsigned int B){
 	b = B;
 }
 
-double particle::getScale(){
-	return scale;
+double particle::getScaleX(){
+	return scaleX;
+}
+
+double particle::getScaleY(){
+	return scaleY;
 }
 	
 void particle::step(level* lvl){
@@ -167,16 +183,16 @@ void particle::draw(painter* picasso, LTexture* background){
 	spritesheet->setColor(r, g, b);	
 
 	if (life > 1){
-		picasso->drawEx(spritesheet, (sprite*spriteSize)%spritesheet->getWidth(), (sprite*spriteSize)/spritesheet->getWidth(), 
-			spriteSize, spriteSize, x, y, spriteSize*scale, spriteSize*scale, angle, 0);
-		picasso->drawEx(spritesheet, (sprite*spriteSize)%spritesheet->getWidth(), (sprite*spriteSize)/spritesheet->getWidth(), 
-			spriteSize, spriteSize, x, 448+(320-y*0.7143)-spriteSize*0.7143, spriteSize*scale, spriteSize*scale*0.7143, angle, 2); //espejado
+		picasso->drawEx(spritesheet, (sprite*spriteSize)%spritesheet->getWidth(), ((sprite*spriteSize)/spritesheet->getWidth())*spriteSize, 
+			spriteSize, spriteSize, x, y, spriteSize*scaleX, spriteSize*scaleY, angle, 0);
+		picasso->drawEx(spritesheet, (sprite*spriteSize)%spritesheet->getWidth(), ((sprite*spriteSize)/spritesheet->getWidth())*spriteSize, 
+			spriteSize, spriteSize, x, 448+(320-y*0.7143), spriteSize*scaleX, spriteSize*scaleY*0.7143, angle, 2); //espejado
 	}	
 	
 	if ((life == 1) && permanent){
 		picasso->setRenderTarget(background);
 		picasso->drawEx(spritesheet, (sprite*spriteSize)%spritesheet->getWidth(), (sprite*spriteSize)/spritesheet->getWidth(), 
-			spriteSize, spriteSize, x-192, y, spriteSize*scale, spriteSize*scale, angle, 0);
+			spriteSize, spriteSize, x-192, y, spriteSize*scaleX, spriteSize*scaleY, angle, 0);
 		picasso->resetRenderTarget();
 	}
 	
@@ -316,7 +332,7 @@ void colourExplosion::step(level* lvl){
 	vector<particle*>::iterator it = particles.begin();
 	while(it != particles.end()){
 		if ((*it) != NULL && (*it)->isAlive()){
-			(*it)->setScale((*it)->getScale()*1.02);
+			(*it)->setScale((*it)->getScaleX()*1.02);
 			it++;
 		} else {
 			if (*it != NULL)
