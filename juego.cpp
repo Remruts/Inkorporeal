@@ -36,6 +36,8 @@ juego::juego(painter* p){
 	posEnSheet["columna2"] = make_pair(3, 6);
 	posEnSheet["butaca0"] = make_pair(0, 5);
 	posEnSheet["piano0"] = make_pair(1, 5);
+	posEnSheet["candelabro0"] = make_pair(0, 6);
+	posEnSheet["cadena0"] = make_pair(1, 6);
 	/*
 	std::cout << "Tamaño mapa: " << posEnSheet.size() << std::endl;
 	

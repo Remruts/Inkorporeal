@@ -69,6 +69,10 @@ vlad::~vlad(){
 void vlad::step(level* lvl){
 	
 	if (alive){
+	
+		if (lives == 0){
+			lvl->addKey(x, y);
+		}
 		
 		if (spdX>=0){
 			runSpriteTop->setSpeed(0.08);
@@ -279,9 +283,11 @@ void vlad::step(level* lvl){
 				x = 192+colDisplace*32-32+(colBox.w+(colBox.x-x));
 			else
 				x = 192+colDisplace*32-(colBox.x-x);
+
 			facingRight = !facingRight;
 			spdX *= -1;
 			colBox.x = x+12;
+				
 		}
 		
 			
@@ -407,8 +413,17 @@ void vlad::draw(painter* pintor){
 			runSpriteTop->draw(pintor, x, y+7-up);
 		}
 		
-		
 		spritesheet->setAlpha(255);
+		
+		//barra
+		pintor->setColor(0x17, 0x17, 0x17, 255);
+		pintor->drawRect(260, 64, 820, 16, 1);
+		pintor->setColor(180, 0, 0, 255);
+		pintor->drawRect(260, 64, 820*(lives/double(maxLives)), 16, 1);
+		pintor->setColor(180, 180, 180, 255);
+		pintor->drawRect(260, 64, 820, 16, 0);
+		pintor->drawRect(259, 63, 822, 18, 0);
+		pintor->setColor(0x17, 0x17, 0x17, 255);
 	}
 	//enemy::draw(pintor);
 	

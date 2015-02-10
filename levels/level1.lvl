@@ -1,6 +1,9 @@
 // Mantener orden de secciones o se arruina todo
 // Si una línea empieza con "espacio" o "/", es salteada
 
+>type
+1 // 0=no lock, 1=lock, 2=boss, 3=final boss?
+
 //Si no hay tres números, se arruina todo.
 >tiles
 1 // rug: 0=none, 1=red

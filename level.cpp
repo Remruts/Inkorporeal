@@ -83,7 +83,20 @@ level::level(const string & filename, juego* game){
 	pointsText = leonardo->textureFromText("0 1 2 3 4 5 6 7 8 9  ", 2, 255, 255, 255);
 	pointsText2 = leonardo->textureFromText("0123456789", 0, 255, 255, 255);
 	
-	puerta = new door(doorSheet, 992, 352, true); //default
+	if (lvlType == 2){
+		bossText = leonardo->textureFromText("BOSS", 3, 180, 0, 0);
+	} else {
+		bossText = NULL;
+	}
+	
+	if (lvlType == 0){
+		puerta = new door(doorSheet, 992, 352, false);
+	} else if ((lvlType == 1) || (lvlType == 2)){
+		puerta = new door(doorSheet, 992, 352, true); //default
+	} else if (lvlType == 3){
+		puerta = NULL;
+	}
+	
 	llave = NULL;
 	
 	
@@ -418,7 +431,7 @@ void level::updateEnemies(){
 				
 				addPoints((*it)->getMaxLives()*100, x, y);
 				
-				if ((llave == NULL) && (rand()%enemyList.size() == 0)){
+				if ((lvlType == 1) && (llave == NULL) && (rand()%enemyList.size() == 0)){
 					llave = new key(doorSheet, x, y);
 				}
 				
@@ -645,6 +658,10 @@ void level::addPickup(pickup* p){
 	pickupList.push_back(p);
 }
 
+void level::addKey(int X, int Y){
+	llave = new key(doorSheet, X, Y);
+}
+
 void level::draw(){
 	// background
 	leonardo->draw(background, 0, 0, 960, 448, 192, 0);
@@ -704,8 +721,18 @@ void level::draw(){
 	}
 	
 	// texto/UI
-	leonardo->draw(testText, 0, 0, 0, 0, 24, 108);
-	leonardo->draw(levelNumText, 0, 0, 0, 0, 1175, 64);
+	if (testText != NULL){
+		leonardo->draw(testText, 0, 0, 0, 0, 24, 108);
+	}
+	
+	if ((levelNumText != NULL) && (bossText == NULL)){
+		leonardo->draw(levelNumText, 0, 0, 0, 0, 1175, 64);
+	}
+	
+	if (bossText != NULL){
+		leonardo->draw(bossText, 0, 0, 0, 0, 1200, 64);
+	}
+	
 	drawPoints();
 }
 
@@ -851,7 +878,17 @@ int level::load(std::istream& is, map<string, pair<int, int> >& posEnSheet){
 
 		// muestro el nombre de la sección, por qué no?
 		std::cout << str << std::endl;
-	
+		if (str == "type"){
+			ignore(is);
+			is >> lvlType; //Cargo tipo
+			std::cout << "tipoNivel: " << lvlType << std::endl;
+			if (lvlType > 3){
+				std::cout << "Archivo corrupto!\n";
+				return 0;
+			}
+			ignore(is);
+		}
+		
 		if (str == "tiles"){
 			ignore(is);
 			is >> rug; //Cargo rug

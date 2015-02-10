@@ -62,10 +62,11 @@ public:
 	// Estas funciones deberían haber tenido un parámetro "tipo" y que acá se creen, 
 	// en vez de que se les pase un puntero. Así el nivel maneja los recursos y no las otras cosas... 
 	// Soy un idiota.
-	void addBullet(bullet*); 	//agrega una bala del jugador a la escena
-	void addEnemyBullet(enemyBullet*); //agrega una bala de enemigo a la escena
-	void addEmitter(emitter*); //agrega un emisor de partículas a la escena
-	void addPickup(pickup*);	//agrega un pickup a la escena
+	void addBullet(bullet*); 			//agrega una bala del jugador a la escena
+	void addEnemyBullet(enemyBullet*); 	//agrega una bala de enemigo a la escena
+	void addEmitter(emitter*); 			//agrega un emisor de partículas a la escena
+	void addPickup(pickup*);			//agrega un pickup a la escena
+	void addKey(int x, int y);			//agrega una llave en la posición correspondiente
 	
 	// No lo pienso arreglar.
 	// En vez de eso, vamos a crear una función que me devuelva el spritesheet de efectos.
@@ -142,8 +143,12 @@ private:
 	LTexture* testText; //Texto de prueba
 	LTexture* pointsText; //texto de puntos
 	LTexture* pointsText2; //texto de puntos2
+	
 	unsigned int levelnum;
 	LTexture* levelNumText;
+	LTexture* bossText;
+	
+	unsigned int lvlType;
 	
 };
 
