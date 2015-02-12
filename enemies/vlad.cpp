@@ -38,7 +38,7 @@ vlad::vlad(LTexture* sprt, int X, int Y) : enemy(sprt, X, Y){
 	lives = 100;
 	maxLives = 100;
 	
-	state = stPrepare;
+	state = stQuake;
 	swordSprite->setCurrentFrame(0);
 	nextState = stQuake;
 	currentAnim = NULL;
