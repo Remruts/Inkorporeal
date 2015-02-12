@@ -63,6 +63,7 @@ public:
 	// en vez de que se les pase un puntero. Así el nivel maneja los recursos y no las otras cosas... 
 	// Soy un idiota.
 	void addBullet(bullet*); 			//agrega una bala del jugador a la escena
+	void addEnemy(enemy*);				//agrega un enemigo a la escena
 	void addEnemyBullet(enemyBullet*); 	//agrega una bala de enemigo a la escena
 	void addEmitter(emitter*); 			//agrega un emisor de partículas a la escena
 	void addPickup(pickup*);			//agrega un pickup a la escena
@@ -88,6 +89,8 @@ private:
 	void updateBullets();
 	//rutina de actualización de enemigos
 	void updateEnemies();
+	//agrega los enemigos en la lista de enemigos a agregar
+	void addEnemies();
 	//rutina de actualización de partículas
 	void updateEmitters();
 	//rutina de actualización de pickups
@@ -132,6 +135,7 @@ private:
 	player* jugador; //puntero al jugador
 	vector<bullet*> bulletList; //vector de punteros a balas de jugador
 	vector<enemy*> enemyList; //vector a puntero de enemigos
+	vector<enemy*> enemiesToAdd; //vector a puntero de enemigos a agregar
 	vector<enemyBullet*> enemyBulletList; //vector a puntero de balas de enemigos
 	vector<emitter*> emitterList; //vector a puntero de emisores de partículas
 	vector<pickup*> pickupList; //vector a puntero de pickups

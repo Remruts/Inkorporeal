@@ -28,7 +28,9 @@ animation::~animation(){
 }
 	
 void animation::setCurrentFrame(int frm){
-	curFrame = frm;
+	if (frm < 0)
+		frm = -frm;
+	curFrame = frm % frameNum;
 }
 const int animation::getCurrentFrame() const{
 	return int(curFrame);

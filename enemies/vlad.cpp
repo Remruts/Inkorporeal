@@ -121,7 +121,7 @@ void vlad::step(level* lvl){
 		
 		timer -= 1;
 		//timeFactor = lives/(double(maxLives)/2);
-		timeFactor = lives/double(maxLives);
+		timeFactor = (lives*0.8)/double(maxLives);
 		
 		if (state == stRun || state == stJump){
 		
@@ -137,10 +137,15 @@ void vlad::step(level* lvl){
 						nextState = stDash;
 					}
 					
-				} else if (rand()%10==0){
-					state = stIdle;
-					timer = timeFactor*(60+rand()%30);
-				} else{
+				}else if (rand()%3 == 0) {
+					if (onGround){
+						timer = 30+60*timeFactor;
+						state = stBats0;
+					} else{
+						timer = 15+int(30*(1-timeFactor));
+						state = stBats1;
+					}
+				}else{
 					timer = timeFactor*(60+rand()%30);
 					if (onGround){
 						//lvl->addEmitter(new upSmoke(lvl->getEffectSheet(), x+colBox.w/2, y+colBox.h));
@@ -266,6 +271,50 @@ void vlad::step(level* lvl){
 			
 			if (timer <= 0 && onGround){
 				timer = (60+rand()%30)*timeFactor;
+				state = stIdle;
+			}
+		} else if (state == stBats0){
+			spdX = 0;
+			spdY = 0;
+			
+			runSpriteBot->setSpeed(0);
+			runSpriteBot->setCurrentFrame(1);
+			
+			facingRight = playerX > 0;
+			
+			if (int(timer)%5 == 0){
+				if (facingRight){
+					lvl->addEnemy(new vladbat(spritesheet, x, y-1, 0-(20+60*timeFactor-timer)));
+				} else {
+					lvl->addEnemy(new vladbat(spritesheet, x, y-1, 180+(20+60*timeFactor-timer)));
+				}
+			}
+			
+			if (timer <= 0){
+				timer = (30+rand()%30)*timeFactor;
+				if (timeFactor < 0.4){
+					state = stPrepare;
+					nextState = stDash;
+				}
+				else{
+					state = stIdle;
+				}
+			}
+			
+		} else if (state == stBats1){
+			spdX = 0;
+			spdY = 0;
+			
+			int rot = rand()%360;
+			if ((timer-int(timer) == 0) && (int(timer)%15 == 0)){
+				for (int i = 0; i < 360; i+=36){
+					lvl->addEnemy(new vladbat(spritesheet, x, y-1, rot+i));
+				}
+				rot = rand()%360;
+			}
+			
+			if (timer <= 0){
+				timer = (30+rand()%30)*timeFactor+10;
 				state = stIdle;
 			}
 		}
@@ -409,7 +458,9 @@ void vlad::draw(painter* pintor){
 			break;
 			}	
 			
-		} else {
+		} else if (state == stBats0){
+			pintor->drawEx(spritesheet, 96, 32, 32, 32, x, y+7-up, 32, 32, 0, !facingRight);
+		} else{
 			runSpriteTop->draw(pintor, x, y+7-up);
 		}
 		
@@ -432,6 +483,117 @@ void vlad::draw(painter* pintor){
 	//pintor->drawRect(colBox.x, colBox.y, colBox.w, colBox.h, 0);
 	//pintor->setColor(0x7F, 0x7F, 0x7F, 255);
 }
+
+//vladbat
+vladbat::vladbat(LTexture* sprt, int X, int Y, double dir) : enemy(sprt, X-192, Y){
+	
+	unsigned int frms[] = {36, 37, 38, 39, 38, 37, 36};
+	movingAnim = new animation(7, 0.5, true, spritesheet, frms, 32);
+	movingAnim->setCurrentFrame(rand()%7);
+		
+	currentAnim = movingAnim;
+	
+	dX = x;
+	dY = y;
+	
+	timer = 2.0;
+	accel = 0.01;
+	maxSpeedX = 4;
+	maxSpeedY = 7;
+	visible = 2;
+	alpha = 255;
+	
+	if (dir < 0){
+		dir = 360-(int(abs(dir))%360);
+	} else if (dir >= 360){
+		dir = int(dir)%360;
+	}
+	
+	spdX = cos(dir/180.0*3.1416)*4;
+	spdY = sin(dir/180.0*3.1416)*4;
+	
+	facingRight = (spdX >= 0);
+	
+	colBox.x = x+9;
+	colBox.y = y+10;
+	colBox.w = 15;
+	colBox.h = 12;
+	
+	lives = 1;
+	maxLives = 0;
+}
+
+vladbat::~vladbat(){
+	if (movingAnim != NULL){
+		delete movingAnim;
+		movingAnim = NULL;
+	}
+}
+
+void vladbat::step(level* lvl){
+	
+	if (alive){
+		int colDisplace;
+		if (spdY>=0){
+			colDisplace = lvl->vRaySolid(colBox.y+colBox.h, colBox.y+colBox.h+spdY+1, colBox.x+colBox.w/2);
+		} else{
+			colDisplace = lvl->vRaySolid(colBox.y, colBox.y+spdY-1, colBox.x+colBox.w/2);
+		}
+		
+		if (colDisplace != -1){
+			lives = 0;
+		}
+		
+		if (facingRight){
+			colDisplace = lvl->hRaySolid(colBox.x+colBox.w, colBox.x+colBox.w+spdX+1, colBox.y+colBox.h/2+spdY);
+		} else {
+			colDisplace = lvl->hRaySolid(colBox.x, colBox.x+spdX-1, colBox.y+colBox.h/2+spdY);
+		}
+		
+		
+		if (colDisplace != -1){
+			lives = 0;
+		}
+	
+		if (((colBox.x+colBox.w >= 1120) && (spdX > 0)) || ((colBox.x <= 224) && (spdX < 0))){
+			lives = 0;
+		}
+		
+		if (((colBox.y+colBox.h >= 416) && (spdY > 0)) || ((y <= 32) && (spdY < 0))){
+			lives = 0;
+		}
+		
+		dX += spdX;
+		dY += spdY;
+
+		if (lives <= 0){
+			alive = false;
+		}
+		
+		x = int(dX);
+		y = int(dY);
+		
+		colBox.x = x+9;
+		colBox.y = y+10;
+		
+		if (currentAnim != NULL)
+		currentAnim->step();
+		
+		if (hurt){
+			hurtTimer-=0.2;
+			if (hurtTimer<=0){
+				hurt = false;
+				hurtTimer = 2;
+			}
+		}
+		
+	}
+}
+
+void vladbat::draw(painter* pintor){
+	enemy::draw(pintor);
+}
+//end vladbat
 
 
 // "upSmoke" emitter

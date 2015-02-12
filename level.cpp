@@ -103,6 +103,11 @@ level::level(const string & filename, juego* game){
 }
 
 level::~level(){
+	if (bossText != NULL){
+		leonardo->freeTexture(bossText);
+		bossText = NULL;
+	}
+	
 	if (levelNumText != NULL){
 		leonardo->freeTexture(levelNumText);
 		levelNumText = NULL;
@@ -116,6 +121,11 @@ level::~level(){
 	if (pointsText != NULL){
 		leonardo->freeTexture(pointsText);
 		pointsText = NULL;
+	}
+	
+	if (pointsText2 != NULL){
+		leonardo->freeTexture(pointsText2);
+		pointsText2 = NULL;
 	}
 	
 	if (background != NULL){
@@ -145,6 +155,18 @@ level::~level(){
 			it2++;	
 		}
 		
+	}
+	
+	//enemigos a agregar
+	it2 = enemiesToAdd.begin();
+	while (it2 != enemiesToAdd.end()){
+		if (*it2 != NULL){
+			delete *it;
+			*it2 = NULL;
+			it2 = enemiesToAdd.erase(it2);
+		}else{
+			it2++;	
+		}
 	}
 	
 	vector<enemyBullet*>::iterator it3 = enemyBulletList.begin();
@@ -392,6 +414,7 @@ void level::updateBullets(){
 }
 
 void level::updateEnemies(){
+	
 	vector<enemy*>::iterator it = enemyList.begin();
 	while (it != enemyList.end()){
 		if (*it != NULL){
@@ -424,9 +447,11 @@ void level::updateEnemies(){
 				
 				coin *c;
 				int max = (*it)->getMaxLives() * 2+1;
-				for (int i = 0; i<max; ++i){
-					c = new coin(coinSheet, x, y);
-					addPickup(c);
+				if (max > 1){
+					for (int i = 0; i<max; ++i){
+						c = new coin(coinSheet, x, y);
+						addPickup(c);
+					}
 				}
 				
 				addPoints((*it)->getMaxLives()*100, x, y);
@@ -622,6 +647,7 @@ void level::update(control* c){
 	updatePlayer(c);
 	updatePickups();
 	updateEnemies();
+	addEnemies();
 	updateEmitters();
 	updatePoints();
 	
@@ -646,6 +672,32 @@ void level::addBullet(bullet* b){
 	bulletList.push_back(b);
 }
 
+void level::addEnemy(enemy* e){
+	enemiesToAdd.emplace_back(e);
+}
+
+void level::addEnemies(){
+	vector<enemy*>::iterator it = enemiesToAdd.begin();
+	
+	while (it != enemiesToAdd.end()){
+		if ((*it) != NULL){
+			enemyList.emplace_back((*it));
+		} 
+		it++;
+	}
+	
+	it = enemiesToAdd.begin();
+	while (it != enemiesToAdd.end()){
+		if (*it != NULL){
+			*it = NULL;
+			it = enemiesToAdd.erase(it);
+		}else{
+			it++;	
+		}
+	}
+	
+}
+
 void level::addEnemyBullet(enemyBullet* b){
 	enemyBulletList.push_back(b);
 }
@@ -662,7 +714,7 @@ void level::addKey(int X, int Y){
 	llave = new key(doorSheet, X, Y);
 }
 
-void level::draw(){
+void level::draw(){	
 	// background
 	leonardo->draw(background, 0, 0, 960, 448, 192, 0);
 	// background espejado
@@ -683,8 +735,10 @@ void level::draw(){
 	//enemigos
 	vector<enemy*>::iterator it2 = enemyList.begin();
 	while (it2 != enemyList.end()){
-		if (*it2 != NULL)
+		if (*it2 != NULL){
 			(*it2)->draw(leonardo);
+		}
+			
 		it2++;
 	}
 	

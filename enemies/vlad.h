@@ -15,7 +15,7 @@ public:
 	
 private:
 
-	enum VState {stRun, stIdle, stDash, stJump, stPrepare, stUppercut, stQuake};
+	enum VState {stRun, stIdle, stDash, stJump, stPrepare, stUppercut, stQuake, stBats0, stBats1};
 	
 	animation* faceSprite;
 	animation* runSpriteTop;
@@ -34,6 +34,20 @@ private:
 	VState nextState;
 };
 
+class vladbat : public enemy{
+public:
+	vladbat(LTexture* sprt, int x, int y, double dir);
+	~vladbat();	
+	
+	virtual void step(level*);
+	virtual void draw(painter*);
+private:
+	animation* movingAnim;
+	double timer;
+	double dX, dY;
+};
+
+
 class upSmoke: public emitter{
 public:
 	upSmoke(LTexture* sprt, int x, int y);
@@ -42,7 +56,6 @@ public:
 	void emit();
 	void step(level*);
 private:
-	
 };
 
 class circleEmitter : public emitter{
