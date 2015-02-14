@@ -29,8 +29,6 @@ class bullet;
 class juego;
 class enemy;
 class enemyBullet;
-class ghost;
-class skelleton;
 class emitter;
 class pickup;
 class door;

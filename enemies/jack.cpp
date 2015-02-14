@@ -140,8 +140,6 @@ jackFire::jackFire(LTexture* sprt, int X, int Y, double SPDX, double SPDY) : ene
 	colBox.h = 16;
 	alpha = 200;
 	
-	em = NULL;
-	
 }
 
 jackFire::~jackFire(){

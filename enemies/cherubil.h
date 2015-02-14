@@ -1,39 +1,38 @@
-#ifndef _JACKO_DARKO_
-#define _JACKO_DARKO_
+#ifndef _CHERUB_DEVIL_
+#define _CHERUB_DEVIL_
 
 #include "enemy.h"
 #include "../particles.h"
 #include <cmath>
 
-class jack : public enemy{
+class cherubil : public enemy{
 public:
-	jack(LTexture* sprt, int x, int y);
-	~jack();
+	cherubil(LTexture* sprt, int x, int y);
+	~cherubil();
 	
 	virtual void step(level*);
 	virtual void draw(painter*);
 private:
-
-	enum JState {stRandom, stPursue, stEscape, stShoot};
 	
-	animation* movingAnim;
+	animation *cherubAnim, *devilAnim;
 	int playerX, playerY;
 	double normalized; //meh
-	JState state;
 	int timer;
 };
 
-class jackFire : public enemyBullet{
+class cherubilArrow : public enemyBullet{
 public:
-	jackFire(LTexture* sprt, int X, int Y, double SPDX, double SPDY);
-	~jackFire();
+	cherubilArrow(LTexture* sprt, int X, int Y, double SPDX, double SPDY, bool TYPE);
+	~cherubilArrow();
 	
 	void step(level*);
 	void draw(painter*);
 private:
-	animation* fireAnim;
+	animation* shootAnim;
+	double invAngle;
 };
 
+/*
 class fireEmitter : public emitter{
 public:
 	fireEmitter(LTexture* sprt, int X, int Y);
@@ -44,5 +43,6 @@ public:
 private:
 	
 };
+*/
 
 #endif

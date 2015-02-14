@@ -7,6 +7,7 @@
 #include "enemies/mask.h"
 #include "enemies/jack.h"
 #include "enemies/vlad.h"
+#include "enemies/cherubil.h"
 #include <iostream> //debug
 
 using namespace std;
@@ -1210,6 +1211,8 @@ int level::load(std::istream& is, map<string, pair<int, int> >& posEnSheet){
 					toSpawn = new jack(enemySprites, pos.x, pos.y);
 				} else if (str == "vlad"){
 					toSpawn = new vlad(vladSprites, pos.x, pos.y);
+				} else if (str == "cherubil"){
+					toSpawn = new cherubil(enemySprites, pos.x, pos.y);
 				} else {
 					std::cout << "Falla cargar enemigos. Archivo corrupto.\n";
 					exit(1);
