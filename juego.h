@@ -16,11 +16,12 @@ using namespace std;
 //fd
 class player;
 class level;
+class menu;
 
 class juego{
 public:
 
-	enum gameState {stMainMenu, stPlaying, stTransition0, stTransition1, stGameOver};
+	enum gameState {stPressStart, stMainMenu, stPlaying, stTransition0, stTransition1, stGameOver};
 	
 	juego(painter*);
 	~juego();
@@ -67,15 +68,49 @@ private:
 	LTexture* invertedTitle; //puntero a texture de título invertido. Podría haberlo dibujado invertido y con otro color.
 	LTexture* pressStart;	//puntero a texture de texto "press start"
 	
+	LTexture* gameOverSprite;  	//puntero a texture de texto "GAME OVER"
+	LTexture* YNSprite;
+	LTexture* continueSprite;
+	bool continueSelected; 		//indica si se selecciona "continue"
+	
 	level* currentLevel; //pointer al nivel actual
 	player* jugador;
 	
-	int levelNum; //current level number
-	int maxLevel;
+	unsigned int levelNum; //current level number
+	unsigned int maxLevel;
+	bool arcadeMode; //Si estamos en modo arcade
 	
 	double transTimer; //transition timer
 	double effectTimer;
 	
+	menu* mainMenu;
+	
+};
+
+class menu{
+public:
+	menu(painter*);
+	~menu();
+	
+	void start(); 	// Función para comenzar
+	void end();		// Función para terminar
+	
+	unsigned int goToNext(); //indica si debería irse a la pantalla de juego y en qué modo
+	
+	void step(control*);
+	void draw(painter*);
+	
+private:
+	bool alive;
+	unsigned char selected; 	// cuál opción es seleccionada?
+	unsigned char screen; 		// 0=start, 1=play, 2=options
+	bool transitioning; 		// en transición?
+	double timer;				// un timer para medir tiempo
+	
+	//Texturas
+	LTexture* menuSprites;
+	LTexture* cursor;
+	LTexture* optionSprites;
 };
 
 #endif

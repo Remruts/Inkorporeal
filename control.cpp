@@ -17,6 +17,9 @@ control::~control(){
 	
 void control::update(SDL_Event* ev){
 	if ((*ev).type == SDL_KEYDOWN){
+		
+		anyKey = true;
+		
 		switch( ev->key.keysym.sym ){
 		case SDLK_ESCAPE:
 			esc = true;
@@ -73,10 +76,24 @@ void control::update(SDL_Event* ev){
 			evMelee = true;
 		break;
 		
+		case SDLK_DOWN:
+			evDown = true;
+		break;
+		case SDLK_s:
+			evDown = true;
+		break;
+		
+		case SDLK_RETURN:
+			evStart = true;
+		break;
+		
 		default:
 		break;
 		}
 	} else if ((*ev).type == SDL_KEYUP){
+		
+		anyKey = false;
+		
 		switch( ev->key.keysym.sym ){
 		case SDLK_ESCAPE:
 			esc = false;
@@ -131,6 +148,17 @@ void control::update(SDL_Event* ev){
 		break;
 		case SDLK_l:
 			evMelee = false;
+		break;
+		
+		case SDLK_DOWN:
+			evDown = false;
+		break;
+		case SDLK_s:
+			evDown = false;
+		break;
+		
+		case SDLK_RETURN:
+			evStart = false;
 		break;
 		
 		default:

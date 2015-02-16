@@ -20,7 +20,11 @@ public:
 	bool evShoot;
 	bool evDash;
 	bool evMelee;
+	
+	bool evDown;
+	bool evStart;
 	bool esc;
+	bool anyKey;
 
 private:
 	
