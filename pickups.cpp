@@ -282,7 +282,10 @@ void coin::draw(painter* disney){
 
 //BEGIN FLOATINGCOIN
 floatingCoin::floatingCoin(LTexture* sprt, int X, int Y) : coin(sprt, X, Y){
-
+	
+	x = x+8;
+	y = y+8;
+	
 	spdX = 0;
 	spdY = 0;
 	

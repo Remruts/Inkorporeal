@@ -1,0 +1,185 @@
+// Mantener orden de secciones o se arruina todo
+// Si una línea empieza con "espacio" o "/", es salteada
+
+>type
+2 // 0=no lock, 1=lock, 2=boss, 3=final boss?
+
+//Si no hay 4 números, se arruina todo.
+>tiles
+1 // rug: 0=no, 1=yes
+1 // wall: 0=black, 1=bird, 2=egg, 3=purple, 4=green
+0 // papering: 0=none, 1=purple, 2=green, 3=red, 4=wood
+2 // floor: 0=bricks, 1=black, 2=black/red, 3=black/purple, 4=red, 5=purple, 6=green, 7=marble
+
+// Mapa de sectores sólidos
+// 59x14 caracteres [real: 30x14 tiles]
+// Si no mide eso, se arruina todo.
+// # significa sólido. Cualquier otra cosa no lo es [aunque yo uso "espacio"].
+// El caracter separador '|' es mentira, pero tiene que haber algo entre cada tile
+// Lo hice así sólo para que se vea mejor
+>map
+#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#
+#| | | | | | | | | | | | | | | | | | | | | | | | | | | | |#
+#| | | | | | | | | | | | | | | | | | | | | | | | | | | | |#
+#| | | | | | | | | | | | | | | | | | | | | | | | | | | | |#
+#| | | | | | | | | | | | | | | | | | | | | | | | | | | | |#
+#| | | | | | | | | | | | | | | | | | | | | | | | | | | | |#
+#| | | | | | | | | | | | | | | | | | | | | | | | | | | | |#
+#| | | | | | | | | | | | | | | | | | | | | | | | | | | | |#
+#| | | | | | | | | | | | | | | | | | | | | | | | | | | | |#
+#| | | | | | | | | | | | | | | | | | | | | | | | | | | | |#
+#| | | | | | | | | | | | | | | | | | | | | | | | | | | | |#
+#| | | | | | | | | | | | | | | | | | | | | | | | | | | | |#
+#| | | | | | | | | | | | | | | | | | | | | | | | | | | | |#
+#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#
+
+//formato: name x y
+// y si no, se arruina todo
+>props
+//candelabros
+cadena0 140 32
+cadena0 140 64
+cadena0 140 96
+candelabro0 140 128
+cadena0 460 32
+cadena0 460 64
+cadena0 460 96
+candelabro0 460 128
+cadena0 780 32
+cadena0 780 64
+cadena0 780 96
+candelabro0 780 128
+//piano y demás
+piano0 672 384
+butaca0 640 384
+florero0 608 362
+mueble0 608 384
+//velas
+vela1 140 298
+vela1 300 298
+vela1 460 298
+vela1 620 298
+vela1 780 298
+//cuadros
+cuadro0 260 352
+cuadro5 292 352
+cuadro3 324 352
+cuadro2 356 352
+//columnas
+columna2 56 384
+columna1 56 352
+columna1 56 320
+columna1 56 288
+columna1 56 256
+columna1 56 224
+columna1 56 192
+columna1 56 160
+columna1 56 128
+columna1 56 96
+columna1 56 64
+columna0 56 32
+//sep
+columna2 232 384
+columna1 232 352
+columna1 232 320
+columna1 232 288
+columna1 232 256
+columna1 232 224
+columna1 232 192
+columna1 232 160
+columna1 232 128
+columna1 232 96
+columna1 232 64
+columna0 232 32
+//eso
+columna2 392 384
+columna1 392 352
+columna1 392 320
+columna1 392 288
+columna1 392 256
+columna1 392 224
+columna1 392 192
+columna1 392 160
+columna1 392 128
+columna1 392 96
+columna1 392 64
+columna0 392 32
+//más
+columna2 552 384
+columna1 552 352
+columna1 552 320
+columna1 552 288
+columna1 552 256
+columna1 552 224
+columna1 552 192
+columna1 552 160
+columna1 552 128
+columna1 552 96
+columna1 552 64
+columna0 552 32
+//más
+columna2 712 384
+columna1 712 352
+columna1 712 320
+columna1 712 288
+columna1 712 256
+columna1 712 224
+columna1 712 192
+columna1 712 160
+columna1 712 128
+columna1 712 96
+columna1 712 64
+columna0 712 32
+//más
+columna2 872 384
+columna1 872 352
+columna1 872 320
+columna1 872 288
+columna1 872 256
+columna1 872 224
+columna1 872 192
+columna1 872 160
+columna1 872 128
+columna1 872 96
+columna1 872 64
+columna0 872 32
+//varanda
+varanda1 32 384
+varanda1 64 384
+varanda1 96 384
+varanda1 128 384
+varanda1 160 384
+varanda1 192 384
+varanda1 224 384
+varanda1 256 384
+varanda1 288 384
+varanda1 320 384
+varanda1 352 384
+varanda1 384 384
+varanda1 416 384
+varanda1 448 384
+varanda1 480 384
+varanda1 512 384
+varanda1 544 384
+varanda1 576 384
+varanda1 608 384
+varanda1 640 384
+varanda1 672 384
+varanda1 704 384
+varanda1 736 384
+varanda1 768 384
+varanda2 800 384
+varanda0 832 384
+varanda1 864 384
+varanda1 896 384
+
+>enemies
+vlad 14 6
+
+>items
+// name x/32 y/32
+//tomato 14 12
+
+//Todos los .lvl deben terminar en >end
+>end
+//A nadie le importa lo que escribas acá

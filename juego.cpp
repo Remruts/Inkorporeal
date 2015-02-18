@@ -138,7 +138,7 @@ juego::juego(painter* p){
 	jugador = new player(playerSprites);
 	
 	levelNum = 0;
-	maxLevel = 3;
+	maxLevel = 10;
 	transTimer = 2.0;
 	effectTimer = 0;
 	mainMenu = new menu(leonardo); //creo el menu

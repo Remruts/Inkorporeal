@@ -26,6 +26,7 @@ public:
 	
 	virtual void step(level*);
 	virtual void draw(painter*);
+	void die();
 private:
 	animation* boneSprite;
 	bool side;

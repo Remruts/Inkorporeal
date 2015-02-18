@@ -174,6 +174,7 @@ thrownbone::thrownbone(LTexture* sprt, int X, int Y, bool right) : enemyBullet(s
 	visible = 2;
 	side = right;
 }
+
 thrownbone::~thrownbone(){
 	if (boneSprite != NULL){
 		delete boneSprite;
@@ -232,3 +233,8 @@ void thrownbone::draw(painter* picasso){
 	enemyBullet::draw(picasso);
 }
 
+void thrownbone::die(){
+	if (colBox.y >= 32){
+		life = 0;
+	}
+}
