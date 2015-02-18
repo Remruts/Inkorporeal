@@ -361,17 +361,17 @@ void coinSparkle::emit(){
 	particle* part = NULL;
 	double spdX, spdY, speed;
 	for (int i = 0; i < rate; i++){
-		speed = (rand()%50-25)/10;
+		speed = (rand()%11)/10+1;
 		spdX = cos((i/double(rate))*2*3.1415)*speed;
 		spdY = sin((i/double(rate))*2*3.1415)*speed;
 		
 		part = new particle(spritesheet, x, y, rand()%3+12);
 		part->setSpeed(spdX, spdY);
 		part->setSpriteSize(16);
-		part->setSprite(rand()%6+5);
+		part->setSprite(rand()%5+6);
 		part->setGravity(true);
 		part->setGravityDir(90);
-		part->setScale(rand()%3/10.0f+0.1);
+		part->setScale(rand()%5/10.0f+0.5);
 		part->setAlpha(255);
 		part->setBlend(1);
 		part->setAngle(rand()%360);

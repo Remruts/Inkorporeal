@@ -1241,7 +1241,9 @@ int level::load(std::istream& is, map<string, pair<int, int> >& posEnSheet){
 			
 				if (str == "tomato"){
 					item = new heart(coinSheet, pos.x, pos.y);
-				} else {
+				} else if (str == "monedita"){
+					item = new floatingCoin(coinSheet, pos.x, pos.y);
+				} else{
 					std::cout << "Falla cargar items. Archivo corrupto.\n";
 					exit(1);
 				}

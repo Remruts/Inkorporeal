@@ -63,8 +63,19 @@ public:
 	
 	void onCollisionWithPlayer(level*);
 	
-private:
+protected:
 	animation* monedita;	
+};
+
+class floatingCoin : public coin{
+public:
+	floatingCoin(LTexture* sprt, int X, int Y);
+	~floatingCoin();
+	
+	void step(level*);
+	void draw(painter*);
+
+private:
 };
 
 class heart : public pickup{

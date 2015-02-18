@@ -97,6 +97,20 @@ void key::step(level* lvl){
 	
 	colBox.x = x+16;
 	colBox.y = y+16;
+	
+	//fix trucho
+	if (colBox.x+colBox.w > 1334){
+		x -= 32;
+	}
+	if (colBox.x < 32){
+		x += 32;
+	}
+	if (colBox.y+colBox.h > 736){
+		y -= 32;
+	}
+	if (colBox.y < 32){
+		y += 32;
+	}
 }
 
 void key::draw(painter* picasso){

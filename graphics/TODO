@@ -1,7 +1,6 @@
 
 > PROPS
 	- Biblioteca
-	- Candelabros
 	- "Bandeja" de comida
 	- Platos
 
@@ -12,8 +11,6 @@
 
 > UI
 	- Barra de vida enemigo
-	- Title [Inkorporeal]
-
 
 > DISEÑO
 	- Niveles
@@ -23,7 +20,7 @@
 > PROGRAMACIÓN
 	- melee
 	- power-ups?
-	- jefe
+	- jefes
 	
 >DONE [sort of]:
 -loader de niveles
@@ -35,3 +32,7 @@
 - disparos enemigo 
 - Puerta [desapareciendo, abriendose]
 - Llave
+- Candelabro
+- Title [Inkorporeal]
+- jefe 1
+- menu~

@@ -99,6 +99,20 @@ void pickup::step(level* lvl){
 	}
 	if (currentAnim != NULL)
 		currentAnim->step();
+	
+	//fix trucho	
+	if (colBox.x+colBox.w > 1334){
+		x -= 32;
+	}
+	if (colBox.x < 32){
+		x += 32;
+	}
+	if (colBox.y+colBox.h > 736){
+		y -= 32;
+	}
+	if (colBox.y < 32){
+		y += 32;
+	}
 }
 
 //CTRL+C... CTRL+V
@@ -266,6 +280,45 @@ void coin::draw(painter* disney){
 
 //END COIN
 
+//BEGIN FLOATINGCOIN
+floatingCoin::floatingCoin(LTexture* sprt, int X, int Y) : coin(sprt, X, Y){
+
+	spdX = 0;
+	spdY = 0;
+	
+	accelY = 0;
+	accelX = 0;
+	
+	unsigned int frms[] = {0, 1, 2, 3, 4, 5};
+	monedita = new animation(6, 0.2, true, sprt, frms, 16);
+	monedita->setCurrentFrame(0);
+	currentAnim = monedita;
+	
+	colBox.x = x;
+	colBox.y = y;
+	colBox.w = 16;
+	colBox.h = 16;
+	
+	pickable = true;
+}
+
+floatingCoin::~floatingCoin(){
+	if (monedita != NULL){
+		delete monedita;
+		monedita = NULL;
+	}
+}
+
+void floatingCoin::step(level* lvl){
+	if (currentAnim != NULL)
+		currentAnim->step();
+}
+
+void floatingCoin::draw(painter* disney){
+	coin::draw(disney);
+}
+//END FLOATINGCOIN
+
 //BEGIN HEART
 
 heart::heart(LTexture* sprt, int X, int Y) : pickup(sprt, X, Y, 600){
@@ -302,6 +355,9 @@ void heart::onCollisionWithPlayer(level* lvl){
 }
 
 void heart::step(level* lvl){
+
+	colBox.x = x+7;
+	colBox.y = y+7;
 	
 	int colDisplace;
 	if (spdY >= 0){
@@ -312,18 +368,18 @@ void heart::step(level* lvl){
 	
 	if (colDisplace != -1){
 		
-		spdY *= -0.98;
+		spdY *= 0.98;
 		
 		if (spdY <= 0.1 && spdY > -0.1){
 			onGround = true;
 			spdY = 0;
-		}
-		
-		if (spdY > 0){
-			spdY = 0;
-			y = colDisplace*32-colBox.h;
-		} else {
-			y = colDisplace*32+colBox.h-6;
+		}else {
+			if (spdY > 0){
+				spdY = 0;
+				y = (colDisplace+1)*32-colBox.h-7;
+			} else {
+				y = colDisplace*32+colBox.h-7;
+			}
 		}
 		
 		colBox.y = y+7;

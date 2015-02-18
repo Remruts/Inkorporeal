@@ -138,15 +138,15 @@ juego::juego(painter* p){
 	jugador = new player(playerSprites);
 	
 	levelNum = 0;
-	maxLevel = 1;
+	maxLevel = 3;
 	transTimer = 2.0;
 	effectTimer = 0;
 	mainMenu = new menu(leonardo); //creo el menu
 	//Cargo el nivel
 	currentLevel = new level("levels/level0.lvl", this);
-	currentScreen = stPressStart;
+	//currentScreen = stPressStart;
 	arcadeMode = false;
-	//currentScreen = stPlaying;
+	currentScreen = stTransition0;
 }
 
 juego::~juego(){

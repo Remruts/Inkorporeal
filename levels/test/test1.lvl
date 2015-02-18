@@ -9,7 +9,7 @@
 1 // rug: 0=no, 1=yes
 1 // wall: 0=black, 1=bird, 2=egg, 3=purple, 4=green
 0 // papering: 0=none, 1=purple, 2=green, 3=red, 4=wood
-0 // floor: 0=bricks, 1=black, 2=black/red, 3=black/purple, 4=red, 5=purple, 6=green, 7=marble
+3 // floor: 0=bricks, 1=black, 2=black/red, 3=black/purple, 4=red, 5=purple, 6=green, 7=marble
 
 // Mapa de sectores sólidos
 // 59x14 caracteres [real: 30x14 tiles]
@@ -21,13 +21,13 @@
 #|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#
 #| | | | | | | | | | | | | | | | | | | | | | | | | | | | |#
 #| | | | | | | | | | | | | | | | | | | | | | | | | | | | |#
+#| | | | | |#|#|#|#| | | |#|#|#|#| | | | | |#|#|#|#| | | |#
 #| | | | | | | | | | | | | | | | | | | | | | | | | | | | |#
 #| | | | | | | | | | | | | | | | | | | | | | | | | | | | |#
+#|#|#|#|#| | | | |#|#|#|#|#| | | | |#|#|#|#|#| | | |#|#|#|#
 #| | | | | | | | | | | | | | | | | | | | | | | | | | | | |#
 #| | | | | | | | | | | | | | | | | | | | | | | | | | | | |#
-#| | | | | | | | | | | | | | | | | | | | | | | | | | | | |#
-#| | | | | | | | | | | | | | | | | | | | | | | | | | | | |#
-#|#|#|#|#|#|#|#|#| | | | | | | | | | | | |#|#|#|#|#|#|#|#|#
+#| | | | |#|#|#|#|#| | | | |#|#|#|#|#| | | |#|#|#|#|#| | |#
 #| | | | | | | | | | | | | | | | | | | | | | | | | | | | |#
 #| | | | | | | | | | | | | | | | | | | | | | | | | | | | |#
 #| | | | | | | | | | | | | | | | | | | | | | | | | | | | |#
@@ -41,31 +41,34 @@
 //cuadro0 795 236
 //velas
 //vela1 70 340
-vela1 300 340
-cuadro1 380 360
-vela1 460 340
-cuadro1 540 360
-vela1 620 340
+//vela1 300 340
+//cuadro1 380 360
+//vela1 460 340
+//cuadro1 540 360
+//vela1 620 340
 //candelabros
-cadena0 140 32
-cadena0 140 64
-cadena0 140 96
-candelabro0 140 128
-cadena0 460 32
-cadena0 460 64
-cadena0 460 96
-candelabro0 460 128
-cadena0 780 32
-cadena0 780 64
-cadena0 780 96
-candelabro0 780 128
+//cadena0 140 32
+//cadena0 140 64
+//cadena0 140 96
+//candelabro0 140 128
+//cadena0 460 32
+//cadena0 460 64
+//cadena0 460 96
+//candelabro0 460 128
+//cadena0 780 32
+//cadena0 780 64
+//cadena0 780 96
+//candelabro0 780 128
 //
-columna2 672 384
-columna1 672 352
-columna0 672 320
-columna2 256 384
-columna1 256 352
-columna0 256 320
+//columna2 672 384
+//columna1 672 352
+//columna0 672 320
+//columna2 256 384
+//columna1 256 352
+//columna0 256 320
+//columna2 128 256
+//columna1 128 224
+//columna0 128 192
 
 >enemies
 // name x/32 y/32
@@ -77,7 +80,15 @@ columna0 256 320
 //skelleton 5 6
 //skelleton 20 6
 //skelleton 15 3
-imp 23 12
+imp 8 2
+imp 14 2
+imp 24 2
+imp 2 4
+imp 12 4
+imp 19 4
+imp 7 8
+imp 15 8
+imp 23 8
 //demobat 14 12
 //mask 17 12
 //jack 15 8
@@ -85,15 +96,7 @@ imp 23 12
 
 >items
 // name x/32 y/32
-tomato 25 7
-monedita 13 6
-monedita 14 6
-monedita 15 6
-monedita 16 6
-monedita 13 7
-monedita 14 7
-monedita 15 7
-monedita 16 7
+//tomato 25 7
 
 //Todos los .lvl deben terminar en >end
 >end
