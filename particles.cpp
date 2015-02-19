@@ -348,7 +348,7 @@ void colourExplosion::step(level* lvl){
 coinSparkle::coinSparkle(LTexture* sprt, int X, int Y) : emitter(sprt, 1, X, Y){
 	timer = 1;
 	maxTimer = 1;
-	rate = 4+rand()%2;
+	rate = 5+rand()%2;
 }
 
 coinSparkle::~coinSparkle(){

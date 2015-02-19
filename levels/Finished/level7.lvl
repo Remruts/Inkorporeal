@@ -1,9 +1,9 @@
-// Nivel 9
+//Nivel 7
 // Mantener orden de secciones o se arruina todo
 // Si una línea empieza con "espacio" o "/", es salteada
 
 >type
-0 // 0=no lock, 1=lock, 2=boss, 3=final boss?
+2 // 0=no lock, 1=lock, 2=boss, 3=final boss?
 
 //Si no hay 4 números, se arruina todo.
 >tiles
@@ -50,6 +50,100 @@ cadena0 780 32
 cadena0 780 64
 cadena0 780 96
 candelabro0 780 128
+//piano y demás
+piano0 672 384
+butaca0 640 384
+florero0 608 362
+mueble0 608 384
+//velas
+vela1 140 298
+vela1 300 298
+vela1 460 298
+vela1 620 298
+vela1 780 298
+//cuadros
+cuadro0 260 352
+cuadro5 292 352
+cuadro3 324 352
+cuadro2 356 352
+//columnas
+columna2 56 384
+columna1 56 352
+columna1 56 320
+columna1 56 288
+columna1 56 256
+columna1 56 224
+columna1 56 192
+columna1 56 160
+columna1 56 128
+columna1 56 96
+columna1 56 64
+columna0 56 32
+//sep
+columna2 232 384
+columna1 232 352
+columna1 232 320
+columna1 232 288
+columna1 232 256
+columna1 232 224
+columna1 232 192
+columna1 232 160
+columna1 232 128
+columna1 232 96
+columna1 232 64
+columna0 232 32
+//eso
+columna2 392 384
+columna1 392 352
+columna1 392 320
+columna1 392 288
+columna1 392 256
+columna1 392 224
+columna1 392 192
+columna1 392 160
+columna1 392 128
+columna1 392 96
+columna1 392 64
+columna0 392 32
+//más
+columna2 552 384
+columna1 552 352
+columna1 552 320
+columna1 552 288
+columna1 552 256
+columna1 552 224
+columna1 552 192
+columna1 552 160
+columna1 552 128
+columna1 552 96
+columna1 552 64
+columna0 552 32
+//más
+columna2 712 384
+columna1 712 352
+columna1 712 320
+columna1 712 288
+columna1 712 256
+columna1 712 224
+columna1 712 192
+columna1 712 160
+columna1 712 128
+columna1 712 96
+columna1 712 64
+columna0 712 32
+//más
+columna2 872 384
+columna1 872 352
+columna1 872 320
+columna1 872 288
+columna1 872 256
+columna1 872 224
+columna1 872 192
+columna1 872 160
+columna1 872 128
+columna1 872 96
+columna1 872 64
+columna0 872 32
 //varanda
 varanda1 32 384
 varanda1 64 384
@@ -81,53 +175,12 @@ varanda1 864 384
 varanda1 896 384
 
 >enemies
-// name x/32 y/32
-//ghost 25 5
-//ghost 3 2
-//ghost 15 5
-//ghost 26 2
-//ghost 23 10
-//ghost 10 12
-//skelleton 15 8
-//skelleton 15 2
-//skelleton 4 5
-//skelleton 25 5
-//skelleton 20 6
-//skelleton 15 3
-//imp 3 8
-//imp 26 8
-//demobat 5 4
-//demobat 10 6
-//demobat 14 4
-//demobat 20 6
-//demobat 25 4
-//mask 17 12
-//jack 15 8
-//cherubil 15 8
+vlad 14 6
 
 >items
 // name x/32 y/32
-tomato 14 5
-tomato 10 5
-tomato 18 5
-//izquierda
-monedita 6 11
-monedita 7 11
-monedita 8 11
-monedita 9 11
-monedita 10 11
-monedita 11 11
-monedita 12 11
-monedita 13 11
-monedita 14 11
-monedita 15 11
-monedita 16 11
-monedita 17 11
-monedita 18 11
-monedita 19 11
-monedita 20 11
-monedita 21 11
-monedita 22 11
+//tomato 14 12
+
 //Todos los .lvl deben terminar en >end
 >end
 //A nadie le importa lo que escribas acá
