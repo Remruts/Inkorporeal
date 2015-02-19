@@ -72,6 +72,7 @@ void vlad::step(level* lvl){
 	
 		if (lives == 0){
 			lvl->addKey(x, y);
+			lvl->shake(4, 20);
 		}
 		
 		if (spdX>=0){
@@ -95,6 +96,7 @@ void vlad::step(level* lvl){
 					state = stRun;
 				
 				if ((state == stQuake) && !onGround){
+					lvl->shake(1, 10);
 					lvl->addEmitter(new upSmoke(lvl->getEffectSheet(), x+colBox.w/2, y+colBox.h));
 				}
 				

@@ -360,8 +360,9 @@ bool player::isDashing(){
 	return !canDash;
 }
 
-void player::getHurt(){
+void player::getHurt(level* lvl){
 	if (!hurt){
+		lvl->shake(1, 5);
 		hurt = true;
 		lives -= 1;
 	}

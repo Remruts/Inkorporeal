@@ -38,13 +38,18 @@ public:
 	SDL_Surface* loadImage(const string& path);
 	void freeImage(SDL_Surface*);
 	
+	//setea maxShakeFactor
+	void setShake(double);
+	//obtiene maxShakeFactor
+	double getShake();
+	
 	//Dibujar cosas lindas
 	void setColor(int r, int g, int b, int a); 				// setea el color para dibujar estas cosas
 	void setBlendMode(int blend); 							// 0=none, 1=blend, 2=add, 3=modulate;
 	void drawRect(int x, int y, int w, int h, bool fill);	//dibuja un rectángulo
 	void drawLine(int x1, int y1, int x2, int y2);			//dibuja una línea
 	
-	void clear(); //limpia la pantalla
+	void clear(); //limpia la pantalla y updatea el shakeFactor
 	
 	//generador de colores aleatorio
 	void setSaturation(unsigned int S);
@@ -67,6 +72,11 @@ private:
 	double randomHue;
 	double randomValue;
 	double randomSaturation;
+	
+	//para hacer screen shakes
+	double maxShakeFactor;
+	double shakeFactor;
+	int shakeX, shakeY;
 	
 };
 

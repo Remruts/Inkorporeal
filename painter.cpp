@@ -37,6 +37,12 @@ painter::painter(SDL_Renderer *screen){
 	randomHue = (rand()%360)/double(360);
 	randomSaturation = 0.8;
 	randomValue = 0.9;
+	
+	//shake
+	maxShakeFactor = 0;
+	shakeFactor = 0;
+	shakeX = 0;
+	shakeY = 0;
 }
 
 painter::~painter(){
@@ -74,8 +80,8 @@ void painter::draw(LTexture *tex, int srcX, int srcY, int srcW, int srcH, int sc
 		rect.h = srcH;
 	}
 	
-	screen_rect.x = screenX;
-	screen_rect.y = screenY;
+	screen_rect.x = screenX+shakeX;
+	screen_rect.y = screenY+shakeY;
 	screen_rect.w = rect.w;
 	screen_rect.h = rect.h;
 	
@@ -111,8 +117,8 @@ void painter::drawEx(LTexture *tex, int srcX, int srcY, int srcW, int srcH,
 		rect.h = srcH;
 	}
 	
-	screen_rect.x = screenX;
-	screen_rect.y = screenY;
+	screen_rect.x = screenX+shakeX;
+	screen_rect.y = screenY+shakeY;
 	if (screenW == 0 || screenH == 0){
 		screen_rect.w = tex->getWidth();
 		screen_rect.h = tex->getHeight();
@@ -262,8 +268,8 @@ void painter::setBlendMode(int blend){
 }
 //dibuja un rectángulo
 void painter::drawRect(int x, int y, int w, int h, bool fill){
-	rect.x = x;
-	rect.y = y;
+	rect.x = x+shakeX;
+	rect.y = y+shakeY;
 	rect.w = w;
 	rect.h = h;
 	
@@ -277,10 +283,36 @@ void painter::drawRect(int x, int y, int w, int h, bool fill){
 
 //dibuja una línea
 void painter::drawLine(int x1, int y1, int x2, int y2){
-	SDL_RenderDrawLine(canvas, x1, y1, x2, y2);	
+	SDL_RenderDrawLine(canvas, x1+shakeX, y1+shakeY, x2+shakeX, y2+shakeY);
+}
+
+void painter::setShake(double shk){
+	maxShakeFactor = shk;
+	if (shakeFactor < 1)
+		shakeFactor = shk/2;
+}
+
+double painter::getShake(){
+	return maxShakeFactor;
 }
 
 void painter::clear(){
+	if (shakeFactor < maxShakeFactor){
+		if (shakeFactor < 1){
+			shakeFactor = 1;
+		}else{
+			shakeFactor *= 1.1;
+		}
+	} else if(shakeFactor > maxShakeFactor){
+		shakeFactor *= 0.9;
+	}
+	
+	if (fabs(shakeFactor) > 0.5){
+		int shk = int(shakeFactor);
+		shakeX = 2*(rand()%(shk+1))-shk;
+		shakeY = 2*(rand()%(shk+1))-shk;
+	}
+	
 	SDL_RenderClear(canvas);
 }
 

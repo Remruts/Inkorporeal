@@ -34,7 +34,7 @@ public:
 	bool isShooting();
 	bool isDashing();
 	
-	void getHurt();
+	void getHurt(level*);
 	
 	void setFlip(bool);
 	

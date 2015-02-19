@@ -99,7 +99,7 @@ level::level(const string & filename, juego* game){
 	}
 	
 	llave = NULL;
-	
+	shakeTimer = 0;
 	
 }
 
@@ -424,27 +424,13 @@ void level::updateEnemies(){
 				it++;
 			} else{
 				
+				shake(1, 10);
+				
 				int x, y;
 				(*it)->getPos(x, y);
-				/*
-				srand(time(NULL)*(x+y));
 				
-				int effect;
-				int scale;
-				//partículas truchas
-				leonardo->setRenderTarget(background);
-				effectSheet->setAlpha(100);
-				for (int i = 0; i<4; ++i){
-					effect = rand()%9;
-					scale = 32*(rand()%3+1);
-					effectSheet->setColor(rand()%256, rand()%256, rand()%256);
-						leonardo->drawEx(effectSheet, 32*(effect%3), 32*(effect/3), 32, 32, 
-						x+rand()%32-16 - 192, y+rand()%32-16, scale, scale, rand()%360, rand()%4);
-				}
-				*/
 				colourExplosion* exp = new colourExplosion(effectSheet, x, y, leonardo);
 				addEmitter(exp);
-				//leonardo->resetRenderTarget()
 				
 				coin *c;
 				int max = (*it)->getMaxLives() * 2+1;
@@ -593,7 +579,7 @@ void level::checkBulletCollisions(){
 		if ((*it3) != NULL && (*it3)->isAlive()){
 			if ((jugador != NULL) && (jugador->getLives() > 0) && checkCollision((*it3)->getColBox(), &jugador->getColBox())){
 				(*it3)->die();
-				jugador->getHurt();
+				jugador->getHurt(this);
 			}
 		}
 		it3++;
@@ -610,7 +596,7 @@ void level::checkPlayerEnemyCollisions(){
 	
 		while (it != enemyList.end()){
 			if ((*it != NULL) && (*it)->isAlive() && checkCollision(colBox, (*it)->getColBox())){
-				jugador->getHurt();
+				jugador->getHurt(this);
 			}
 			it++;
 		}
@@ -638,6 +624,14 @@ void level::checkPlayerPickup(){
 
 void level::update(control* c){
 	
+	//screen shake
+	if (shakeTimer > 0){
+		shakeTimer -= 1;
+		if (shakeTimer == 0){
+			leonardo->setShake(0);
+		}
+	}
+		
 	checkBulletCollisions();
 	checkPlayerEnemyCollisions();
 	checkPlayerPickup();
@@ -658,14 +652,23 @@ void level::update(control* c){
 	} else if (enemyList.size() == 0){
 		//currentState = stWin;
 	}
-	if ((currentState == stWin) ||(currentState == stLose)){
+	if ((currentState == stWin) || (currentState == stLose)){
 		finished = true;
+		shakeTimer = 1;
+		leonardo->setShake(0);
 	}
 }
 
 bool level::checkCollision(const SDL_Rect* A, const SDL_Rect* B){
 	return ( ((B->x >= A->x) && (B->x <= A->x+A->w)) || ((A->x >= B->x) && (A->x <= B->x+B->w)) ) && //chequeo x
 		( ((B->y >= A->y) && (B->y <= A->y+A->h)) || ((A->y >= B->y) && (A->y <= B->y+B->h)) ); //chequeo y
+}
+
+void level::shake(double intensity, int time){
+	if (intensity > leonardo->getShake()){
+		leonardo->setShake(intensity);
+	}
+	shakeTimer = max(time, shakeTimer);
 }
 
 

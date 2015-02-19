@@ -45,6 +45,9 @@ public:
 	void draw();
 	void update(control*);
 	
+	//Función para que otros llamen a screen shake
+	void shake(double intensity, int time);
+	
 	//determina si un punto está sobre el jugador
 	bool isPlayer(int x, int y) const;
 	void getPlayerPos(int &x, int &y);
@@ -141,6 +144,8 @@ private:
 	
 	door* puerta;
 	key* llave;
+	
+	int shakeTimer;
 	
 	LTexture* testText; //Texto de prueba
 	LTexture* pointsText; //texto de puntos

@@ -292,16 +292,8 @@ floatingCoin::floatingCoin(LTexture* sprt, int X, int Y) : coin(sprt, X, Y){
 	accelY = 0;
 	accelX = 0;
 	
-	unsigned int frms[] = {0, 1, 2, 3, 4, 5};
-	monedita = new animation(6, 0.2, true, sprt, frms, 16);
 	monedita->setCurrentFrame(0);
-	currentAnim = monedita;
-	
-	colBox.x = x;
-	colBox.y = y;
-	colBox.w = 16;
-	colBox.h = 16;
-	
+		
 	pickable = true;
 }
 
