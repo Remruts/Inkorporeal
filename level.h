@@ -156,7 +156,7 @@ private:
 	LTexture* bossText;
 	
 	unsigned int lvlType;
-	
+	bool hardcoreMode;
 };
 
 #endif

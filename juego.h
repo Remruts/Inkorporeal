@@ -21,7 +21,7 @@ class menu;
 class juego{
 public:
 
-	enum gameState {stPressStart, stMainMenu, stPlaying, stTransition0, stTransition1, stGameOver};
+	enum gameState {stPressStart, stMainMenu, stPlaying, stTransition0, stTransition1, stGameOver, stPaused};
 	
 	juego(painter*);
 	~juego();
@@ -43,6 +43,7 @@ public:
 	int getLevelNum();
 	painter* getPainter();
 	player* getPlayer();
+	bool getMode();
 	
 	gameState getState();
 	
@@ -78,7 +79,7 @@ private:
 	
 	unsigned int levelNum; //current level number
 	unsigned int maxLevel;
-	bool arcadeMode; //Si estamos en modo arcade
+	bool hardcoreMode; //Si estamos en modo hardcore
 	
 	double transTimer; //transition timer
 	double effectTimer;

@@ -139,13 +139,13 @@ juego::juego(painter* p){
 	
 	levelNum = 0;
 	maxLevel = 10;
-	transTimer = 2.0;
+	transTimer = 3.0;
 	effectTimer = 0;
 	mainMenu = new menu(leonardo); //creo el menu
 	//Cargo el nivel
 	currentLevel = new level("levels/level0.lvl", this);
 	//currentScreen = stPressStart;
-	arcadeMode = false;
+	hardcoreMode = false;
 	currentScreen = stTransition0;
 }
 
@@ -265,8 +265,9 @@ void juego::step(control* c){
 		
 		mainMenu->step(c);
 		if(mainMenu->goToNext() > 0){
-			arcadeMode = mainMenu->goToNext()-1;
+			hardcoreMode = mainMenu->goToNext()-1;
 			currentScreen = stTransition0;
+			transTimer = 3.0;
 		}
 
 	}
@@ -299,7 +300,18 @@ void juego::step(control* c){
 				}
 			}else {
 				currentLevel->update(c);
+				if (c->evStart){
+					currentScreen = stPaused;
+					c->evStart = false;
+				}
 			}
+		}
+	}
+	
+	if (currentScreen == stPaused){
+		if (c->evStart){
+			currentScreen = stPlaying;
+			c->evStart = false;
 		}
 	}
 	
@@ -315,15 +327,22 @@ void juego::step(control* c){
 		transTimer -= 0.01;
 		if (transTimer <= 2.5){
 			currentScreen = stGameOver;
-			transTimer = 3;
+			transTimer = 0;
 			continueSelected = true;
 		}
 	}
 	
-	if (currentScreen == stGameOver){
+	if (currentScreen == stGameOver){	
+		if (hardcoreMode){
+			transTimer += 0.02;
+			if (transTimer > 1){
+				transTimer = 1;
+			}
+		}
+		
 		if ((c->evShoot) || (c->evMelee) || (c->evStart) ){
 			//currentScreen = stMainMenu;
-			if (arcadeMode){
+			if (hardcoreMode){
 				currentScreen = stPressStart;
 				mainMenu->start();
 				levelNum = 0;
@@ -334,11 +353,12 @@ void juego::step(control* c){
 					jugador = new player(playerSprites);
 					currentLevel = new level(string("levels/level")+to_string(levelNum)+string(".lvl"), this);
 					currentScreen = stTransition0;
+					transTimer = 3.0;
 				} else{
 					leonardo->setColor(120, 0, 0, 255);	
 					leonardo->drawRect(0, 0, 1366, 768, 1);
 					leonardo->setColor(0x17, 0x17, 0x17, 255);
-					arcadeMode = true;
+					hardcoreMode = true;
 				}
 			}
 
@@ -357,15 +377,23 @@ void juego::step(control* c){
 }
 
 void juego::draw(){
+	
+	if (currentScreen == stPaused){
+		leonardo->setColor(255, 255, 255, 255);
+		leonardo->drawRect(240, 48, 16, 32, 1);
+		leonardo->drawRect(272, 48, 16, 32, 1);
+		leonardo->setColor(0x17, 0x17, 0x17, 255);
+	}
 
 	if (currentScreen == stGameOver){
-		if (arcadeMode){
-			gameOverSprite->setAlpha(10);
+		leonardo->setColor(120, 0, 0, 255);	
+		leonardo->drawRect(0, 0, 1366, 768, 1);
+		leonardo->setColor(0x17, 0x17, 0x17, 255);
+			
+		if (hardcoreMode){
+			gameOverSprite->setAlpha(255*transTimer);
 			leonardo->draw(gameOverSprite, 0, 0, 0, 0, 220, 200);
 		} else {
-			leonardo->setColor(120, 0, 0, 255);	
-			leonardo->drawRect(0, 0, 1366, 768, 1);
-			leonardo->setColor(0x17, 0x17, 0x17, 255);
 			leonardo->draw(continueSprite, 0, 0, 0, 0, 220, 150);
 			leonardo->draw(YNSprite, 0, (!continueSelected)*128, 380, 128, 500, 400);
 		}
@@ -405,18 +433,18 @@ void juego::draw(){
 		leonardo->setBlendMode(0);
 		leonardo->setColor(0x17, 0x17, 0x17, 255);
 	}
-		
-	if ((transTimer > 2.0) && (currentScreen == stTransition0)){
-		leonardo->setBlendMode(1);
-		leonardo->setColor(0x17, 0x17, 0x17, int(255*((1.5-transTimer)/1.5f)));
-		
-		leonardo->drawRect(0, 0, 1366, 768, 1); //debería hacer algo con screen_width/screen_height, pero bue
-		
-		leonardo->setBlendMode(0);
-		leonardo->setColor(0x17, 0x17, 0x17, 255);
-	}
 	
 	if (currentScreen == stTransition0){
+	
+		if (transTimer > 2.0){
+			leonardo->setBlendMode(1);
+			leonardo->setColor(0x17, 0x17, 0x17, int(255*((1.5-transTimer)/1.5f)));
+			
+			leonardo->drawRect(0, 0, 1366, 768, 1); //debería hacer algo con screen_width/screen_height, pero bue
+			
+			leonardo->setBlendMode(0);
+			leonardo->setColor(0x17, 0x17, 0x17, 255);
+		}
 		
 		if ((currentLevel!=NULL) && (transTimer <= 1.5)){
 			currentLevel->draw();
@@ -487,6 +515,10 @@ player* juego::getPlayer(){
 	return jugador;
 }
 
+bool juego::getMode(){
+	return hardcoreMode;
+}
+
 juego::gameState juego::getState(){
 	return currentScreen;
 }
@@ -506,7 +538,7 @@ menu::menu(painter* leonardo){
 		exit(1);
 	}
 	
-	optionSprites = leonardo->loadTexture("graphics/regular_arcade.png");
+	optionSprites = leonardo->loadTexture("graphics/regular_hardcore.png");
 	if (optionSprites == NULL){
 		std::cout << "Error al cargar los gráficos del menú. (3/3)" << std::endl;
 		exit(1);
@@ -640,8 +672,8 @@ void menu::draw(painter* pintor){
 				pintor->draw(optionSprites, 0, 0, 0, 0, 560, 500);
 			}
 			if (selected){
-				pintor->draw(cursor, 0, 0, 0, 0, 520+sin(timer/30*3.1415)*4, 605);
-				pintor->drawEx(cursor, 0, 0, 0, 0, 800-sin(timer/30*3.1415)*4, 605, 0, 0, 0, 1);
+				pintor->draw(cursor, 0, 0, 0, 0, 500+sin(timer/30*3.1415)*4, 599);
+				pintor->drawEx(cursor, 0, 0, 0, 0, 820-sin(timer/30*3.1415)*4, 599, 0, 0, 0, 1);
 			} else {
 				pintor->draw(cursor, 0, 0, 0, 0, 510+sin(timer/30*3.1415)*4, 540);
 				pintor->drawEx(cursor, 0, 0, 0, 0, 810-sin(timer/30*3.1415)*4, 540, 0, 0, 0, 1);

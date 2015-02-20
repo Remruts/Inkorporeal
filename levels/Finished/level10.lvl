@@ -1,0 +1,89 @@
+// NIVEL 10
+// Mantener orden de secciones o se arruina todo
+// Si una línea empieza con "espacio" o "/", es salteada
+
+>type
+1 // 0=no lock, 1=lock, 2=boss, 3=final boss?
+
+//Si no hay 4 números, se arruina todo.
+>tiles
+1 // rug: 0=no, 1=yes
+3 // wall: 0=black, 1=bird, 2=egg, 3=purple, 4=green
+0 // papering: 0=none, 1=purple, 2=green, 3=red, 4=wood
+3 // floor: 0=bricks, 1=black, 2=black/red, 3=black/purple, 4=red, 5=purple, 6=green, 7=marble
+
+// Mapa de sectores sólidos
+// 59x14 caracteres [real: 30x14 tiles]
+// Si no mide eso, se arruina todo.
+// # significa sólido. Cualquier otra cosa no lo es [aunque yo uso "espacio"].
+// El caracter separador '|' es mentira, pero tiene que haber algo entre cada tile
+// Lo hice así sólo para que se vea mejor
+// Debería haber hecho que los "0"s sean moneditas... y "H"s corazones
+// Update: Eso hice
+>map
+#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#
+#| | | | | | | | | | | | |0|0| |0|0| | | | | | | | | | | |#
+#| | | | | | | | | | | |0|0|0|0|0|0|0| | | | | | | | | | |#
+#| | | | | |H| | | | | | |0|0|0|0|0| | | | | |H| | | | | |#
+#| | | | |#|#|#|#| | | | | |0|0|0| | | | |#|#|#|#| | | | |#
+#| | | | | | | |#|#|#|#|#| | |0| | |#|#|#|#| | | | | | | |#
+#|0|0|0|0| | | | | | | |#|#|#|#|#|#|#| | | | | | |0|0|0|0|#
+#|#|#|#|#| | | | | | | | | | | | | | | | | | | | |#|#|#|#|#
+#| | | | | | | | | | | | | | |0| | | | | | | | | | | | | |#
+#| | | | | |0|0|0| | | | | |0|0|0| | | | |0|0|0| | | | | |#
+#| | | | |#|#|#|#|#|#|#|#| | |0| | |#|#|#|#|#|#|#| | | | |#
+#| | | | | | | | | | | | | | | | | | | | | | | | | | | | |#
+#| | | | | | | | | | | | | | | | | | | | | | | | | | | | |#
+#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#
+
+//formato: name x y
+// y si no, se arruina todo
+>props
+cadena0 160 32
+cadena0 160 64
+cadena0 160 96
+cadena0 160 160
+cadena0 160 192
+cadena0 160 224
+cadena0 160 256
+cadena0 160 288
+//
+cadena0 384 224
+cadena0 384 256
+cadena0 384 288
+//
+cadena0 768 32
+cadena0 768 64
+cadena0 768 96
+cadena0 768 160
+cadena0 768 192
+cadena0 768 224
+cadena0 768 256
+cadena0 768 288
+//
+cadena0 576 224
+cadena0 576 256
+cadena0 576 288
+
+>enemies
+// name x/32 y/32
+skelleton 10 4
+skelleton 19 4
+ghost 14 2
+ghost 20 2
+ghost 20 6
+ghost 14 6
+ghost 8 6
+ghost 8 2
+ghost 14 9
+ghost 8 9
+ghost 20 9
+jack 5 2
+jack 24 2
+
+>items
+// name x/32 y/32
+//DEPRECATED
+//Todos los .lvl deben terminar en >end
+>end
+//A nadie le importa lo que escribas acá

@@ -18,6 +18,8 @@
 // # significa sólido. Cualquier otra cosa no lo es [aunque yo uso "espacio"].
 // El caracter separador '|' es mentira, pero tiene que haber algo entre cada tile
 // Lo hice así sólo para que se vea mejor
+// Debería haber hecho que los "0"s sean moneditas... y "H"s corazones
+// Update: Eso hice
 >map
 #|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#
 #| | | | | | | | | | | | | | | | | | | | | | | | | | | | |#
@@ -25,9 +27,9 @@
 #| | | | | | | | | | | | | | | | | | | | | | | | | | | | |#
 #| | | | | | | | | | | | | | | | | | | | | | | | | | | | |#
 #| | | | | | | | | | | | | | | | | | | | | | | | | | | | |#
-#| | | | | | | | | | | | | | | | | | | | | | | | | | | | |#
-#| | | | | | | | | | | | | | | | | | | | | | | | | | | | |#
-#| | | | | | | | | | | | | | | | | | | | | | | | | | | | |#
+#| | | | | | | | | | | | |0|0|0|0| | | | | | | | | | | | |#
+#| | | | | | | | | | | | |0|0|0|0| | | | | | | | | | | | |#
+#| | | | | | | | | | | | | | | | | | | | | | | | |H| | | |#
 #|#|#|#|#|#|#|#|#| | | | | | | | | | | | |#|#|#|#|#|#|#|#|#
 #| | | | | | | | | | | | | | | | | | | | | | | | | | | | |#
 #| | | | | | | | | | | | | | | | | | | | | | | | | | | | |#
@@ -86,15 +88,16 @@ imp 23 12
 
 >items
 // name x/32 y/32
-tomato 25 7
-monedita 13 6
-monedita 14 6
-monedita 15 6
-monedita 16 6
-monedita 13 7
-monedita 14 7
-monedita 15 7
-monedita 16 7
+//DEPRECATED
+//tomato 25 7
+//monedita 13 6
+//monedita 14 6
+//monedita 15 6
+//monedita 16 6
+//monedita 13 7
+//monedita 14 7
+//monedita 15 7
+//monedita 16 7
 
 //Todos los .lvl deben terminar en >end
 >end

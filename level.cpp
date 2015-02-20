@@ -28,6 +28,8 @@ level::level(const string & filename, juego* game){
 	coinSheet = game->getCoinSheet();		// paso puntero a sprites de monedita
 	doorSheet = game->getDoorSheet();		// paso puntero a sprites de puerta
 	
+	hardcoreMode = game->getMode();
+	
 	//Determino el número de nivel
 	int num = game->getLevelNum();
 	if (num > 99){
@@ -442,9 +444,15 @@ void level::updateEnemies(){
 				}
 				
 				addPoints((*it)->getMaxLives()*100, x, y);
-				
-				if ((lvlType == 1) && (llave == NULL) && (rand()%enemyList.size() == 0)){
-					llave = new key(doorSheet, x, y);
+
+				if (hardcoreMode){
+					if (enemyList.size() == 1){
+						llave = new key(doorSheet, x, y);
+					}
+				} else{
+					if ((lvlType == 1) && (llave == NULL) && (rand()%enemyList.size() == 0)){
+						llave = new key(doorSheet, x, y);
+					}
 				}
 				
 				delete *it;
@@ -1150,6 +1158,14 @@ int level::load(std::istream& is, map<string, pair<int, int> >& posEnSheet){
 					} else {
 						SDL_BlitSurface(tileSheet, &rect, backSurface, &pos);
 					}			
+				} else if (c == 'H'){
+					pos.x = i%30 * 32+192;
+					pos.y = i/30 * 32;
+					pickupList.push_back(new heart(coinSheet, pos.x, pos.y));
+				} else if (c == '0'){
+					pos.x = i%30 * 32+192;
+					pos.y = i/30 * 32;
+					pickupList.push_back(new floatingCoin(coinSheet, pos.x, pos.y));
 				}
 				is.get(c); //salteo el '|' o '\n'
 				
