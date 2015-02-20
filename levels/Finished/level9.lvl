@@ -1,0 +1,148 @@
+// NIVEL 9
+// Mantener orden de secciones o se arruina todo
+// Si una línea empieza con "espacio" o "/", es salteada
+
+>type
+1 // 0=no lock, 1=lock, 2=boss, 3=final boss?
+
+//Si no hay 4 números, se arruina todo.
+>tiles
+1 // rug: 0=no, 1=yes
+3 // wall: 0=black, 1=bird, 2=egg, 3=purple, 4=green
+0 // papering: 0=none, 1=purple, 2=green, 3=red, 4=wood
+3 // floor: 0=bricks, 1=black, 2=black/red, 3=black/purple, 4=red, 5=purple, 6=green, 7=marble
+
+// Mapa de sectores sólidos
+// 59x14 caracteres [real: 30x14 tiles]
+// Si no mide eso, se arruina todo.
+// # significa sólido. Cualquier otra cosa no lo es [aunque yo uso "espacio"].
+// El caracter separador '|' es mentira, pero tiene que haber algo entre cada tile
+// Lo hice así sólo para que se vea mejor
+>map
+#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#
+#| | | | | | | | | | | | | | | | | | | | | | | | | | | | |#
+#| | | | | | | | | | | | | | | | | | | | | | | | | | | | |#
+#| | | | | | | | | | | | | | | | | | | | | | | | | | | | |#
+#| | | | |#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#
+#| | | | | | | | | | | | | | | | | | | | | | | | | | | | |#
+#| | | | | | | | | | | | | | | | | | | | | | | | | | | | |#
+#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#| | | | |#
+#| | | | | | | | | | | | | | | | | | | | | | | | | | | | |#
+#| | | | | | | | | | | | | | | | | | | | | | | | | | | | |#
+#| | | | |#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#
+#| | | | | | | | | | | | | | | | | | | | | | | | | | | | |#
+#| | | | | | | | | | | | | | | | | | | | | | | | | | | | |#
+#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#
+
+//formato: name x y
+// y si no, se arruina todo
+>props
+columna2 160 192
+columna0 160 160
+columna2 160 384
+columna0 160 352
+columna2 768 288
+columna0 768 256
+//
+varanda0 128 288
+varanda1 160 288
+varanda1 192 288
+varanda2 224 288
+varanda2 800 192
+varanda1 768 192
+varanda1 736 192
+varanda0 704 192
+varanda0 128 96
+varanda1 160 96
+varanda1 192 96
+varanda2 224 96
+//cuadros
+//cuadro1 304 352
+//cuadro1 624 352
+//velas
+//vela1 70 340
+//vela1 300 340
+//cuadro1 380 360
+//vela1 460 340
+//cuadro1 540 360
+//vela1 620 340
+//
+>enemies
+// name x/32 y/32
+imp 15 3
+imp 5 3
+imp 3 6
+imp 13 6
+imp 24 6
+imp 8 9
+imp 21 9
+imp 12 12
+skelleton 10 3
+skelleton 19 3
+skelleton 7 6
+demobat 21 3
+demobat 6 3
+demobat 10 6
+demobat 20 6
+demobat 15 6
+demobat 17 8
+demobat 12 8
+demobat 5 8
+ghost 14 7
+ghost 20 10
+ghost 3 10
+jack 15 8
+
+>items
+// name x/32 y/32
+tomato 13 9
+tomato 16 6
+tomato 12 3
+//
+monedita 1 10
+monedita 2 10
+monedita 3 10
+monedita 4 10
+//
+monedita 25 10
+monedita 26 10
+monedita 27 7
+monedita 28 7
+//
+monedita 1 4
+monedita 2 4
+monedita 3 4
+monedita 4 4
+//
+monedita 1 1
+monedita 2 1
+monedita 3 1
+monedita 4 1
+monedita 5 1
+monedita 6 1
+monedita 7 1
+monedita 8 1
+monedita 9 1
+monedita 10 1
+monedita 11 1
+monedita 12 1
+monedita 13 1
+monedita 14 1
+monedita 15 1
+monedita 16 1
+monedita 17 1
+monedita 18 1
+monedita 19 1
+monedita 20 1
+monedita 21 1
+monedita 22 1
+monedita 23 1
+monedita 24 1
+monedita 25 1
+monedita 26 1
+monedita 27 1
+monedita 28 1
+
+//Todos los .lvl deben terminar en >end
+>end
+//A nadie le importa lo que escribas acá
