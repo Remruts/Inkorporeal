@@ -79,6 +79,9 @@ public:
 	
 	bool isFinished();
 	lvlState getState();
+	
+	void setHighscore(long int);
+	void setHardcore(bool);
 
 private:
 	int load(std::istream& is, map<string, pair<int, int> >& posEnSheet);
@@ -154,6 +157,7 @@ private:
 	unsigned int levelnum;
 	LTexture* levelNumText;
 	LTexture* bossText;
+	long int highscore;
 	
 	unsigned int lvlType;
 	bool hardcoreMode;

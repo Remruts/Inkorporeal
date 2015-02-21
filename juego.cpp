@@ -144,9 +144,10 @@ juego::juego(painter* p){
 	mainMenu = new menu(leonardo); //creo el menu
 	//Cargo el nivel
 	currentLevel = new level("levels/level0.lvl", this);
-	//currentScreen = stPressStart;
+	currentScreen = stPressStart;
 	hardcoreMode = false;
-	currentScreen = stTransition0;
+	//currentScreen = stTransition0;
+	highscore = 0;
 }
 
 juego::~juego(){
@@ -268,6 +269,10 @@ void juego::step(control* c){
 			hardcoreMode = mainMenu->goToNext()-1;
 			currentScreen = stTransition0;
 			transTimer = 3.0;
+			loadHighscore();
+			currentLevel->setHighscore(highscore);
+			currentLevel->setHardcore(hardcoreMode);
+			std::cout << "highscore: " << highscore << std::endl;
 		}
 
 	}
@@ -291,10 +296,16 @@ void juego::step(control* c){
 					transTimer = 3.0;
 					
 				} else {
+					
 					delete currentLevel;
+					if (jugador->getPoints() > highscore){
+						highscore = jugador->getPoints();
+						saveHighscore();
+					}
 					delete jugador;
 					jugador = NULL;
 					currentLevel = NULL;
+					
 					currentScreen = stTransition1;
 					transTimer = 3.0;
 				}
@@ -683,4 +694,78 @@ void menu::draw(painter* pintor){
 		break;
 		}
 	}
+}
+
+void juego::loadHighscore(){
+	ifstream archivo;
+	highscore = 0;
+	long int regular_score = 0 ^ 0x54A9F23E;
+	long int hardcore_score = 0 ^ 0x54A9F23E;
+	
+	archivo.open("save/highscores.sav");
+	
+	if (archivo.good())
+		archivo >> regular_score;
+	
+	if (archivo.good())
+		archivo >> hardcore_score;
+		
+	if (hardcoreMode){
+		highscore = hardcore_score ^ 0x54A9F23E; //random magic number xor
+	} else{
+		highscore = regular_score ^ 0x54A9F23E; //random magic number xor
+	}
+	
+	archivo.close();
+}
+
+long int juego::getHighscore(){
+	return highscore;
+}
+
+void juego::setHighscore(long int hs){
+	highscore = hs;
+}
+
+void juego::saveHighscore(){
+		
+	// Tantos años... Tantos años Y TODAVÍA NO SÉ MANEJAR ARCHIVOS!!!
+	// AAAAAAAAAAAAAHHHHHH!!!
+	// POR QUÉ NO PUEDO ABRIR IN/OUT, GENERANDO UN ARCHIVO NUEVO SI NO EXISTIERA?? 
+	
+	fstream* archivo = new fstream("save/highscores.sav", std::fstream::in);
+	long int regular_score = 0 ^ 0x54A9F23E;
+	long int hardcore_score = 0 ^ 0x54A9F23E;
+
+	archivo->seekg(0);
+	
+	if (archivo->good())
+		*archivo >> regular_score;
+	
+	if (archivo->good())
+		*archivo >> hardcore_score;
+		
+	archivo->close();
+	if (archivo != NULL){
+		delete archivo;
+		archivo = NULL;
+	}
+	
+	//si la carpeta "save" no existe, se pudre todo
+	archivo = new fstream("save/highscores.sav", std::fstream::out);
+	archivo->seekp(0);
+	
+	if (hardcoreMode){
+		*archivo << regular_score;
+		*archivo << " ";
+		hardcore_score = highscore ^ 0x54A9F23E; //random magic number xor
+		*archivo << hardcore_score;
+	} else{
+		regular_score = highscore ^ 0x54A9F23E; //random magic number xor
+		*archivo << regular_score;
+		*archivo << " ";
+		*archivo << hardcore_score;
+	}
+	archivo->close();
+	delete archivo;
 }

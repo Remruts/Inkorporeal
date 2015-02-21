@@ -29,6 +29,8 @@ level::level(const string & filename, juego* game){
 	doorSheet = game->getDoorSheet();		// paso puntero a sprites de puerta
 	
 	hardcoreMode = game->getMode();
+	std::cout << ((hardcoreMode) ? "HARDCORE 1337" : "n00b") << std::endl; 
+	highscore = game->getHighscore();
 	
 	//Determino el número de nivel
 	int num = game->getLevelNum();
@@ -76,7 +78,12 @@ level::level(const string & filename, juego* game){
 	leonardo->freeImage(backSurface); //ya no me sirve la superficie anterior...
 	
 	//Creo diversas texturas de textos
-	testText = leonardo->textureFromText("{LIVES}", 3, 255, 255, 255);
+	if (hardcoreMode){
+		testText = leonardo->textureFromText("{DEATH}", 3, 255, 255, 255);
+	} else {
+		testText = leonardo->textureFromText("{LIVES}", 3, 255, 255, 255);
+	}
+	
 	if (levelnum<10){
 		levelNumText = leonardo->textureFromText("Level 0"+to_string(levelnum), 3, 255, 255, 255);
 	} else{
@@ -237,6 +244,25 @@ bool level::isFinished(){
 
 level::lvlState level::getState(){
 	return currentState;
+}
+
+void level::setHighscore(long int hs){
+	highscore = hs;
+}
+
+void level::setHardcore(bool h){
+	hardcoreMode = h;
+	
+	if (testText != NULL){
+		leonardo->freeTexture(testText);
+		testText = NULL;
+	}
+	
+	if (hardcoreMode){
+		testText = leonardo->textureFromText("{DEATH}", 3, 255, 255, 255);
+	} else {
+		testText = leonardo->textureFromText("{LIVES}", 3, 255, 255, 255);
+	}
 }
 
 void level::addPoints(int p, int x, int y){
@@ -788,7 +814,11 @@ void level::draw(){
 	
 	// texto/UI
 	if (testText != NULL){
-		leonardo->draw(testText, 0, 0, 0, 0, 24, 108);
+		if (hardcoreMode){
+			leonardo->draw(testText, 0, 0, 0, 0, 6, 108);
+		} else{
+			leonardo->draw(testText, 0, 0, 0, 0, 24, 108);
+		}
 	}
 	
 	if ((levelNumText != NULL) && (bossText == NULL)){
@@ -811,7 +841,21 @@ void level::drawPoints(){
 		points/=10;
 	}
 	
-	//puntos
+	//highscore
+	points = jugador->getPoints();
+	pointsText->setColor(200, 0, 0);
+	if (highscore > points){
+		points = highscore;
+	}
+	
+	for (int i = 0; i<10; i++){
+		power = points%10;
+		leonardo->drawEx(pointsText, 24*power+power-1, 0, 24, 32, 1330-18*i, 150, 24, 32, 0, 0);
+		points/=10;
+	}
+	pointsText->setColor(255, 255, 255);
+	
+	//puntos que aparecen cuando se obtiene algo
 	vector<movingPoints*>::iterator it = pointsList.begin();
 	while (it != pointsList.end()){
 		if (*it != NULL)

@@ -10,6 +10,7 @@
 #include <map>
 #include <string>
 #include <utility>
+#include <fstream>
 
 using namespace std;
 
@@ -39,6 +40,9 @@ public:
 	LTexture* getEffectSheet();
 	LTexture* getCoinSheet();
 	LTexture* getDoorSheet();
+	long int getHighscore();
+	
+	void setHighscore(long int hs); //no lo creo necesario, pero bue
 	
 	int getLevelNum();
 	painter* getPainter();
@@ -48,6 +52,10 @@ public:
 	gameState getState();
 	
 private:
+	
+	void loadHighscore();
+	void saveHighscore();
+	
 	bool running;
 	painter* leonardo;
 	
@@ -80,6 +88,7 @@ private:
 	unsigned int levelNum; //current level number
 	unsigned int maxLevel;
 	bool hardcoreMode; //Si estamos en modo hardcore
+	long int highscore;
 	
 	double transTimer; //transition timer
 	double effectTimer;
