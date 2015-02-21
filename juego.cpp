@@ -138,15 +138,15 @@ juego::juego(painter* p){
 	jugador = new player(playerSprites);
 	
 	levelNum = 0;
-	maxLevel = 10;
+	maxLevel = 14;
 	transTimer = 3.0;
 	effectTimer = 0;
 	mainMenu = new menu(leonardo); //creo el menu
 	//Cargo el nivel
 	currentLevel = new level("levels/level0.lvl", this);
-	currentScreen = stPressStart;
+	//currentScreen = stPressStart;
+	currentScreen = stTransition0;
 	hardcoreMode = false;
-	//currentScreen = stTransition0;
 	highscore = 0;
 }
 
@@ -245,8 +245,26 @@ bool juego::isRunning(){
 void juego::step(control* c){
 	
 	if (c->esc){
-		running = false;
-		return;
+		running = false; //For debugging purposes
+		/*
+		c->esc = false;
+		if ((currentScreen == stPlaying || currentScreen == stPaused)){
+			if (currentLevel != NULL){
+				delete currentLevel;
+				delete jugador;
+				jugador = NULL;
+				currentLevel = NULL;
+			}
+			currentScreen = stPressStart;
+			mainMenu->start();
+			levelNum = 0;
+			jugador = new player(playerSprites);
+			currentLevel = new level(string("levels/level")+to_string(levelNum)+string(".lvl"), this);
+		} else if (currentScreen == stPressStart || currentScreen == stMainMenu){
+			running = false;
+			return; 
+		}
+		*/
 	}
 	
 	if (currentScreen == stPressStart){

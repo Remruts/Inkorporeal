@@ -43,7 +43,7 @@ void ghost::step(level* lvl){
 			timer = rand()%2+1;
 		}
 	
-		if (((x+32 >= 1088) && (spdX > 0)) || ((x <= 224) && (spdX < 0))){
+		if (((x >= 1088) && (spdX > 0)) || ((x <= 224) && (spdX < 0))){
 			spdX = -spdX*2;
 		}
 		if (((y+32 >= 416) && (spdY > 0)) || ((y <= 32) && (spdY < 0))){
