@@ -93,7 +93,7 @@ level::level(const string & filename, juego* game){
 	pointsText = leonardo->textureFromText("0 1 2 3 4 5 6 7 8 9  ", 2, 255, 255, 255);
 	pointsText2 = leonardo->textureFromText("0123456789", 0, 255, 255, 255);
 	
-	if (lvlType == 2){
+	if (lvlType >= 2){
 		bossText = leonardo->textureFromText("BOSS", 3, 180, 0, 0);
 	} else {
 		bossText = NULL;
@@ -598,7 +598,7 @@ void level::checkBulletCollisions(){
 		if ((*it) != NULL && (*it)->isAlive()){
 			while(it2 != enemyList.end()){
 				if ((*it2 != NULL) && (*it2)->isAlive() && checkCollision((*it2)->getColBox(), (*it)->getColBox())){
-					(*it)->die();
+					(*it)->die(this);
 					(*it2)->getHurt();
 					break;
 				}
@@ -822,11 +822,11 @@ void level::draw(){
 	}
 	
 	if ((levelNumText != NULL) && (bossText == NULL)){
-		leonardo->draw(levelNumText, 0, 0, 0, 0, 1175, 64);
+		leonardo->draw(levelNumText, 0, 0, 0, 0, 1175, 48);
 	}
 	
 	if (bossText != NULL){
-		leonardo->draw(bossText, 0, 0, 0, 0, 1200, 64);
+		leonardo->draw(bossText, 0, 0, 0, 0, 1200, 48);
 	}
 	
 	drawPoints();
@@ -837,7 +837,7 @@ void level::drawPoints(){
 	int power;
 	for (int i = 0; i<10; i++){
 		power = points%10;
-		leonardo->drawEx(pointsText, 24*power+power-1, 0, 24, 32, 1330-18*i, 120, 24, 32, 0, 0);
+		leonardo->drawEx(pointsText, 24*power+power-1, 0, 24, 32, 1330-18*i, 104, 24, 32, 0, 0);
 		points/=10;
 	}
 	
@@ -850,7 +850,7 @@ void level::drawPoints(){
 	
 	for (int i = 0; i<10; i++){
 		power = points%10;
-		leonardo->drawEx(pointsText, 24*power+power-1, 0, 24, 32, 1330-18*i, 150, 24, 32, 0, 0);
+		leonardo->drawEx(pointsText, 24*power+power-1, 0, 24, 32, 1330-18*i, 134, 24, 32, 0, 0);
 		points/=10;
 	}
 	pointsText->setColor(255, 255, 255);

@@ -8,10 +8,12 @@
 #include "painter.h"
 #include "animation.h"
 #include "level.h"
+class level; //forward declaration
+
+#include "particles.h"
 
 #include <cmath>
 
-class level; //forward declaration
 
 class player {
 public:
@@ -89,7 +91,7 @@ public:
 	SDL_Rect* getColBox();
 	
 	bool isAlive();
-	void die();
+	void die(level*);
 	
 private:
 	int x, y, spd;

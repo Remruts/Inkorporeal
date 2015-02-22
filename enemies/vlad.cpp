@@ -176,6 +176,7 @@ void vlad::step(level* lvl){
 			
 			if (spdX != 0){
 				facingRight = spdX>0;
+				lvl->addEmitter(new dashEmitter(lvl->getEffectSheet(), x, y+colBox.h/2));
 				if (int(timer)%10 == 0)
 					lvl->addEmitter(new circleEmitter(lvl->getEffectSheet(), x+ (facingRight ? 0 : colBox.w ), y+colBox.h/2, facingRight));
 				

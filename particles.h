@@ -124,4 +124,49 @@ private:
 	
 };
 
+class dashEmitter : public emitter{
+public:
+	dashEmitter(LTexture* sprt, int X, int Y);
+	~dashEmitter();
+	
+	void step(level* lvl);
+	void emit();
+private:
+	
+};
+
+class afterShot : public emitter{
+public:
+	afterShot(LTexture* sprt, int X, int Y);
+	~afterShot();
+	
+	void step(level* lvl);
+	void emit();
+private:
+	
+};
+
+class hurtEffect : public emitter{
+public:
+	hurtEffect(LTexture* sprt, int X, int Y);
+	~hurtEffect();
+	
+	void step(level* lvl);
+	void emit();
+private:
+	
+};
+
+class starEffect : public emitter{
+public:
+	starEffect(LTexture* sprt, int X, int Y);
+	~starEffect();
+	
+	void step(level* lvl);
+	void emit();
+private:
+	
+};
+
+
 #endif

@@ -261,6 +261,10 @@ void player::step(level* lvl){
 		timeToBlink = 3.0;
 	}
 	
+	if (state == stDash){
+		lvl->addEmitter(new dashEmitter(lvl->getEffectSheet(), x+((2*(spdX<=0)-1)*(collisionBox.w+10)), y+collisionBox.h/2));
+	}
+	
 	if (timeToBlink <= 2 && state == stDash && !canDash){
 		state = stJump;
 	}
@@ -363,6 +367,8 @@ bool player::isDashing(){
 void player::getHurt(level* lvl){
 	if (!hurt){
 		lvl->shake(1, 5);
+		lvl->addEmitter(new hurtEffect(lvl->getEffectSheet(), x, y));
+		lvl->addEmitter(new starEffect(lvl->getEffectSheet(), x, y));
 		hurt = true;
 		lives -= 1;
 	}
@@ -397,7 +403,7 @@ void bullet::step(level* lvl){
 		collisionBox.y = y-2;
 		
 		if (lvl->hRaySolid(x, x+spd, y) != -1){
-			alive = false;
+			die(lvl);
 		}
 		
 	}
@@ -414,11 +420,13 @@ bool bullet::isAlive(){
 	return alive;
 }
 
-void bullet::die(){
+void bullet::die(level* lvl){
 	alive = false;
+	lvl->addEmitter(new afterShot(lvl->getEffectSheet(), x, y));
 }
 
 SDL_Rect* bullet::getColBox(){
 	return &collisionBox;
 }
+
 
