@@ -23,6 +23,7 @@ particle::particle(LTexture* sprt, int X, int Y, int Life){
 	
 	alpha = 255;
 	angle = 0;
+	invAngle = 0;
 	
 	permanent = false;
 	blend = 0;
@@ -104,6 +105,11 @@ void particle::setAngle(int dir){
 		dir += 360;
 	}
 	angle = dir;
+	
+	int radAngle = (angle/180.0)*(3.1415);
+	double X = cos(radAngle);
+	double Y = -sin(radAngle);
+	invAngle = 180*(atan2(Y, X)/3.1415);
 }
 	
 void particle::setPermanence(bool p){
@@ -193,7 +199,7 @@ void particle::draw(painter* picasso, LTexture* background){
 		picasso->drawEx(spritesheet, (sprite*spriteSize)%spritesheet->getWidth(), ((sprite*spriteSize)/spritesheet->getWidth())*spriteSize, 
 			spriteSize, spriteSize, x, y, spriteSize*scaleX, spriteSize*scaleY, angle, 0);
 		picasso->drawEx(spritesheet, (sprite*spriteSize)%spritesheet->getWidth(), ((sprite*spriteSize)/spritesheet->getWidth())*spriteSize, 
-			spriteSize, spriteSize, x, 448+(320-y*0.7143), spriteSize*scaleX, spriteSize*scaleY*0.7143, angle, 2); //espejado
+			spriteSize, spriteSize, x, 448+(320-y*0.7143), spriteSize*scaleX, spriteSize*scaleY*0.7143, invAngle, 2); //espejado
 	}	
 	
 	if ((life == 1) && permanent){

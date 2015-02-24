@@ -69,11 +69,16 @@ Engine::Engine(int w, int h, bool fs){
 	screen_height = h;
 	fullscreen = fs;
 	
-	int error = SDL_Init(SDL_INIT_VIDEO);
+	int error = SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
 	if(error == -1){
 		std::cout << "Couldn't initialize SDL...\n";
 		exit(1);
     }
+    
+    if(Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) { 
+		std::cout << "SDL_mixer could not initialize! Error: " << Mix_GetError() << std::endl;
+		exit(1);
+	}
 	
 	int imgFlags = IMG_INIT_PNG; 
 	if( (IMG_Init( imgFlags ) & imgFlags) != imgFlags ) { 
@@ -117,6 +122,12 @@ Engine::Engine(int w, int h, bool fs){
 	}
 	*/
 	
+	bach = new jukebox();
+	if (bach == NULL){
+		std::cout << "Bach's dead. Check your jukebox.\n";
+		exit(1);
+	}
+	
 	picasso = new painter(gRenderer);
 	if (picasso == NULL){
 		std::cout << "Picasso's dead. Check your painter.\n";
@@ -130,7 +141,7 @@ Engine::Engine(int w, int h, bool fs){
 		exit(1);
 	}
 	
-	game = new juego(picasso);
+	game = new juego(picasso, bach);
 	if (game == NULL){
 		std::cout << "Couldn't start the game.\n";
 		exit(1);
@@ -154,12 +165,16 @@ Engine::~Engine(){
 		
 	if(picasso != NULL)
 		delete picasso;
+	
+	if(bach != NULL)
+		delete bach;
 		
 	SDL_DestroyRenderer(gRenderer);
 	SDL_DestroyWindow(window);
 	gRenderer = NULL;
 	window = NULL;
 	
+	Mix_Quit();
 	TTF_Quit();
 	IMG_Quit();
 	SDL_Quit();

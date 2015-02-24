@@ -1,0 +1,122 @@
+#include "jukebox.h"
+
+jukebox::jukebox(){
+	Mix_AllocateChannels(128); //128 canales es suficiente?
+	setGeneralSoundVolume(0.4);
+	musicSetVolume(0.8);
+}
+
+jukebox::~jukebox(){
+	
+}
+
+//sound
+Mix_Chunk* jukebox::loadSound(const string & path){
+	return Mix_LoadWAV(path.c_str());
+}
+
+void jukebox::freeSound(Mix_Chunk* sound){
+	Mix_FreeChunk(sound);
+}
+
+void jukebox::playSound(Mix_Chunk* sound){
+
+	if (Mix_PlayChannel(-1, sound, 0) == -1){
+		std::cout << "Couldn't play sound. Error: " << Mix_GetError() << std::endl;
+	}
+}
+
+void jukebox::soundSetVolume(Mix_Chunk* sound, float volume){
+	
+	if (volume < 0){
+		volume = 0;
+	} else if (volume > 1){
+		volume = 1;
+	}
+	
+	soundVolume = volume;
+	
+	Mix_VolumeChunk(sound, MIX_MAX_VOLUME*volume);
+}
+
+float jukebox::getGeneralSoundVolume(){
+	return soundVolume;
+}
+
+void jukebox::setGeneralSoundVolume(float volume){
+	if (volume < 0){
+		volume = 0;
+	}else if (volume > 1){
+		volume = 1;
+	}
+	
+	Mix_Volume(-1, MIX_MAX_VOLUME*volume);
+}
+
+//music
+Mix_Music* jukebox::loadMusic(const string & path){
+	return Mix_LoadMUS(path.c_str());
+}
+
+void jukebox::freeMusic(Mix_Music* music){
+	Mix_FreeMusic(music);
+}
+
+void jukebox::playMusic(Mix_Music* music, bool loop, bool fadeIn){
+	
+	int error;
+	
+	if (fadeIn){
+		error = Mix_FadeInMusic(music, (loop ? -1: 1), 2500);
+	} else{
+		error = Mix_PlayMusic(music, (loop ? -1: 1));
+	}
+	
+	if (error == -1){
+		std::cout << "Couldn't play music. Error: " << Mix_GetError() << std::endl;
+	}
+	
+}
+
+void jukebox::pauseMusic(){
+	if (!Mix_PausedMusic()){
+		Mix_PauseMusic();
+	}
+}
+
+void jukebox::resumeMusic(){
+	if (Mix_PausedMusic()){
+		Mix_ResumeMusic();
+	}
+}
+
+void jukebox::haltMusic(bool fadeOut){
+	if (fadeOut){
+		Mix_FadeOutMusic(2500);
+	} else{
+		Mix_HaltMusic();
+	}
+	
+}
+
+void jukebox::musicSetVolume(float volume){
+	
+	if (volume < 0){
+		volume = 0;
+	}else if (volume > 1){
+		volume = 1;
+	}
+	
+	musicVolume = volume;
+	
+	Mix_VolumeMusic(MIX_MAX_VOLUME*volume);
+}
+
+float jukebox::getMusicVolume(){
+	return musicVolume;
+}
+
+bool jukebox::musicIsPlaying(){
+	return (Mix_PlayingMusic() && !Mix_PausedMusic());
+}
+

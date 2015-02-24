@@ -206,6 +206,7 @@ coin::~coin(){
 void coin::onCollisionWithPlayer(level* lvl){
 	lvl->addEmitter(new coinSparkle(spritesheet, x+8, y));
 	lvl->addPoints(5, x, y);
+	lvl->playSound("coinSound");
 	pickup::onCollisionWithPlayer(lvl);
 }
 

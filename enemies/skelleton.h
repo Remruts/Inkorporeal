@@ -4,6 +4,8 @@
 #include "enemy.h"
 #include <deque>
 
+using std::deque;
+
 class skelleton : public enemy{
 public:
 	skelleton(LTexture* sprt, int x, int y);

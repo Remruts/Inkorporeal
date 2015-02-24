@@ -234,9 +234,11 @@ void player::step(level* lvl){
 	if (gunCounter <= 0){
 		gunCounter = 0;
 	}
+	
 	if (shooting && (gunCounter == 0)){
 		
 		bullet* b = new bullet(spritesheet, x + spdX + facingRight*32, y+20+spdY, 24*facingRight-12);
+		lvl->playSound("shootSound");
 		lvl->addBullet(b);
 		gunCounter = 1;
 	}
@@ -259,6 +261,7 @@ void player::step(level* lvl){
 	if (canDash && state == stDash){
 		canDash = 0;
 		timeToBlink = 3.0;
+		lvl->playSound("dashSound");
 	}
 	
 	if (state == stDash){
@@ -353,7 +356,8 @@ void player::draw(painter* pintor){
 }
 
 void player::shoot(){
-	shooting = true;
+	//if ((state != stDash) || ((spdX < 0) == facingRight))
+		shooting = true;
 }
 
 bool player::isShooting(){
@@ -366,6 +370,7 @@ bool player::isDashing(){
 
 void player::getHurt(level* lvl){
 	if (!hurt){
+		lvl->playSound("getHitSound");
 		lvl->shake(1, 5);
 		lvl->addEmitter(new hurtEffect(lvl->getEffectSheet(), x, y));
 		lvl->addEmitter(new starEffect(lvl->getEffectSheet(), x, y));

@@ -2,42 +2,43 @@
 #include "juego.h"
 #include <iostream> //debug
 
-juego::juego(painter* p){
+juego::juego(painter* p, jukebox* b){
 	leonardo = p;
+	bach = b;
 	running = true;
 	
-	// posEnSheet.insert(pair<string, pair<int, int> >("mesa1", (make_pair(0, 0))));
+	// posEnSheet.insert(pair<string, pair<int, int> >("mesa1", (std::make_pair(0, 0))));
 	// Cargo las posiciones de los props en el mapa
-	posEnSheet["mesa0"] = make_pair(0, 0);
-	posEnSheet["mesa1"] = make_pair(1, 0);
-	posEnSheet["silla0"] = make_pair(2, 0);
-	posEnSheet["silla1"] = make_pair(3, 0);
-	posEnSheet["pared0"] = make_pair(4, 0);
-	posEnSheet["botella0"] = make_pair(0, 1);
-	posEnSheet["botella1"] = make_pair(1, 1);
-	posEnSheet["cuadro0"] = make_pair(2, 1);
-	posEnSheet["cuadro1"] = make_pair(3, 1);
-	posEnSheet["cuadro2"] = make_pair(4, 1);
-	posEnSheet["vela0"] = make_pair(0, 2);
-	posEnSheet["vela1"] = make_pair(1, 2);
-	posEnSheet["cuadro3"] = make_pair(2, 2);
-	posEnSheet["cuadro4"] = make_pair(3, 2);
-	posEnSheet["cuadro5"] = make_pair(4, 2);
-	posEnSheet["libro0"] = make_pair(0, 3);
-	posEnSheet["libro1"] = make_pair(1, 3);
-	posEnSheet["mueble0"] = make_pair(2, 3);
-	posEnSheet["florero0"] = make_pair(3, 3);
-	posEnSheet["florero1"] = make_pair(4, 3);
-	posEnSheet["varanda0"] = make_pair(0, 4);
-	posEnSheet["varanda1"] = make_pair(1, 4);
-	posEnSheet["varanda2"] = make_pair(2, 4);
-	posEnSheet["columna0"] = make_pair(3, 4);
-	posEnSheet["columna1"] = make_pair(3, 5);
-	posEnSheet["columna2"] = make_pair(3, 6);
-	posEnSheet["butaca0"] = make_pair(0, 5);
-	posEnSheet["piano0"] = make_pair(1, 5);
-	posEnSheet["candelabro0"] = make_pair(0, 6);
-	posEnSheet["cadena0"] = make_pair(1, 6);
+	posEnSheet["mesa0"] = std::make_pair(0, 0);
+	posEnSheet["mesa1"] = std::make_pair(1, 0);
+	posEnSheet["silla0"] = std::make_pair(2, 0);
+	posEnSheet["silla1"] = std::make_pair(3, 0);
+	posEnSheet["pared0"] = std::make_pair(4, 0);
+	posEnSheet["botella0"] = std::make_pair(0, 1);
+	posEnSheet["botella1"] = std::make_pair(1, 1);
+	posEnSheet["cuadro0"] = std::make_pair(2, 1);
+	posEnSheet["cuadro1"] = std::make_pair(3, 1);
+	posEnSheet["cuadro2"] = std::make_pair(4, 1);
+	posEnSheet["vela0"] = std::make_pair(0, 2);
+	posEnSheet["vela1"] = std::make_pair(1, 2);
+	posEnSheet["cuadro3"] = std::make_pair(2, 2);
+	posEnSheet["cuadro4"] = std::make_pair(3, 2);
+	posEnSheet["cuadro5"] = std::make_pair(4, 2);
+	posEnSheet["libro0"] = std::make_pair(0, 3);
+	posEnSheet["libro1"] = std::make_pair(1, 3);
+	posEnSheet["mueble0"] = std::make_pair(2, 3);
+	posEnSheet["florero0"] = std::make_pair(3, 3);
+	posEnSheet["florero1"] = std::make_pair(4, 3);
+	posEnSheet["varanda0"] = std::make_pair(0, 4);
+	posEnSheet["varanda1"] = std::make_pair(1, 4);
+	posEnSheet["varanda2"] = std::make_pair(2, 4);
+	posEnSheet["columna0"] = std::make_pair(3, 4);
+	posEnSheet["columna1"] = std::make_pair(3, 5);
+	posEnSheet["columna2"] = std::make_pair(3, 6);
+	posEnSheet["butaca0"] = std::make_pair(0, 5);
+	posEnSheet["piano0"] = std::make_pair(1, 5);
+	posEnSheet["candelabro0"] = std::make_pair(0, 6);
+	posEnSheet["cadena0"] = std::make_pair(1, 6);
 	/*
 	std::cout << "Tamaño mapa: " << posEnSheet.size() << std::endl;
 	
@@ -134,6 +135,44 @@ juego::juego(painter* p){
 	}
 	continueSelected = true;
 	
+	soundBank["coinSound"] = bach->loadSound("sounds/coin.wav");
+	bach->soundSetVolume(soundBank["coinSound"], 0.4);
+	if (!soundBank["coinSound"]){
+		std::cout << "Error al cargar sonido de moneda. " << std::endl;
+	}
+	
+	soundBank["dashSound"] = bach->loadSound("sounds/inazumakick.wav");
+	bach->soundSetVolume(soundBank["dashSound"], 0.8);
+	if (!soundBank["dashSound"]){
+		std::cout << "Error al cargar sonido de dash. " << std::endl;
+	}
+	
+	soundBank["shootSound"] = bach->loadSound("sounds/pchew.wav");
+	bach->soundSetVolume(soundBank["shootSound"], 0.6);
+	if (!soundBank["shootSound"]){
+		std::cout << "Error al cargar sonido de disparo. " << std::endl;
+	}
+	
+	soundBank["getHitSound"] = bach->loadSound("sounds/large_footsteps.wav");
+	bach->soundSetVolume(soundBank["getHitSound"], 0.8);
+	if (!soundBank["getHitSound"]){
+		std::cout << "Error al cargar sonido de herido. " << std::endl;
+	}
+	
+	soundBank["explosionSound"] = bach->loadSound("sounds/hit.wav");
+	bach->soundSetVolume(soundBank["explosionSound"], 1);
+	if (!soundBank["explosionSound"]){
+		std::cout << "Error al cargar sonido de explosion. " << std::endl;
+	}
+	
+	musicBank["levelMusic"] = bach->loadMusic("music/Nightmare.mp3");
+	if (!musicBank["levelMusic"]){
+		std::cout << "Error al cargar música de nivel. " << std::endl;
+	}
+	
+	hardcoreMode = false;
+	highscore = 0;
+	
 	//Creo un jugador nuevo
 	jugador = new player(playerSprites);
 	
@@ -146,8 +185,6 @@ juego::juego(painter* p){
 	currentLevel = new level("levels/level0.lvl", this);
 	//currentScreen = stPressStart;
 	currentScreen = stTransition0;
-	hardcoreMode = false;
-	highscore = 0;
 }
 
 juego::~juego(){
@@ -232,6 +269,21 @@ juego::~juego(){
 		continueSprite = NULL;
 	}
 	
+	for (map<string, Mix_Chunk*>::iterator itSnd = soundBank.begin(); itSnd!=soundBank.end(); ++itSnd){
+		if (itSnd->second != NULL){
+			bach->freeSound(itSnd->second);
+			itSnd->second = NULL;
+		}
+	}
+	
+	for (map<string, Mix_Music*>::iterator itMus = musicBank.begin(); itMus!=musicBank.end(); ++itMus){
+		if (itMus->second != NULL){
+			bach->freeMusic(itMus->second);
+			itMus->second = NULL;
+		}
+	}
+	
+	
 	if (mainMenu != NULL){
 		delete mainMenu;
 		mainMenu = NULL;
@@ -309,7 +361,7 @@ void juego::step(control* c){
 					jugador->reset();
 					jugador->step(currentLevel);
 					delete currentLevel;
-					currentLevel = new level(string("levels/level")+to_string(levelNum)+string(".lvl"), this);
+					currentLevel = new level(string("levels/level")+std::to_string(levelNum)+string(".lvl"), this);
 					
 					transTimer = 3.0;
 					
@@ -376,11 +428,11 @@ void juego::step(control* c){
 				mainMenu->start();
 				levelNum = 0;
 				jugador = new player(playerSprites);
-				currentLevel = new level(string("levels/level")+to_string(levelNum)+string(".lvl"), this);
+				currentLevel = new level(string("levels/level")+std::to_string(levelNum)+string(".lvl"), this);
 			} else{
 				if (continueSelected){
 					jugador = new player(playerSprites);
-					currentLevel = new level(string("levels/level")+to_string(levelNum)+string(".lvl"), this);
+					currentLevel = new level(string("levels/level")+std::to_string(levelNum)+string(".lvl"), this);
 					currentScreen = stTransition0;
 					transTimer = 3.0;
 				} else{
@@ -551,6 +603,19 @@ bool juego::getMode(){
 juego::gameState juego::getState(){
 	return currentScreen;
 }
+
+jukebox* juego::getJukebox(){
+	return bach;
+}
+
+map<string, Mix_Chunk* >* juego::getSoundBank(){
+	return &soundBank;
+}
+
+map<string, Mix_Music* >* juego::getMusicBank(){
+	return &musicBank;
+}
+
 //Termina "juego"
 
 //empieza menú
@@ -715,7 +780,7 @@ void menu::draw(painter* pintor){
 }
 
 void juego::loadHighscore(){
-	ifstream archivo;
+	std::ifstream archivo;
 	highscore = 0;
 	long int regular_score = 0 ^ 0x54A9F23E;
 	long int hardcore_score = 0 ^ 0x54A9F23E;
@@ -751,7 +816,7 @@ void juego::saveHighscore(){
 	// AAAAAAAAAAAAAHHHHHH!!!
 	// POR QUÉ NO PUEDO ABRIR IN/OUT, GENERANDO UN ARCHIVO NUEVO SI NO EXISTIERA?? 
 	
-	fstream* archivo = new fstream("save/highscores.sav", std::fstream::in);
+	std::fstream* archivo = new std::fstream("save/highscores.sav", std::fstream::in);
 	long int regular_score = 0 ^ 0x54A9F23E;
 	long int hardcore_score = 0 ^ 0x54A9F23E;
 
@@ -770,7 +835,7 @@ void juego::saveHighscore(){
 	}
 	
 	//si la carpeta "save" no existe, se pudre todo
-	archivo = new fstream("save/highscores.sav", std::fstream::out);
+	archivo = new std::fstream("save/highscores.sav", std::fstream::out);
 	archivo->seekp(0);
 	
 	if (hardcoreMode){

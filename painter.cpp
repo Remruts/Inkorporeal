@@ -185,13 +185,13 @@ LTexture* painter::textureFromText(const string& textureText, int size, unsigned
 	}
 	
 	if(textSurface == NULL) { 
-		cout << "Unable to render text surface! SDL_ttf Error: " << TTF_GetError() << endl;
+		std::cout << "Unable to render text surface! SDL_ttf Error: " << TTF_GetError() << std::endl;
 		exit(1);
 	} else { 
 		//Create texture from surface pixels 
 		mTexture = SDL_CreateTextureFromSurface( canvas, textSurface ); 
 		if( mTexture == NULL ) { 
-			cout << "Unable to create texture from rendered text! SDL Error: \n" << SDL_GetError() << endl; 
+			std::cout << "Unable to create texture from rendered text! SDL Error: \n" << SDL_GetError() << std::endl; 
 			exit(1);
 		} else { 
 			//create finalTex

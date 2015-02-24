@@ -11,6 +11,8 @@
 #include <time.h>
 #include <math.h>
 
+using std::vector;
+
 class particle{
 public:
 	particle(LTexture* spritesheet, int x, int y, int life);
@@ -63,7 +65,7 @@ private:
 	bool blend;
 	
 	int alpha;
-	int angle;
+	int angle, invAngle;
 	
 	unsigned int r, g, b;
 	

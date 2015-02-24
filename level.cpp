@@ -10,7 +10,7 @@
 #include "enemies/cherubil.h"
 #include <iostream> //debug
 
-using namespace std;
+using std::vector;
 
 // map<string, pair<int, int> > & posEnSheet
 level::level(const string & filename, juego* game){
@@ -18,15 +18,22 @@ level::level(const string & filename, juego* game){
 	finished = false;
 	currentState = stPlaying;
 	
+	
+	leonardo = game->getPainter();			// paso puntero a painter
+	bach = game->getJukebox();				// paso puntero a jukebox
+	
+	jugador = game->getPlayer(); 			// paso puntero a jugador
+	
 	propSheet = game->getPropsheet(); 		// paso puntero a surface de props
 	tileSheet = game->getTilesheet();		// paso puntero a surface de tiles
-	leonardo = game->getPainter();			// paso puntero a painter
-	jugador = game->getPlayer(); 			// paso puntero a jugador
 	enemySprites = game->getEnemySprites();	// paso puntero a sprites de enemigos
 	vladSprites = game->getVladSprites();	// paso puntero a sprites de Vlad
 	effectSheet = game->getEffectSheet();	// paso puntero a sprites de effectos
 	coinSheet = game->getCoinSheet();		// paso puntero a sprites de monedita
 	doorSheet = game->getDoorSheet();		// paso puntero a sprites de puerta
+	
+	soundBank = game->getSoundBank();
+	musicBank = game->getMusicBank();
 	
 	hardcoreMode = game->getMode();
 	std::cout << ((hardcoreMode) ? "HARDCORE 1337" : "n00b") << std::endl; 
@@ -63,7 +70,7 @@ level::level(const string & filename, juego* game){
 	pos.y = 64;
 	
     //Empecemos a cargar el nivel
-	ifstream archivo;
+	std::ifstream archivo;
 	archivo.open(filename.c_str());
 	bool ok = (archivo.good() && load(archivo, *(game->getMap())));
 	if (!ok){
@@ -85,9 +92,9 @@ level::level(const string & filename, juego* game){
 	}
 	
 	if (levelnum<10){
-		levelNumText = leonardo->textureFromText("Level 0"+to_string(levelnum), 3, 255, 255, 255);
+		levelNumText = leonardo->textureFromText("Level 0"+std::to_string(levelnum), 3, 255, 255, 255);
 	} else{
-		levelNumText = leonardo->textureFromText("Level "+to_string(levelnum), 3, 255, 255, 255);
+		levelNumText = leonardo->textureFromText("Level "+std::to_string(levelnum), 3, 255, 255, 255);
 	}
 	
 	pointsText = leonardo->textureFromText("0 1 2 3 4 5 6 7 8 9  ", 2, 255, 255, 255);
@@ -109,6 +116,8 @@ level::level(const string & filename, juego* game){
 	
 	llave = NULL;
 	shakeTimer = 0;
+	
+	//bach->playMusic((*musicBank)["levelMusic"], 1, 0);
 	
 }
 
@@ -274,6 +283,10 @@ void level::addLife(){
 	jugador->addLives();
 }
 
+void level::playSound(const string& str){
+	bach->playSound((*soundBank)[str]);
+}
+
 void level::updatePlayer(control *c){
 	//WIP: meter parte de este código en step() de player
 	if (jugador!=NULL){
@@ -288,8 +301,7 @@ void level::updatePlayer(control *c){
 		
 		//Si presiono "disparo"
 		if (c->evShoot){
-			if (playerState != player::stDash)
-				jugador->shoot();
+			jugador->shoot();
 		}
 		
 		//Si presiono derecha
@@ -452,6 +464,7 @@ void level::updateEnemies(){
 				it++;
 			} else{
 				
+				playSound("explosionSound");
 				shake(1, 10);
 				
 				int x, y;
@@ -702,7 +715,7 @@ void level::shake(double intensity, int time){
 	if (intensity > leonardo->getShake()){
 		leonardo->setShake(intensity);
 	}
-	shakeTimer = max(time, shakeTimer);
+	shakeTimer = std::max(time, shakeTimer);
 }
 
 
@@ -1231,12 +1244,12 @@ int level::load(std::istream& is, map<string, pair<int, int> >& posEnSheet){
 			ignore(is);
 			while(is.peek() != '>' && is.good()){
 				getline(is, str, ' ');
-				cout << str << " ";
+				std::cout << str << " ";
 				rect.x = posEnSheet[str].first * 32;
 				rect.y = posEnSheet[str].second * 32;
 				is >> pos.x;
 				is >> pos.y;
-				cout << "x: " << pos.x << ", y: " << pos.y << endl;
+				std::cout << "x: " << pos.x << ", y: " << pos.y << std::endl;
 				SDL_BlitSurface(propSheet, &rect, backSurface, &pos);
 				
 				ignore(is);
@@ -1250,15 +1263,15 @@ int level::load(std::istream& is, map<string, pair<int, int> >& posEnSheet){
 			while(is.peek() != '>' && is.good()){
 
 				getline(is, str, ' ');
-				cout << str << " ";
+				std::cout << str << " ";
 				
 				is >> pos.x;
 				pos.x *= 32;
-				cout << pos.x << " ";
+				std::cout << pos.x << " ";
 
 				is >> pos.y;
 				pos.y *= 32;
-				cout << pos.y << endl;
+				std::cout << pos.y << std::endl;
 			
 				if (str == "ghost"){
 					toSpawn = new ghost(enemySprites, pos.x, pos.y);
@@ -1292,15 +1305,15 @@ int level::load(std::istream& is, map<string, pair<int, int> >& posEnSheet){
 			while(is.peek() != '>' && is.good()){
 
 				getline(is, str, ' ');
-				cout << str << " ";
+				std::cout << str << " ";
 				
 				is >> pos.x;
 				pos.x = pos.x*32+192;
-				cout << pos.x << " ";
+				std::cout << pos.x << " ";
 
 				is >> pos.y;
 				pos.y *= 32;
-				cout << pos.y << endl;
+				std::cout << pos.y << std::endl;
 			
 				if (str == "tomato"){
 					item = new heart(coinSheet, pos.x, pos.y);

@@ -4,6 +4,7 @@
 
 #include "control.h"
 #include "painter.h"
+#include "jukebox.h"
 #include "level.h"
 #include "LTexture.h"
 #include "player.h"
@@ -12,19 +13,21 @@
 #include <utility>
 #include <fstream>
 
-using namespace std;
-
 //fd
 class player;
 class level;
 class menu;
+
+using std::map;
+using std::string;
+using std::pair;
 
 class juego{
 public:
 
 	enum gameState {stPressStart, stMainMenu, stPlaying, stTransition0, stTransition1, stGameOver, stPaused};
 	
-	juego(painter*);
+	juego(painter*, jukebox*);
 	~juego();
 	
 	bool isRunning();
@@ -49,6 +52,11 @@ public:
 	player* getPlayer();
 	bool getMode();
 	
+	//Debería haber usado mapas desde un principio... :(
+	jukebox* getJukebox();
+	map<string, Mix_Chunk* >* getSoundBank();
+	map<string, Mix_Music* >* getMusicBank();
+	
 	gameState getState();
 	
 private:
@@ -58,6 +66,7 @@ private:
 	
 	bool running;
 	painter* leonardo;
+	jukebox* bach;
 	
 	gameState currentScreen;
 	
@@ -72,6 +81,9 @@ private:
 	LTexture* effectSheet; //puntero a texture de effectos
 	LTexture* coinSheet; //puntero a texture de moneditas
 	LTexture* doorSheet; //puntero a texture de puerta
+	
+	map<string, Mix_Chunk*> soundBank; //sonidos
+	map<string, Mix_Music*> musicBank; //música
 	
 	LTexture* titleScreen; //puntero a texture de título
 	LTexture* invertedTitle; //puntero a texture de título invertido. Podría haberlo dibujado invertido y con otro color.

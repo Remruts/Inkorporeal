@@ -8,6 +8,9 @@ control::control(){
 	evShoot = false;
 	evDash = false;
 	evMelee = false;
+	evStart = false;
+	evDown = false;
+	anyKey = false;
 	esc = false;
 }
 

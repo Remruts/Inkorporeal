@@ -10,7 +10,7 @@
 
 #define GOLDEN_RATIO_CONJUGATE 0.618033988749895
 
-using namespace std;
+using std::string;
 
 class painter{
 public:

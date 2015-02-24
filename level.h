@@ -4,9 +4,11 @@
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_mixer.h>
 
 #include "juego.h"
 #include "painter.h"
+#include "jukebox.h"
 #include "LTexture.h"
 #include "player.h"
 #include "control.h"
@@ -33,6 +35,10 @@ class emitter;
 class pickup;
 class door;
 class key;
+
+using std::vector;
+using std::map;
+using std::pair;
 
 class level{
 public:
@@ -82,6 +88,8 @@ public:
 	
 	void setHighscore(long int);
 	void setHardcore(bool);
+	
+	void playSound(const string &);
 
 private:
 	int load(std::istream& is, map<string, pair<int, int> >& posEnSheet);
@@ -118,8 +126,12 @@ private:
 	lvlState currentState; 	//indica si el nivel se está jugando, se ganó o se perdió
 	bool finished; 			//indica si terminó el nivel
 	
-	painter* leonardo;
+	jukebox* bach;
+	map<string, Mix_Chunk*>* soundBank; //sonidos
+	map<string, Mix_Music*>* musicBank; //música
 	
+	painter* leonardo;
+		
 	LTexture *background; //esto es lo que se muestra
 	SDL_Surface* backSurface; //buffer
 	SDL_Rect rect, pos, rugrect; //Creo rectángulos para blitear cada tile en el background
@@ -135,6 +147,7 @@ private:
 	LTexture *coinSheet;
 	LTexture *doorSheet;
 	
+		
 	bool solid[420]; // mapa de 30x14 (=420). Determina si es sólido (true) o no (false)
 	player* jugador; //puntero al jugador
 	vector<bullet*> bulletList; //vector de punteros a balas de jugador
