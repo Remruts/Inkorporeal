@@ -215,7 +215,7 @@ juego::juego(painter* p, jukebox* b){
 	//Creo un jugador nuevo
 	jugador = new player(playerSprites);
 	
-	levelNum = 8;
+	levelNum = 0;
 	maxLevel = 13;
 	transTimer = 3.0;
 	effectTimer = 0;
