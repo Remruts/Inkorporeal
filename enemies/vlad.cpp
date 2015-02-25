@@ -98,6 +98,7 @@ void vlad::step(level* lvl){
 				if ((state == stQuake) && !onGround){
 					lvl->shake(1, 10);
 					lvl->addEmitter(new upSmoke(lvl->getEffectSheet(), x+colBox.w/2, y+colBox.h));
+					lvl->playSound("getHitSound");
 				}
 				
 				onGround = true;
@@ -152,6 +153,7 @@ void vlad::step(level* lvl){
 					if (onGround){
 						//lvl->addEmitter(new upSmoke(lvl->getEffectSheet(), x+colBox.w/2, y+colBox.h));
 						spdY = -12;
+						lvl->playSound("jumpSound");
 						onGround = false;
 					}
 				}
@@ -233,6 +235,7 @@ void vlad::step(level* lvl){
 				
 				if (timer <= 0){
 					lvl->addEmitter(new circleEmitter(lvl->getEffectSheet(), x+ (facingRight ? 0 : colBox.w ), y+colBox.h/2, facingRight));
+					lvl->playSound("dashSound");
 					state = stDash;
 					timer = abs(playerX)/20;
 					spdX = (2*(playerX>0)-1)*20;
@@ -248,6 +251,7 @@ void vlad::step(level* lvl){
 				
 				if (timer <= 0){
 					lvl->addEmitter(new upSmoke(lvl->getEffectSheet(), x+colBox.w/2, y+colBox.h));
+					lvl->playSound("jumpSound");
 					state = stUppercut;
 					timer = abs(playerY)/20;
 					if (timer < 10);
@@ -260,6 +264,7 @@ void vlad::step(level* lvl){
 				spdX = 0;
 				
 				if (timer <= 0){
+					lvl->playSound("dashSound");
 					state = stQuake;
 					timer = 80*timeFactor+10;
 					spdY = 20;
@@ -286,6 +291,7 @@ void vlad::step(level* lvl){
 			facingRight = playerX > 0;
 			
 			if (int(timer)%5 == 0){
+				lvl->playSound("shootSound2");
 				if (facingRight){
 					lvl->addEnemy(new vladbat(spritesheet, x, y-1, 0-(20+60*timeFactor-timer)));
 				} else {
@@ -310,6 +316,7 @@ void vlad::step(level* lvl){
 			
 			int rot = rand()%360;
 			if ((timer-int(timer) == 0) && (int(timer)%15 == 0)){
+				lvl->playSound("shootSound2");
 				for (int i = 0; i < 360; i+=36){
 					lvl->addEnemy(new vladbat(spritesheet, x, y-1, rot+i));
 				}

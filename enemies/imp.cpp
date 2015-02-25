@@ -86,6 +86,7 @@ void imp::step(level* lvl){
 			
 			if (onGround && !standing){
 				spdY = -12;
+				lvl->playSound("jumpSound");
 				onGround = false;
 			}
 				

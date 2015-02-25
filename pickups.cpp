@@ -344,6 +344,7 @@ heart::~heart(){
 }
 
 void heart::onCollisionWithPlayer(level* lvl){
+	lvl->playSound("heartSound");
 	lvl->addEmitter(new coinSparkle(spritesheet, x+8, y));
 	lvl->addPoints(1000, x, y);
 	lvl->addLife();

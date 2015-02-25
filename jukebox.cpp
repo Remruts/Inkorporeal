@@ -1,7 +1,7 @@
 #include "jukebox.h"
 
 jukebox::jukebox(){
-	Mix_AllocateChannels(128); //128 canales es suficiente?
+	Mix_AllocateChannels(24); //24 canales es suficiente?
 	setGeneralSoundVolume(0.4);
 	musicSetVolume(0.8);
 }
@@ -20,9 +20,12 @@ void jukebox::freeSound(Mix_Chunk* sound){
 }
 
 void jukebox::playSound(Mix_Chunk* sound){
-
-	if (Mix_PlayChannel(-1, sound, 0) == -1){
-		std::cout << "Couldn't play sound. Error: " << Mix_GetError() << std::endl;
+	
+	if(delay<5){
+		if (Mix_PlayChannel(-1, sound, 0) == -1){
+			std::cout << "Couldn't play sound. Error: " << Mix_GetError() << std::endl;
+		}
+		delay +=1;
 	}
 }
 
@@ -67,7 +70,7 @@ void jukebox::playMusic(Mix_Music* music, bool loop, bool fadeIn){
 	int error;
 	
 	if (fadeIn){
-		error = Mix_FadeInMusic(music, (loop ? -1: 1), 2500);
+		error = Mix_FadeInMusic(music, (loop ? -1: 1), fadeTime);
 	} else{
 		error = Mix_PlayMusic(music, (loop ? -1: 1));
 	}
@@ -92,7 +95,7 @@ void jukebox::resumeMusic(){
 
 void jukebox::haltMusic(bool fadeOut){
 	if (fadeOut){
-		Mix_FadeOutMusic(2500);
+		Mix_FadeOutMusic(fadeTime);
 	} else{
 		Mix_HaltMusic();
 	}
@@ -120,3 +123,14 @@ bool jukebox::musicIsPlaying(){
 	return (Mix_PlayingMusic() && !Mix_PausedMusic());
 }
 
+void jukebox::setFade(int fade){
+	if (fade<0){
+		fade = 0;
+	}
+	fadeTime = fade;
+}
+
+void jukebox::update(){
+	if (delay>0)
+		delay -= 1;
+}

@@ -358,6 +358,7 @@ void level::updatePlayer(control *c){
 		if (c->evJump){
 			if (solid[iesimo] && (playerState != player::stJump) && (playerState != player::stDash)){
 				spdY -= 10;
+				playSound("jumpSound");
 				jugador->setState(player::stJump);
 			}
 		}
@@ -594,6 +595,7 @@ void level::updateKey(){
 				SDL_Rect* pos = llave->getColBox();
 				if ((abs(pos->x+pos->w/2-playerX) <= 48) && (abs(pos->y+pos->h/2-playerY) <= 48)){
 					llave->pick();
+					playSound("keySound");
 				}
 			}
 		}

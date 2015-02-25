@@ -32,6 +32,10 @@ ghost::~ghost(){
 
 void ghost::step(level* lvl){
 	if (alive){
+	
+		if (hurt && hurtTimer >= 2){
+			lvl->playSound("ghostSound");
+		}
 		
 		timer -= 0.1;
 		

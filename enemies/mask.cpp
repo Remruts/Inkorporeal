@@ -20,6 +20,7 @@ mask::mask(LTexture* sprt, int X, int Y) : enemy(sprt, X, Y){
 	
 	lives = 10;
 	maxLives = lives;
+	timer = 1;
 }
 
 mask::~mask(){
@@ -31,6 +32,12 @@ mask::~mask(){
 
 void mask::step(level* lvl){
 	if (alive){
+	
+		timer -= 1;
+		if (timer == 0){
+			lvl->playSound("warningSound");
+			timer = 120+rand()%120;
+		}
 		
 		lvl->getPlayerPos(playerX, playerY);
 		playerX = playerX - x;

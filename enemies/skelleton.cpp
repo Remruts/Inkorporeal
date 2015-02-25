@@ -48,6 +48,7 @@ void skelleton::step(level* lvl){
 	
 	if (alive){
 		
+
 		int colDisplace;
 		if (spdY>=0){
 			colDisplace = lvl->vRaySolid(colBox.y+colBox.h, colBox.y+colBox.h+spdY+1, colBox.x+colBox.w/2);
@@ -100,6 +101,7 @@ void skelleton::step(level* lvl){
 		
 		if (currentAnim == shootingAnim){
 			if (currentAnim->getCurrentFrame() == 2 && shooting){
+				lvl->playSound("shootSound2");
 				thrownbone* bone = new thrownbone(spritesheet, x, y, facingRight);
 				lvl->addEnemyBullet(bone);
 				shooting = false;

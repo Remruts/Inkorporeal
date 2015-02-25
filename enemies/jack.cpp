@@ -53,6 +53,7 @@ void jack::step(level* lvl){
 			state = stEscape;
 			spdY = -2;
 			timer = 120;
+			lvl->playSound("shootSound2");
 			lvl->addEnemyBullet(new jackFire(spritesheet, x, y, 4*(double(playerX)/normalized), 4*(double(playerY)/normalized)));
 		}
 		
@@ -73,6 +74,7 @@ void jack::step(level* lvl){
 		break;
 		
 		case stShoot:
+			lvl->playSound("shootSound2");
 			lvl->addEnemyBullet(new jackFire(spritesheet, x, y, 4*(double(playerX)/normalized), 4*(double(playerY)/normalized)));
 			state = stRandom;
 		break;

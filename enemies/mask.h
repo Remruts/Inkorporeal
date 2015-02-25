@@ -15,6 +15,7 @@ private:
 	animation* movingAnim;
 	int playerX, playerY;
 	double normalized; //meh
+	int timer;
 };
 
 #endif

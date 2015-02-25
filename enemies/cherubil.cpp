@@ -59,6 +59,7 @@ void cherubil::step(level* lvl){
 			facingRight = (playerX >= 0);
 			
 			if (int(timer)%50 == 0){
+				lvl->playSound("shootSound2");
 				lvl->addEnemyBullet(new cherubilArrow(spritesheet, x, y, 
 					6*(double(playerX)/normalized), 8*(double(playerY)/normalized), rand()%2));
 			}

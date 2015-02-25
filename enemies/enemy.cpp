@@ -217,7 +217,7 @@ enemyBullet::~enemyBullet(){
 void enemyBullet::step(level* lvl){
 	
 	
-	if (life == 0){
+	if (alive && life == 0){
 		alive = false;
 	}
 	life -= 1;

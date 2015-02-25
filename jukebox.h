@@ -30,8 +30,15 @@ public:
 	float getMusicVolume();
 	bool musicIsPlaying();
 	
+	void setFade(int); 	// setea tiempo para fade In/Out en ms
+	void update();		// resetea "delay"
+	
 private:
 	float soundVolume, musicVolume;
+	int fadeTime;
+	// Este "delay" existe para que no se escuchen sonidos muy juntos, produciendo ruido
+	// además, achica la cantidad de "canales" que son necesarios para el audio
+	float delay; 
 };
 
 #endif

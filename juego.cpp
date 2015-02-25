@@ -136,21 +136,27 @@ juego::juego(painter* p, jukebox* b){
 	continueSelected = true;
 	
 	soundBank["coinSound"] = bach->loadSound("sounds/coin.wav");
-	bach->soundSetVolume(soundBank["coinSound"], 0.4);
+	bach->soundSetVolume(soundBank["coinSound"], 0.2);
 	if (!soundBank["coinSound"]){
 		std::cout << "Error al cargar sonido de moneda. " << std::endl;
 	}
 	
-	soundBank["dashSound"] = bach->loadSound("sounds/inazumakick.wav");
-	bach->soundSetVolume(soundBank["dashSound"], 0.8);
+	soundBank["dashSound"] = bach->loadSound("sounds/firethrow.wav");
+	bach->soundSetVolume(soundBank["dashSound"], 0.6);
 	if (!soundBank["dashSound"]){
 		std::cout << "Error al cargar sonido de dash. " << std::endl;
 	}
 	
 	soundBank["shootSound"] = bach->loadSound("sounds/pchew.wav");
-	bach->soundSetVolume(soundBank["shootSound"], 0.6);
+	bach->soundSetVolume(soundBank["shootSound"], 0.4);
 	if (!soundBank["shootSound"]){
 		std::cout << "Error al cargar sonido de disparo. " << std::endl;
+	}
+	
+	soundBank["shootSound2"] = bach->loadSound("sounds/inazumakick.wav");
+	bach->soundSetVolume(soundBank["shootSound2"], 0.6);
+	if (!soundBank["shootSound2"]){
+		std::cout << "Error al cargar sonido de disparo2. " << std::endl;
 	}
 	
 	soundBank["getHitSound"] = bach->loadSound("sounds/large_footsteps.wav");
@@ -160,10 +166,43 @@ juego::juego(painter* p, jukebox* b){
 	}
 	
 	soundBank["explosionSound"] = bach->loadSound("sounds/hit.wav");
-	bach->soundSetVolume(soundBank["explosionSound"], 1);
 	if (!soundBank["explosionSound"]){
 		std::cout << "Error al cargar sonido de explosion. " << std::endl;
 	}
+	
+	soundBank["jumpSound"] = bach->loadSound("sounds/jump0.wav");
+	if (!soundBank["jumpSound"]){
+		std::cout << "Error al cargar sonido de salto. " << std::endl;
+	}
+	
+	soundBank["batSound"] = bach->loadSound("sounds/jump0.wav");
+	bach->soundSetVolume(soundBank["batSound"], 0.4);
+	if (!soundBank["batSound"]){
+		std::cout << "Error al cargar sonido de murciélago. " << std::endl;
+	}
+	
+	soundBank["warningSound"] = bach->loadSound("sounds/suspense.wav");
+	if (!soundBank["warningSound"]){
+		std::cout << "Error al cargar sonido de warning. " << std::endl;
+	}
+	
+	soundBank["ghostSound"] = bach->loadSound("sounds/aw.wav");
+	if (!soundBank["ghostSound"]){
+		std::cout << "Error al cargar sonido de fantasma " << std::endl;
+	}
+	
+	soundBank["heartSound"] = bach->loadSound("sounds/uip.wav");
+	bach->soundSetVolume(soundBank["heartSound"], 0.4);
+	if (!soundBank["heartSound"]){
+		std::cout << "Error al cargar sonido de corazón " << std::endl;
+	}
+	
+	soundBank["keySound"] = bach->loadSound("sounds/keyTake.wav");
+	//bach->soundSetVolume(soundBank["keySound"], 0.4);
+	if (!soundBank["keySound"]){
+		std::cout << "Error al cargar sonido de llave " << std::endl;
+	}
+	
 	
 	musicBank["levelMusic"] = bach->loadMusic("music/Nightmare.mp3");
 	if (!musicBank["levelMusic"]){
@@ -176,8 +215,8 @@ juego::juego(painter* p, jukebox* b){
 	//Creo un jugador nuevo
 	jugador = new player(playerSprites);
 	
-	levelNum = 0;
-	maxLevel = 14;
+	levelNum = 8;
+	maxLevel = 13;
 	transTimer = 3.0;
 	effectTimer = 0;
 	mainMenu = new menu(leonardo); //creo el menu
@@ -298,6 +337,7 @@ void juego::step(control* c){
 	
 	if (c->esc){
 		running = false; //For debugging purposes
+		return;
 		/*
 		c->esc = false;
 		if ((currentScreen == stPlaying || currentScreen == stPaused)){
@@ -318,6 +358,8 @@ void juego::step(control* c){
 		}
 		*/
 	}
+	
+	bach->update();
 	
 	if (currentScreen == stPressStart){
 		effectTimer += 2;
