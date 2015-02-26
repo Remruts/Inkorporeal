@@ -198,7 +198,7 @@ juego::juego(painter* p, jukebox* b){
 	}
 	
 	soundBank["keySound"] = bach->loadSound("sounds/keyTake.wav");
-	//bach->soundSetVolume(soundBank["keySound"], 0.4);
+	bach->soundSetVolume(soundBank["keySound"], 0.4);
 	if (!soundBank["keySound"]){
 		std::cout << "Error al cargar sonido de llave " << std::endl;
 	}
@@ -213,6 +213,11 @@ juego::juego(painter* p, jukebox* b){
 	bach->soundSetVolume(soundBank["selectSound"], 0.6);
 	if (!soundBank["selectSound"]){
 		std::cout << "Error al cargar sonido de selección " << std::endl;
+	}
+	
+	soundBank["shutterSound"] = bach->loadSound("sounds/shutter.wav");
+	if (!soundBank["shutterSound"]){
+		std::cout << "Error al cargar sonido de shutter " << std::endl;
 	}
 	
 	musicBank["levelMusic"] = bach->loadMusic("music/Nightmare.mp3");
@@ -369,6 +374,10 @@ void juego::step(control* c){
 			return; 
 		}
 		*/
+	}
+	
+	if (c->evScreenshot){
+		bach->playSound(soundBank["shutterSound"]);
 	}
 	
 	bach->update();
@@ -962,6 +971,11 @@ void menu::draw(painter* pintor){
 			}
 		break;
 		case 2:
+			
+			pintor->setColor(255, 255, 255, 255);
+			pintor->drawLine(570, 530, 790, 530);
+			pintor->drawLine(570, 658, 790, 658);
+			
 			if (selected){
 				pintor->draw(cursor, 0, 0, 0, 0, 495+sin(timer/30*3.1415)*4, 599);
 				pintor->drawEx(cursor, 0, 0, 0, 0, 820-sin(timer/30*3.1415)*4, 599, 0, 0, 0, 1);

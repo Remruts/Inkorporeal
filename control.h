@@ -25,6 +25,8 @@ public:
 	bool evStart;
 	bool esc;
 	bool anyKey;
+	
+	bool evScreenshot;
 
 private:
 	

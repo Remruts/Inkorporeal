@@ -12,6 +12,7 @@ control::control(){
 	evDown = false;
 	anyKey = false;
 	esc = false;
+	evScreenshot = false;
 }
 
 control::~control(){
@@ -90,6 +91,10 @@ void control::update(SDL_Event* ev){
 			evStart = true;
 		break;
 		
+		case SDLK_p:
+			evScreenshot = true;
+		break;
+		
 		default:
 		break;
 		}
@@ -162,6 +167,10 @@ void control::update(SDL_Event* ev){
 		
 		case SDLK_RETURN:
 			evStart = false;
+		break;
+		
+		case SDLK_p:
+			evScreenshot = false;
 		break;
 		
 		default:

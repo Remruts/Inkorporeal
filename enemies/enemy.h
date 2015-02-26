@@ -78,6 +78,4 @@ protected:
 	animation* currentAnim;
 };
 
-
-
 #endif

@@ -56,7 +56,7 @@ public:
 	void setValue(unsigned int V);
 	void getRandomColor(unsigned int &R, unsigned int &G, unsigned int &B);
 	void hsvToRgb(unsigned int H, double V, double S, unsigned int &R, unsigned int &G, unsigned int &B);
-
+	
 private:
 	SDL_Renderer *canvas;
 	SDL_Rect rect;
