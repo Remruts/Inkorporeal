@@ -487,11 +487,11 @@ void level::updateEnemies(){
 
 				if (hardcoreMode){
 					if (enemyList.size() == 1){
-						llave = new key(doorSheet, x, y);
+						addKey(x, y);
 					}
 				} else{
 					if ((lvlType == 1) && (llave == NULL) && (rand()%enemyList.size() == 0)){
-						llave = new key(doorSheet, x, y);
+						addKey(x, y);
 					}
 				}
 				
@@ -765,6 +765,7 @@ void level::addPickup(pickup* p){
 
 void level::addKey(int X, int Y){
 	llave = new key(doorSheet, X, Y);
+	playSound("keyAppearsSound");
 }
 
 void level::draw(){	

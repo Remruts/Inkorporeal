@@ -111,7 +111,7 @@ private:
 
 class menu{
 public:
-	menu(painter*);
+	menu(juego*);
 	~menu();
 	
 	void start(); 	// Función para comenzar
@@ -133,6 +133,11 @@ private:
 	LTexture* menuSprites;
 	LTexture* cursor;
 	LTexture* optionSprites;
+	LTexture* soundSprites;
+	
+	// sonido
+	jukebox* bach;
+	map<string, Mix_Chunk*>* soundBank; //sonidos
 };
 
 #endif

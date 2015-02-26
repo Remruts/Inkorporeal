@@ -37,8 +37,6 @@ void jukebox::soundSetVolume(Mix_Chunk* sound, float volume){
 		volume = 1;
 	}
 	
-	soundVolume = volume;
-	
 	Mix_VolumeChunk(sound, MIX_MAX_VOLUME*volume);
 }
 
@@ -53,6 +51,7 @@ void jukebox::setGeneralSoundVolume(float volume){
 		volume = 1;
 	}
 	
+	soundVolume = volume;
 	Mix_Volume(-1, MIX_MAX_VOLUME*volume);
 }
 

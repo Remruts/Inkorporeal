@@ -203,6 +203,17 @@ juego::juego(painter* p, jukebox* b){
 		std::cout << "Error al cargar sonido de llave " << std::endl;
 	}
 	
+	soundBank["keyAppearsSound"] = bach->loadSound("sounds/halo.wav");
+	bach->soundSetVolume(soundBank["keyAppearsSound"], 0.6);
+	if (!soundBank["keyAppearsSound"]){
+		std::cout << "Error al cargar sonido de llave2 " << std::endl;
+	}
+	
+	soundBank["selectSound"] = bach->loadSound("sounds/tut.wav");
+	bach->soundSetVolume(soundBank["selectSound"], 0.6);
+	if (!soundBank["selectSound"]){
+		std::cout << "Error al cargar sonido de selección " << std::endl;
+	}
 	
 	musicBank["levelMusic"] = bach->loadMusic("music/Nightmare.mp3");
 	if (!musicBank["levelMusic"]){
@@ -219,11 +230,12 @@ juego::juego(painter* p, jukebox* b){
 	maxLevel = 13;
 	transTimer = 3.0;
 	effectTimer = 0;
-	mainMenu = new menu(leonardo); //creo el menu
+	mainMenu = new menu(this); //creo el menu
 	//Cargo el nivel
 	currentLevel = new level("levels/level0.lvl", this);
-	//currentScreen = stPressStart;
-	currentScreen = stTransition0;
+	currentScreen = stPressStart;
+	//currentScreen = stTransition0;
+	//bach->playMusic(musicBank["levelMusic"], 1, 0);
 }
 
 juego::~juego(){
@@ -365,6 +377,7 @@ void juego::step(control* c){
 		effectTimer += 2;
 		effectTimer = int(effectTimer)%360;
 		if (c->evStart || c->evShoot){
+			bach->playSound(soundBank["dashSound"]);
 			currentScreen = stMainMenu;
 			mainMenu->start();
 			c->evShoot = false;
@@ -375,7 +388,7 @@ void juego::step(control* c){
 	if (currentScreen == stMainMenu){
 		effectTimer += 2;
 		effectTimer = int(effectTimer)%360;
-		
+
 		mainMenu->step(c);
 		if(mainMenu->goToNext() > 0){
 			hardcoreMode = mainMenu->goToNext()-1;
@@ -465,6 +478,7 @@ void juego::step(control* c){
 		
 		if ((c->evShoot) || (c->evMelee) || (c->evStart) ){
 			//currentScreen = stMainMenu;
+			bach->playSound(soundBank["dashSound"]);
 			if (hardcoreMode){
 				currentScreen = stPressStart;
 				mainMenu->start();
@@ -491,6 +505,7 @@ void juego::step(control* c){
 		}
 		
 		if (c->evLeft || c->evRight){
+			bach->playSound(soundBank["selectSound"]);
 			continueSelected = !continueSelected;
 			c->evLeft = false;
 			c->evRight = false;
@@ -658,169 +673,6 @@ map<string, Mix_Music* >* juego::getMusicBank(){
 	return &musicBank;
 }
 
-//Termina "juego"
-
-//empieza menú
-menu::menu(painter* leonardo){
-	menuSprites = leonardo->loadTexture("graphics/menu_sprites.png");
-	if (menuSprites == NULL){
-		std::cout << "Error al cargar los gráficos del menú. (1/3)" << std::endl;
-		exit(1);
-	}
-	
-	cursor = leonardo->loadTexture("graphics/marker.png");
-	if (cursor == NULL){
-		std::cout << "Error al cargar los gráficos del menú. (2/3)" << std::endl;
-		exit(1);
-	}
-	
-	optionSprites = leonardo->loadTexture("graphics/regular_hardcore.png");
-	if (optionSprites == NULL){
-		std::cout << "Error al cargar los gráficos del menú. (3/3)" << std::endl;
-		exit(1);
-	}
-	
-	alive = false;
-	selected = 0;
-	screen = 0;
-	transitioning = false;
-	timer = 60.0;
-}
-
-menu::~menu(){
-
-	if (menuSprites != NULL){
-		delete menuSprites;
-		menuSprites = NULL;
-	}
-	
-	if (cursor != NULL){
-		delete cursor;
-		cursor = NULL;
-	}
-	
-	if (optionSprites != NULL){
-		delete optionSprites;
-		optionSprites = NULL;
-	}
-}
-
-void menu::start(){
-	alive = true;
-	selected = 0;
-	screen = 0;
-	timer = 60;
-}
-
-void menu::end(){
-	alive = false;
-}
-	
-unsigned int menu::goToNext(){
-	if ((!alive) && (screen == 1)){
-		return selected+1;
-	} else {
-		return 0;
-	}
-}
-	
-void menu::step(control* ctrl){
-	if (alive){
-		timer -= 1;
-		
-		if (timer <= 0){
-			timer = 60.0;
-		}
-		switch(screen){
-		case 0:
-			if (ctrl->evDown){
-				selected+=1;
-				if (selected > 2){
-					selected = 0;
-				}
-				ctrl->evDown = false;
-			}
-			if (ctrl->evJump){
-				selected-=1;
-				if (selected > 2){
-					selected = 2;
-				}
-				ctrl->evJump = false;
-			}
-			if (ctrl->evShoot || ctrl->evStart){
-				if (selected == 0){
-					screen = 1;
-				} else if (selected == 1){
-					
-				} else if (selected == 2){
-					exit(1);
-				}
-				ctrl->evShoot = false;
-				ctrl->evStart = false;
-			}
-		break;
-		case 1:
-			if (ctrl->evDown || ctrl->evJump){
-				selected = !selected;
-				ctrl->evJump = false;
-				ctrl->evDown = false;
-			}
-			if (ctrl->evShoot || ctrl->evStart){
-				end();
-				ctrl->evShoot = false;
-				ctrl->evStart = false;
-			}
-			if (ctrl->evDash){
-				selected = 0;
-				screen = 0;
-			}
-		break;
-		default:
-		break;
-		}
-	}
-}
-
-void menu::draw(painter* pintor){
-	if (alive){
-		switch(screen){
-		case 0:
-			pintor->draw(menuSprites, 0, 0, 0, 0, 560, 500);
-			
-			switch(selected){
-			case 0:
-				pintor->draw(cursor, 0, 0, 0, 0, 550+sin(timer/30*3.1415)*4, 510);
-				pintor->drawEx(cursor, 0, 0, 0, 0, 763-sin(timer/30*3.1415)*4, 510, 0, 0, 0, 1);
-			break;
-			case 1:
-				pintor->draw(cursor, 0, 0, 0, 0, 500+sin(timer/30*3.1415)*4, 570);
-				pintor->drawEx(cursor, 0, 0, 0, 0, 820-sin(timer/30*3.1415)*4, 570, 0, 0, 0, 1);
-			break;
-			case 2:
-				pintor->draw(cursor, 0, 0, 0, 0, 550+sin(timer/30*3.1415)*4, 636);
-				pintor->drawEx(cursor, 0, 0, 0, 0, 763-sin(timer/30*3.1415)*4, 636, 0, 0, 0, 1);
-			break;
-			}
-
-		break;
-		case 1:
-			if (optionSprites != NULL){
-				pintor->draw(optionSprites, 0, 0, 0, 0, 560, 500);
-			}
-			if (selected){
-				pintor->draw(cursor, 0, 0, 0, 0, 500+sin(timer/30*3.1415)*4, 599);
-				pintor->drawEx(cursor, 0, 0, 0, 0, 820-sin(timer/30*3.1415)*4, 599, 0, 0, 0, 1);
-			} else {
-				pintor->draw(cursor, 0, 0, 0, 0, 510+sin(timer/30*3.1415)*4, 540);
-				pintor->drawEx(cursor, 0, 0, 0, 0, 810-sin(timer/30*3.1415)*4, 540, 0, 0, 0, 1);
-			}
-
-		default:
-		break;
-		}
-	}
-}
-
 void juego::loadHighscore(){
 	std::ifstream archivo;
 	highscore = 0;
@@ -894,3 +746,248 @@ void juego::saveHighscore(){
 	archivo->close();
 	delete archivo;
 }
+
+//Termina "juego"
+
+//empieza menú
+menu::menu(juego* game){
+
+	bach = game->getJukebox();
+	soundBank = game->getSoundBank();
+	painter* leonardo = game->getPainter();
+	
+	menuSprites = leonardo->loadTexture("graphics/menu_sprites.png");
+	if (menuSprites == NULL){
+		std::cout << "Error al cargar los gráficos del menú. (1/4)" << std::endl;
+		exit(1);
+	}
+	
+	cursor = leonardo->loadTexture("graphics/marker.png");
+	if (cursor == NULL){
+		std::cout << "Error al cargar los gráficos del menú. (2/4)" << std::endl;
+		exit(1);
+	}
+	
+	optionSprites = leonardo->loadTexture("graphics/regular_hardcore.png");
+	if (optionSprites == NULL){
+		std::cout << "Error al cargar los gráficos del menú. (3/4)" << std::endl;
+		exit(1);
+	}
+	
+	soundSprites = leonardo->loadTexture("graphics/soundMusic.png");
+	if (soundSprites == NULL){
+		std::cout << "Error al cargar los gráficos del menú. (4/4)" << std::endl;
+		exit(1);
+	}
+	
+	alive = false;
+	selected = 0;
+	screen = 0;
+	transitioning = false;
+	timer = 60.0;
+}
+
+menu::~menu(){
+
+	if (menuSprites != NULL){
+		delete menuSprites;
+		menuSprites = NULL;
+	}
+	
+	if (cursor != NULL){
+		delete cursor;
+		cursor = NULL;
+	}
+	
+	if (optionSprites != NULL){
+		delete optionSprites;
+		optionSprites = NULL;
+	}
+	
+	if (soundSprites != NULL){
+		delete soundSprites;
+		soundSprites = NULL;
+	}
+}
+
+void menu::start(){
+	alive = true;
+	selected = 0;
+	screen = 0;
+	timer = 60;
+}
+
+void menu::end(){
+	alive = false;
+}
+	
+unsigned int menu::goToNext(){
+	if ((!alive) && (screen == 1)){
+		return selected+1;
+	} else {
+		return 0;
+	}
+}
+	
+void menu::step(control* ctrl){
+	if (alive){
+		timer -= 1;
+		
+		if (timer <= 0){
+			timer = 60.0;
+		}
+		switch(screen){
+		case 0:
+			if (ctrl->evDown){
+				selected+=1;
+				if (selected > 2){
+					selected = 0;
+				}
+				ctrl->evDown = false;
+				bach->playSound((*soundBank)["selectSound"]);
+			}
+			if (ctrl->evJump){
+				selected-=1;
+				if (selected > 2){
+					selected = 2;
+				}
+				ctrl->evJump = false;
+				bach->playSound((*soundBank)["selectSound"]);
+			}
+			if (ctrl->evShoot || ctrl->evStart){
+				if (selected == 0){
+					screen = 1;
+				} else if (selected == 1){
+					screen = 2;
+					selected = 0;
+				} else if (selected == 2){
+					exit(1);
+				}
+				ctrl->evShoot = false;
+				ctrl->evStart = false;
+				bach->playSound((*soundBank)["dashSound"]);
+			}
+		break;
+		case 1:
+			if (ctrl->evDown || ctrl->evJump){
+				bach->playSound((*soundBank)["selectSound"]);
+				selected = !selected;
+				ctrl->evJump = false;
+				ctrl->evDown = false;
+			}
+			if (ctrl->evShoot || ctrl->evStart){
+				bach->playSound((*soundBank)["dashSound"]);
+				end();
+				ctrl->evShoot = false;
+				ctrl->evStart = false;
+			}
+			if (ctrl->evDash){
+				selected = 0;
+				screen = 0;
+			}
+		break;
+		case 2:
+			if (ctrl->evDown || ctrl->evJump){
+				bach->playSound((*soundBank)["selectSound"]);
+				selected = !selected;
+				ctrl->evJump = false;
+				ctrl->evDown = false;
+			}
+			
+			if (ctrl->evLeft){
+				if (selected){
+					bach->musicSetVolume(bach->getMusicVolume()-0.1);
+				} else {
+					bach->playSound((*soundBank)["selectSound"]);
+					bach->setGeneralSoundVolume(bach->getGeneralSoundVolume()-0.1);
+				}
+				
+				ctrl->evLeft = false;
+			}
+			
+			if (ctrl->evRight){
+				if (selected){
+					bach->musicSetVolume(bach->getMusicVolume()+0.1);
+				} else {
+					bach->playSound((*soundBank)["selectSound"]);
+					bach->setGeneralSoundVolume(bach->getGeneralSoundVolume()+0.1);
+				}
+				
+				ctrl->evRight = false;
+			}
+			
+			if (ctrl->evDash){
+				selected = 1;
+				screen = 0;
+			}
+		break;
+		default:
+		break;
+		}
+	}
+}
+
+void menu::draw(painter* pintor){
+	if (alive){
+		switch(screen){
+		case 0:
+			pintor->draw(menuSprites, 0, 0, 0, 0, 560, 500);
+			
+			switch(selected){
+			case 0:
+				pintor->draw(cursor, 0, 0, 0, 0, 550+sin(timer/30*3.1415)*4, 510);
+				pintor->drawEx(cursor, 0, 0, 0, 0, 763-sin(timer/30*3.1415)*4, 510, 0, 0, 0, 1);
+			break;
+			case 1:
+				pintor->draw(cursor, 0, 0, 0, 0, 500+sin(timer/30*3.1415)*4, 570);
+				pintor->drawEx(cursor, 0, 0, 0, 0, 820-sin(timer/30*3.1415)*4, 570, 0, 0, 0, 1);
+			break;
+			case 2:
+				pintor->draw(cursor, 0, 0, 0, 0, 550+sin(timer/30*3.1415)*4, 636);
+				pintor->drawEx(cursor, 0, 0, 0, 0, 763-sin(timer/30*3.1415)*4, 636, 0, 0, 0, 1);
+			break;
+			}
+
+		break;
+		case 1:
+			if (optionSprites != NULL){
+				pintor->draw(optionSprites, 0, 0, 0, 0, 560, 500);
+			}
+			if (selected){
+				pintor->draw(cursor, 0, 0, 0, 0, 500+sin(timer/30*3.1415)*4, 599);
+				pintor->drawEx(cursor, 0, 0, 0, 0, 820-sin(timer/30*3.1415)*4, 599, 0, 0, 0, 1);
+			} else {
+				pintor->draw(cursor, 0, 0, 0, 0, 510+sin(timer/30*3.1415)*4, 540);
+				pintor->drawEx(cursor, 0, 0, 0, 0, 810-sin(timer/30*3.1415)*4, 540, 0, 0, 0, 1);
+			}
+		break;
+		case 2:
+			if (selected){
+				pintor->draw(cursor, 0, 0, 0, 0, 495+sin(timer/30*3.1415)*4, 599);
+				pintor->drawEx(cursor, 0, 0, 0, 0, 820-sin(timer/30*3.1415)*4, 599, 0, 0, 0, 1);
+			} else {
+				pintor->draw(cursor, 0, 0, 0, 0, 495+sin(timer/30*3.1415)*4, 540);
+				pintor->drawEx(cursor, 0, 0, 0, 0, 820-sin(timer/30*3.1415)*4, 540, 0, 0, 0, 1);
+			}
+			
+			pintor->draw(soundSprites, 0, 0, 48, 48, 547, 539);
+			pintor->draw(soundSprites, 48, 0, 48, 48, 547, 600);
+			
+			pintor->setColor(0x6e, 0x26, 0x97, 255);
+			pintor->drawRect(600, 552, 200*bach->getGeneralSoundVolume(), 24, 1);
+			pintor->setColor(255, 255, 255, 255);
+			pintor->drawRect(600, 552, 200, 24, 0);
+			
+			pintor->setColor(0x6e, 0x26, 0x97, 255);
+			pintor->drawRect(600, 610, 200*bach->getMusicVolume(), 24, 1);
+			pintor->setColor(255, 255, 255, 255);
+			pintor->drawRect(600, 610, 200, 24, 0);
+			pintor->setColor(0x17, 0x17, 0x17, 255);
+		break;
+		
+		default:
+		break;
+		}
+	}
+}
+
