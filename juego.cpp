@@ -235,11 +235,16 @@ juego::juego(painter* p, jukebox* b){
 	maxLevel = 13;
 	transTimer = 3.0;
 	effectTimer = 0;
+	
+	introScreen = new intro(this);
+	outroScreen = new outro(this);
 	mainMenu = new menu(this); //creo el menu
 	//Cargo el nivel
 	currentLevel = new level("levels/level0.lvl", this);
 	currentScreen = stPressStart;
+	nextScreen = stIntro;
 	//currentScreen = stTransition0;
+	//nextScreen = stOutro;
 	//bach->playMusic(musicBank["levelMusic"], 1, 0);
 }
 
@@ -344,6 +349,16 @@ juego::~juego(){
 		delete mainMenu;
 		mainMenu = NULL;
 	}
+	
+	if (introScreen != NULL){
+		delete introScreen;
+		introScreen = NULL;
+	}
+	
+	if (outroScreen != NULL){
+		delete outroScreen;
+		outroScreen = NULL;
+	}
 }
 
 bool juego::isRunning(){
@@ -355,6 +370,7 @@ void juego::step(control* c){
 	if (c->esc){
 		running = false; //For debugging purposes
 		return;
+		
 		/*
 		c->esc = false;
 		if ((currentScreen == stPlaying || currentScreen == stPaused)){
@@ -364,11 +380,12 @@ void juego::step(control* c){
 				jugador = NULL;
 				currentLevel = NULL;
 			}
-			currentScreen = stPressStart;
+			currentScreen = stTransition0;
+			nextScreen = stPressStart;
 			mainMenu->start();
 			levelNum = 0;
 			jugador = new player(playerSprites);
-			currentLevel = new level(string("levels/level")+to_string(levelNum)+string(".lvl"), this);
+			currentLevel = new level(string("levels/level")+std::to_string(levelNum)+string(".lvl"), this);
 		} else if (currentScreen == stPressStart || currentScreen == stMainMenu){
 			running = false;
 			return; 
@@ -401,7 +418,10 @@ void juego::step(control* c){
 		mainMenu->step(c);
 		if(mainMenu->goToNext() > 0){
 			hardcoreMode = mainMenu->goToNext()-1;
+			
+			nextScreen = stIntro;
 			currentScreen = stTransition0;
+			
 			transTimer = 3.0;
 			loadHighscore();
 			currentLevel->setHighscore(highscore);
@@ -415,20 +435,23 @@ void juego::step(control* c){
 		if (currentLevel != NULL){
 			if(currentLevel->isFinished()){
 				if (currentLevel->getState() == level::stWin){
-
+					
+					nextScreen = stPlaying;
 					currentScreen = stTransition0;
 					
 					levelNum += 1;
-					if (levelNum > maxLevel)
+					if (levelNum > maxLevel){
+						nextScreen = stOutro;
 						levelNum = 0;
-					
+					}
+										
 					jugador->reset();
 					jugador->step(currentLevel);
 					delete currentLevel;
 					currentLevel = new level(string("levels/level")+std::to_string(levelNum)+string(".lvl"), this);
 					
 					transTimer = 3.0;
-					
+														
 				} else {
 					
 					delete currentLevel;
@@ -460,10 +483,44 @@ void juego::step(control* c){
 		}
 	}
 	
+	if (currentScreen == stIntro){
+		if (introScreen != NULL){
+			introScreen->step();
+			if (!introScreen->isAlive() || ((c->evShoot) || (c->evMelee) || (c->evStart) )){
+				
+				introScreen->reset();
+				nextScreen = stPlaying;
+				currentScreen = stTransition0;
+				transTimer = 3.0;
+				
+				c->evShoot = false;
+				c->evMelee = false;
+				c->evStart = false;
+			}
+		} 		
+	}
+	
+	if (currentScreen == stOutro){
+		if (outroScreen != NULL){
+			outroScreen->step();
+			if (!outroScreen->isAlive() || ((c->evShoot) || (c->evMelee) || (c->evStart) )){
+			
+				outroScreen->reset();
+				nextScreen = stPressStart;
+				currentScreen = stTransition0;
+				transTimer = 3.0;
+				
+				c->evShoot = false;
+				c->evMelee = false;
+				c->evStart = false;
+			}
+		} 		
+	}
+	
 	if (currentScreen == stTransition0){
 		transTimer -= 0.03;
 		if (transTimer <= 0){
-			currentScreen = stPlaying;
+			currentScreen = nextScreen;
 			transTimer = 3;
 		}
 	}
@@ -489,22 +546,33 @@ void juego::step(control* c){
 			//currentScreen = stMainMenu;
 			bach->playSound(soundBank["dashSound"]);
 			if (hardcoreMode){
-				currentScreen = stPressStart;
+				
+				currentScreen = stTransition0;
+				nextScreen = stPressStart;
+				transTimer = 3.0;
+				
 				mainMenu->start();
 				levelNum = 0;
 				jugador = new player(playerSprites);
 				currentLevel = new level(string("levels/level")+std::to_string(levelNum)+string(".lvl"), this);
-			} else{
+			
+			} else {
 				if (continueSelected){
+				
 					jugador = new player(playerSprites);
 					currentLevel = new level(string("levels/level")+std::to_string(levelNum)+string(".lvl"), this);
+					
 					currentScreen = stTransition0;
+					nextScreen = stPlaying;
 					transTimer = 3.0;
+					
 				} else{
+				
 					leonardo->setColor(120, 0, 0, 255);	
 					leonardo->drawRect(0, 0, 1366, 768, 1);
 					leonardo->setColor(0x17, 0x17, 0x17, 255);
 					hardcoreMode = true;
+					
 				}
 			}
 
@@ -559,8 +627,22 @@ void juego::draw(){
 		leonardo->draw(pressStart, 0, 0, 0, 0, 530, 590);
 	}
 	
+	if (currentScreen == stIntro){
+		if (introScreen != NULL){
+			introScreen->draw(leonardo);
+		}
+	}
+	
+	if (currentScreen == stOutro){
+		if (outroScreen != NULL){
+			outroScreen->draw(leonardo);
+		}
+	}
+	
 	if (currentScreen == stMainMenu){
-		mainMenu->draw(leonardo);
+		if (mainMenu != NULL){
+			mainMenu->draw(leonardo);	
+		}
 	}
 	
 	if (currentScreen == stPlaying){
@@ -582,28 +664,78 @@ void juego::draw(){
 	}
 	
 	if (currentScreen == stTransition0){
-	
 		if (transTimer > 2.0){
 			leonardo->setBlendMode(1);
 			leonardo->setColor(0x17, 0x17, 0x17, int(255*((1.5-transTimer)/1.5f)));
-			
+		
 			leonardo->drawRect(0, 0, 1366, 768, 1); //debería hacer algo con screen_width/screen_height, pero bue
-			
+		
 			leonardo->setBlendMode(0);
 			leonardo->setColor(0x17, 0x17, 0x17, 255);
 		}
 		
-		if ((currentLevel!=NULL) && (transTimer <= 1.5)){
-			currentLevel->draw();
+		if (nextScreen == stIntro){
 			
-			leonardo->setBlendMode(1);
-			leonardo->setColor(0x17, 0x17, 0x17, int(255*(transTimer/1.5f)));
+			if ((introScreen != NULL) && (transTimer <= 1.5)){
+				introScreen->draw(leonardo);
 			
-			leonardo->drawRect(0, 0, 1366, 768, 1); //debería hacer algo con screen_width/screen_height, pero bue
+				leonardo->setBlendMode(1);
+				leonardo->setColor(0x17, 0x17, 0x17, int(255*(transTimer/1.5f)));
 			
-			leonardo->setBlendMode(0);
-			leonardo->setColor(0x17, 0x17, 0x17, 255);
+				leonardo->drawRect(0, 0, 1366, 768, 1); //debería hacer algo con screen_width/screen_height, pero bue
+			
+				leonardo->setBlendMode(0);
+				leonardo->setColor(0x17, 0x17, 0x17, 255);
+			}
+			
+		} else if (nextScreen == stPlaying){
+		
+			if ((currentLevel!=NULL) && (transTimer <= 1.5)){
+				currentLevel->draw();
+			
+				leonardo->setBlendMode(1);
+				leonardo->setColor(0x17, 0x17, 0x17, int(255*(transTimer/1.5f)));
+			
+				leonardo->drawRect(0, 0, 1366, 768, 1); //debería hacer algo con screen_width/screen_height, pero bue
+			
+				leonardo->setBlendMode(0);
+				leonardo->setColor(0x17, 0x17, 0x17, 255);
+			}
+		} else if (nextScreen == stPressStart){
+		
+			if (transTimer <= 1.5){
+				effectTimer = 360;
+			
+				leonardo->draw(titleScreen, 0, 0, 0, 0, 220, 64);
+				
+				pressStart->setAlpha(255);
+				leonardo->draw(pressStart, 0, 0, 0, 0, 530, 590);
+			
+				leonardo->setBlendMode(1);
+				leonardo->setColor(0, 0, 0, int(255*(transTimer/1.5f)));
+			
+				leonardo->drawRect(0, 0, 1366, 768, 1); //debería hacer algo con screen_width/screen_height, pero bue
+			
+				leonardo->setBlendMode(0);
+				leonardo->setColor(0x17, 0x17, 0x17, 255);
+			}
+		} else if (nextScreen == stOutro){
+			
+			if ((outroScreen != NULL) && (transTimer <= 1.5)){
+				outroScreen->draw(leonardo);
+			
+				leonardo->setBlendMode(1);
+				leonardo->setColor(0x17, 0x17, 0x17, int(255*(transTimer/1.5f)));
+			
+				leonardo->drawRect(0, 0, 1366, 768, 1); //debería hacer algo con screen_width/screen_height, pero bue
+			
+				leonardo->setBlendMode(0);
+				leonardo->setColor(0x17, 0x17, 0x17, 255);
+			}
+			
 		}
+		
+		
 	}
 }
 
@@ -1004,4 +1136,249 @@ void menu::draw(painter* pintor){
 		}
 	}
 }
+//end menu
 
+//start intro
+intro::intro(juego* game){
+	
+	painter* leonardo = game->getPainter();
+	
+	introSprites = leonardo->loadTexture("graphics/mansion_intro.png");
+	if (introSprites == NULL){
+		std::cout << "Error al cargar los gráficos de intro" << std::endl;
+		exit(1);
+	}
+	
+	alive = true;
+	timer = 180.0;
+}
+
+intro::~intro(){
+	if (introSprites != NULL){
+		delete introSprites;
+		introSprites = NULL;
+	}
+}
+
+bool intro::isAlive(){
+	return alive;
+}
+
+void intro::reset(){
+	alive = true;
+	timer = 180;
+}
+	
+void intro::step(){
+	if (alive){
+		timer -= 1;
+		if (timer<=0){
+			alive = false;
+		}
+	}
+	
+}
+
+void intro::draw(painter* pintor){
+	pintor->draw(introSprites, (480*(timer/180)), (256*(timer/180)), 896, 416, 224, 32);
+}
+//end intro
+
+//start outro
+outro::outro(juego* game){
+	painter* leonardo = game->getPainter();
+	
+	outroSprites = leonardo->loadTexture("graphics/mansion_outro.png");
+	if (outroSprites == NULL){
+		std::cout << "Error al cargar los gráficos del final 1/3" << std::endl;
+		exit(1);
+	}
+	
+	mansionSprite = leonardo->loadTexture("graphics/mansion.png");
+	if (mansionSprite == NULL){
+		std::cout << "Error al cargar los gráficos del final 2/3" << std::endl;
+		exit(1);
+	}
+	
+	smokeSprites = leonardo->loadTexture("graphics/effects.png");
+	if (smokeSprites == NULL){
+		std::cout << "Error al cargar los gráficos del final 3/3" << std::endl;
+		exit(1);
+	}
+	
+	alive = true;
+	timer = 360.0;
+	timer2 = 300.0;
+	
+}
+
+outro::~outro(){
+	if (outroSprites != NULL){
+		delete outroSprites;
+		outroSprites = NULL;
+	}
+	
+	if (mansionSprite != NULL){
+		delete mansionSprite;
+		mansionSprite = NULL;
+	}
+	
+	if (smokeSprites != NULL){
+		delete smokeSprites;
+		smokeSprites = NULL;
+	}
+	
+	vector<smokeCloud*>::iterator it = parts.begin();
+	while(it != parts.end()){
+		if (*it != NULL){
+			delete *it;
+			*it = NULL;
+			it = parts.erase(it);
+		} else{
+			it++;
+		}
+	}
+}
+
+bool outro::isAlive(){
+	return alive;
+}
+
+void outro::reset(){
+	alive = true;
+	timer = 360.0;
+	timer2 = 300.0;
+}
+	
+void outro::step(){
+	if (alive){
+		if (timer2 > 0){
+			timer2 -= 1;
+		} else if (timer2 < 0){
+			timer2 = 0;
+		}
+			
+		if (timer2 == 0){
+			timer -= 1;
+		}
+		if (timer<=0){
+			alive = false;
+		}
+		
+		rnum = (rand()%9)-4;
+	}
+	
+	int max = 12*(timer/360)*(timer/360);
+	
+	if (timer < 160){
+		max = 0;
+	}
+	
+	for (int i = 0; i < max; ++i){
+		parts.push_back(new smokeCloud(500+rand()%225-480*(1-timer/360), 220+rand()%21-10-256*(1-timer/360), smokeSprites));
+	}
+		
+	vector<smokeCloud*>::iterator it = parts.begin();
+	while(it != parts.end()){
+		if ((*it) != NULL && (*it)->isAlive()){
+			(*it)->step();
+			it++;
+		} else {
+			if (*it != NULL)
+				delete *it;
+			*it = NULL;
+			it = parts.erase(it);
+		}
+	}
+}
+
+void outro::draw(painter* pintor){
+	pintor->draw(outroSprites, 480-(480*(timer/360)), 256-(256*(timer/360)), 896, 416, 224, 32);
+	//0 es un caso raro... No sé porqué
+	if (timer2 > 1){
+		pintor->draw(mansionSprite, 0, 0, 256, 204*(timer2/300.0), 500+rnum, 48+204*(1-(timer2/300.0)));
+		mansionSprite->setAlpha(100);
+		pintor->drawEx(mansionSprite, 0, 0, 256, 204*(timer2/300.0), 500+rnum, 251, 
+			256, 204*0.7143*(timer2/300.0), 0, 2);
+		mansionSprite->setAlpha(255);
+	}
+	
+	vector<smokeCloud*>::iterator it = parts.begin();
+	while(it != parts.end()){
+		if ((*it) != NULL && (*it)->isAlive()){
+			(*it)->draw(pintor);
+		}
+		it++;
+	}
+}
+//end outro
+
+//start smokeCloud
+smokeCloud::smokeCloud(int X, int Y, LTexture* sprt){
+	x = X;
+	y = Y;
+	sprite = sprt;
+	alive = true;
+	life = 10+rand()%10;
+	maxLife = life;
+	angle = rand()%361;
+	type = rand()%3;
+	if (type == 2){
+		y-=32;
+	}
+}
+
+smokeCloud::~smokeCloud(){
+	
+}
+	
+bool smokeCloud::isAlive(){
+	return alive;
+}
+	
+void smokeCloud::step(){
+	if (alive){
+		life -= 1;
+		if (life<=0){
+			alive = false;
+		}
+		
+		angle+=10;
+		
+		if (angle>360){
+			angle -= 360;
+		}
+		y-= 2;
+		x += 2*rand()%2 - 1;
+	}
+}
+
+void smokeCloud::draw(painter* pintor){
+	double proportion = life/double(maxLife);
+	
+	if (type == 2){
+		sprite->setAlpha(128*proportion);
+	} else{
+		sprite->setBlendMode(1);
+		sprite->setAlpha(255*proportion);
+	}
+	
+	switch (type){
+	case 0:
+		sprite->setColor(32*proportion, 100*proportion*proportion, 200*proportion);
+	break;
+	case 1:
+		sprite->setColor(200*proportion, 100*proportion*proportion, 32*proportion); 
+	break;
+	case 2:
+		sprite->setColor(32*proportion, 32*proportion, 32*proportion);
+	break;
+	}
+	
+	pintor->drawEx(sprite, 0, 0, 32, 32, x+16, y+16, 32, 32, angle, 0);
+	
+	sprite->setColor(255, 255, 255);
+	sprite->setAlpha(255);
+	sprite->setBlendMode(0);
+}
+//end smokeCloud

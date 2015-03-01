@@ -12,20 +12,26 @@
 #include <string>
 #include <utility>
 #include <fstream>
+#include <vector>
 
 //fd
 class player;
 class level;
 class menu;
+class intro;
+class outro;
+class smokeCloud;
 
 using std::map;
 using std::string;
 using std::pair;
+using std::vector;
 
 class juego{
 public:
 
-	enum gameState {stPressStart, stMainMenu, stPlaying, stTransition0, stTransition1, stGameOver, stPaused};
+	enum gameState {stPressStart, stMainMenu, stIntro, stPlaying, 
+		stTransition0, stTransition1, stGameOver, stPaused, stOutro};
 	
 	juego(painter*, jukebox*);
 	~juego();
@@ -69,6 +75,7 @@ private:
 	jukebox* bach;
 	
 	gameState currentScreen;
+	gameState nextScreen;
 	
 	SDL_Surface* tiles; //puntero a Surface de tiles
 	SDL_Surface* props; //puntero a Surface de props
@@ -106,7 +113,8 @@ private:
 	double effectTimer;
 	
 	menu* mainMenu;
-	
+	intro* introScreen;
+	outro* outroScreen;
 };
 
 class menu{
@@ -138,6 +146,67 @@ private:
 	// sonido
 	jukebox* bach;
 	map<string, Mix_Chunk*>* soundBank; //sonidos
+};
+
+class intro{
+public:
+	intro(juego*);
+	~intro();
+	
+	bool isAlive();
+	
+	void reset();
+	
+	void step();
+	void draw(painter*);
+	
+private:
+	LTexture* introSprites;
+	
+	bool alive;
+	double timer;
+};
+
+class outro{
+public:
+	outro(juego*);
+	~outro();
+	
+	bool isAlive();
+	
+	void reset();
+	
+	void step();
+	void draw(painter*);
+	
+private:
+	LTexture* outroSprites;
+	LTexture* mansionSprite;
+	LTexture* smokeSprites;
+	
+	bool alive;
+	double timer, timer2;
+	int rnum;
+	
+	vector<smokeCloud*> parts;
+};
+
+class smokeCloud{
+public:
+	smokeCloud(int, int, LTexture*);
+	~smokeCloud();
+	
+	bool isAlive();
+	
+	void step();
+	void draw(painter*);
+private:
+	LTexture* sprite;
+	int type;
+	int x, y;
+	int life, maxLife;
+	double angle;
+	bool alive;
 };
 
 #endif
