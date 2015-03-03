@@ -46,6 +46,7 @@ public:
 	LTexture* getPlayerSprites();
 	LTexture* getEnemySprites();
 	LTexture* getVladSprites();
+	LTexture* getPriestSprites();
 	LTexture* getEffectSheet();
 	LTexture* getCoinSheet();
 	LTexture* getDoorSheet();
@@ -85,6 +86,7 @@ private:
 	LTexture* playerSprites; //puntero a Texture de spritesheet de MC
 	LTexture* enemySprites; //puntero a Texture de spritesheet de enemigos
 	LTexture* vladSprites; //puntero a Texture de spritesheet de vlad
+	LTexture* priestSprites; //puntero a Texture de spritesheet del priest
 	LTexture* effectSheet; //puntero a texture de effectos
 	LTexture* coinSheet; //puntero a texture de moneditas
 	LTexture* doorSheet; //puntero a texture de puerta

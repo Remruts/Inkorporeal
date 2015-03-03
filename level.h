@@ -143,6 +143,7 @@ private:
 	SDL_Surface *tileSheet;
 	LTexture *enemySprites;
 	LTexture *vladSprites; //Sprites de Vlad, duh?
+	LTexture *priestSprites;
 	LTexture *effectSheet;
 	LTexture *coinSheet;
 	LTexture *doorSheet;

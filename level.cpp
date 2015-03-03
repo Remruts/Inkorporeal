@@ -8,6 +8,7 @@
 #include "enemies/jack.h"
 #include "enemies/vlad.h"
 #include "enemies/cherubil.h"
+#include "enemies/priest.h"
 #include <iostream> //debug
 
 using std::vector;
@@ -28,6 +29,7 @@ level::level(const string & filename, juego* game){
 	tileSheet = game->getTilesheet();		// paso puntero a surface de tiles
 	enemySprites = game->getEnemySprites();	// paso puntero a sprites de enemigos
 	vladSprites = game->getVladSprites();	// paso puntero a sprites de Vlad
+	priestSprites = game->getPriestSprites();	// paso puntero a sprites del priest
 	effectSheet = game->getEffectSheet();	// paso puntero a sprites de effectos
 	coinSheet = game->getCoinSheet();		// paso puntero a sprites de monedita
 	doorSheet = game->getDoorSheet();		// paso puntero a sprites de puerta
@@ -1292,7 +1294,9 @@ int level::load(std::istream& is, map<string, pair<int, int> >& posEnSheet){
 					toSpawn = new vlad(vladSprites, pos.x, pos.y);
 				} else if (str == "cherubil"){
 					toSpawn = new cherubil(enemySprites, pos.x, pos.y);
-				} else {
+				} else if (str == "priest"){
+					toSpawn = new priest(priestSprites, pos.x, pos.y);
+				}else {
 					std::cout << "Falla cargar enemigos. Archivo corrupto.\n";
 					exit(1);
 				}

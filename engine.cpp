@@ -149,7 +149,12 @@ Engine::Engine(int w, int h, bool fs){
 	
 	event = new SDL_Event; // No hay forma de que esto muera
 	SDL_ShowCursor(0);
-
+	
+	//Para medir fps
+	frameCount = 0;
+	lastTime = SDL_GetTicks();
+	fpsText = 0;
+	FPS = 0;
 }
 
 Engine::~Engine(){
@@ -184,8 +189,10 @@ void Engine::run(){
 	running = true;
 	
 	while(isRunning()){	
+	
 		step();
 		draw();
+		
 	}
 	
 }
@@ -212,7 +219,24 @@ void Engine::draw(){
 	
 	game->draw();
 	
+	++frameCount;
+	
+	if (SDL_GetTicks() > lastTime + 1000){
+		FPS = frameCount;
+		//std::cout << "fps: " << frameCount << std::endl;
+		lastTime = SDL_GetTicks();
+		frameCount = 0;
+	}
+	
+	fpsText = picasso->textureFromText(std::to_string(int(FPS)) + " fps", 1, 200, 0, 0);
+	if (fpsText != NULL){
+		picasso->draw(fpsText, 0, 0, 0, 0, 16, 16);			
+		picasso->freeTexture(fpsText);
+		fpsText = NULL;
+	}
+	
 	SDL_RenderPresent(gRenderer);	//Update screen 
+		
 }
 
 bool Engine::isRunning(){

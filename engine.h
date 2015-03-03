@@ -7,10 +7,13 @@
 #include <SDL2/SDL_ttf.h>
 #include <iostream>
 #include <string>
+#include <time.h>
 #include "painter.h"
 #include "jukebox.h"
 #include "control.h"
 #include "juego.h"
+
+using std::string;
 
 class Engine{
 public:
@@ -38,6 +41,11 @@ private:
 	juego* game;
 	control* controller;
 	SDL_Event* event;
+	
+	double frameCount;
+	double lastTime;
+	double FPS;
+	LTexture* fpsText;
 };
 
 #endif

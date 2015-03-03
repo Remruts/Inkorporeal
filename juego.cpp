@@ -75,10 +75,17 @@ juego::juego(painter* p, jukebox* b){
 		exit(1);
 	}
 	
-	//cargar spritesheet de enemigos
+	//cargar spritesheet de vlad
 	vladSprites = leonardo->loadTexture("graphics/vlad_sprites.png");
 	if (vladSprites == NULL){
 		std::cout << "Error al cargar los gráficos de Vlad. " << std::endl;
+		exit(1);
+	}
+	
+	//cargar spritesheet de priest
+	priestSprites = leonardo->loadTexture("graphics/priest.png");
+	if (priestSprites == NULL){
+		std::cout << "Error al cargar los gráficos del cura. " << std::endl;
 		exit(1);
 	}
 	
@@ -241,9 +248,10 @@ juego::juego(painter* p, jukebox* b){
 	mainMenu = new menu(this); //creo el menu
 	//Cargo el nivel
 	currentLevel = new level("levels/level0.lvl", this);
-	currentScreen = stPressStart;
-	nextScreen = stIntro;
-	//currentScreen = stTransition0;
+	//currentScreen = stPressStart;
+	//nextScreen = stIntro;
+	currentScreen = stTransition0;
+	nextScreen = stPlaying;
 	//nextScreen = stOutro;
 	//bach->playMusic(musicBank["levelMusic"], 1, 0);
 }
@@ -283,6 +291,11 @@ juego::~juego(){
 	if (vladSprites != NULL){
 		leonardo->freeTexture(vladSprites);
 		vladSprites = NULL;
+	}
+	
+	if (priestSprites != NULL){
+		leonardo->freeTexture(priestSprites);
+		priestSprites = NULL;
 	}
 	
 	if (effectSheet != NULL){
@@ -768,6 +781,10 @@ LTexture* juego::getEnemySprites(){
 
 LTexture* juego::getVladSprites(){
 	return vladSprites;
+}
+
+LTexture* juego::getPriestSprites(){
+	return priestSprites;
 }
 
 LTexture* juego::getEffectSheet(){
