@@ -25,6 +25,8 @@ priest::priest(LTexture* sprt, int X, int Y) : enemy(sprt, X, Y){
 	
 	haloAngle = 0;
 	haloColor = 0;
+	
+	shadowDevil = new demon(spritesheet, x+156, y-32);
 }
 
 priest::~priest(){
@@ -34,6 +36,11 @@ priest::~priest(){
 		movingAnim = NULL;
 	}
 	*/
+	
+	if (shadowDevil != NULL){
+		delete shadowDevil;
+		shadowDevil = NULL;
+	}
 }
 
 void priest::step(level* lvl){
@@ -60,6 +67,10 @@ void priest::step(level* lvl){
 	
 	enemy::step(lvl);
 	
+	if (shadowDevil != NULL){
+		shadowDevil->step(lvl);
+	}
+	
 	colBox.x = x+4;
 	colBox.y = y;
 	
@@ -79,7 +90,7 @@ void priest::draw(painter* pintor){
 	
 	//cool pero MUY ineficiente
 	//for (int i = 0; i < 28; ++i)
-		//drawHalo(pintor, spritesheet, 224+i*33, 400, 270, 1, 3, 1);
+	//	drawHalo(pintor, spritesheet, 224+i*33, 400, 270, 1, 3, 1);
 	
 	int dir;
 	for (int i = 0; i<15; ++i){
@@ -111,6 +122,17 @@ void priest::draw(painter* pintor){
 	//priest
 	pintor->draw(spritesheet, 32, 0, 32, 48, x, y-flap/8);
 	
+	/*
+	//demon	
+	pintor->drawEx(spritesheet, 0, 64, 192, 256, x-96, y-128, 192, 256, 0, 0);
+	pintor->drawEx(spritesheet, 160, 0, 64, 64, x-16, y-72, 64, 64, 0, 0);
+	pintor->setPivot(32, 16);
+	pintor->drawEx(spritesheet, 224, 160, 64, 160, x+40, y, 64, 160, 270+flap, 0);
+	pintor->drawEx(spritesheet, 224, 160, 64, 160, x-90, y, 64, 160, 90-flap, 1);
+	pintor->defaultPivot();
+	*/
+	
+	shadowDevil->draw(pintor);
 	
 	//barra
 	pintor->setColor(0x17, 0x17, 0x17, 255);
@@ -190,4 +212,272 @@ void priest::drawHalo(painter* p, LTexture* cube, int x, int y, double direction
 			drawHalo(p, cube, x+realSize*cos(inRad), y+realSize*sin(inRad), direction, size, counter, colour);
 		}
 	}
+}
+//FIN PRIEST
+
+//LIMBS
+
+limb::limb(LTexture* sprt, limb* padre){
+	
+	spritesheet = sprt;
+	
+	sprtX = 0;
+	sprtY = 0;
+	
+	// default 32
+	sprtSizeX = 32;
+	sprtSizeY = 32;
+	
+	x = 0;
+	y = 0;
+	
+	pivotX = 0;
+	pivotY = 0;
+	
+	angle = 0; 
+	parent  = padre;
+	
+	mirroring = 0;
+}
+
+limb::~limb(){
+	
+}
+
+//posición relativa
+void limb::getPos(int &X, int &Y){
+	X = x;
+	Y = y;
+}
+//ángulo relativo en grados
+double limb::getAngle(){
+	return angle;
+}
+
+//obtener pivote
+void limb::getPivot(int &X, int &Y){
+	X = pivotX;
+	Y = pivotY;
+}
+
+//setear ángulo relativo;
+void limb::setAngle(double ang){
+	if (ang < 0){
+		ang = 360 + int(ang)%360;
+	} else if (ang >= 360){
+		ang = int(ang) % 360;
+	}
+	angle = ang;
+}
+//setear el pivote;
+void limb::setPivot(int X, int Y){
+	pivotX = X;
+	pivotY = Y;
+}
+
+//qué sprite va a ser dibujado
+void limb::setSprite(int X, int Y, int tamX, int tamY){
+	sprtX = X;
+	sprtY = Y;
+	sprtSizeX = tamX;
+	sprtSizeY = tamY;
+}
+
+//espejar: 0=no, 1=horizontal, 2=vertical, 3=ambos.
+void limb::mirror(int m) {
+	if (m<0){
+		m = 0;
+	} else if (m>3){
+		m = m%4;
+	}
+	
+	mirroring = m;
+}
+
+//setear posición
+void limb::setPos(int X, int Y){
+	x = X;
+	y = Y;
+}
+
+//posición real en el mundo
+void limb::getWorldPos(int &X, int &Y){
+	X = 0;
+	Y = 0;
+	
+	limb* nuevoPadre = parent;
+	limb* miembroActual = this;
+	
+	int pivX, pivY;
+	double parentAngle;
+	int dstX, dstY;
+	double magnitud;
+	
+	//Funciona, pero los sprites tienen que estar para abajo y coincidir los pivotes
+	while(nuevoPadre != NULL){
+		
+		
+		nuevoPadre->getPivot(pivX, pivY);
+		
+		//obtengo el ángulo real del padre 
+		parentAngle = nuevoPadre->getWorldAngle();
+		
+		//primero calculo ángulo entre pivote padre y pivote hijo, y magnitud
+		dstX = (miembroActual->x - miembroActual->pivotX)-pivX;
+		dstY = (miembroActual->y - miembroActual->pivotY)-pivY;
+		magnitud = sqrt(dstX*dstX+dstY*dstY);
+		
+		//Luego calculo la posición real
+		X += cos(parentAngle/180.0*3.1415)*magnitud;
+		Y += sin(parentAngle/180.0*3.1415)*magnitud;
+		
+		miembroActual = nuevoPadre;
+		nuevoPadre = miembroActual->parent;
+	}
+	
+	X += miembroActual->x;
+	Y += miembroActual->y;	
+	
+}
+
+//ángulo real
+double limb::getWorldAngle(){
+	limb* nuevoPadre = parent;
+	double res = angle;
+	while (nuevoPadre != NULL){
+		res += nuevoPadre->angle;
+		nuevoPadre = nuevoPadre->parent;
+	}
+	if (res>360){
+		res = int(res)%360;
+	}
+	return res;
+}
+
+//dibujar
+void limb::draw(painter* pintor){
+	limb* miembro = this;
+	int X, Y;
+	while(miembro != NULL){
+		
+		miembro->getWorldPos(X, Y);
+		
+		pintor->setPivot(miembro->pivotX, miembro->pivotY);
+		pintor->drawEx(miembro->spritesheet, miembro->sprtX, miembro->sprtY, miembro->sprtSizeX, miembro->sprtSizeY, X, Y, 
+			miembro->sprtSizeX, miembro->sprtSizeY, miembro->getWorldAngle()-90, miembro->mirroring);
+			
+		miembro = miembro->parent;
+	}
+	pintor->defaultPivot();
+}
+//FIN LIMBS
+
+
+//DEMON
+demon::demon(LTexture* sprt, int X, int Y){
+	spritesheet = sprt;
+	
+	angBrazoIzq = 180;
+	
+	x = X;
+	y = Y;
+	
+	brazoIzq = new limb(sprt, NULL);
+	brazoIzq->setAngle(angBrazoIzq);
+	brazoIzq->setSprite(224, 160, 64, 160);
+	brazoIzq->setPivot(32, 16);
+	brazoIzq->setPos(x-100, y);
+	
+	antebrazoIzq = new limb(sprt, brazoIzq);
+	antebrazoIzq->setAngle(0);
+	antebrazoIzq->setSprite(224, 160, 64, 160);
+	antebrazoIzq->setPivot(32, 16);
+	antebrazoIzq->setPos(0, 140);
+	
+	manoIzq = new limb(sprt, antebrazoIzq);
+	manoIzq->setAngle(0);
+	manoIzq->setSprite(224, 96, 64, 64);
+	manoIzq->setPivot(32, 16);
+	manoIzq->setPos(0, 138);
+	
+	
+	brazoDer = new limb(sprt, NULL);
+	brazoDer->setAngle(angBrazoIzq-180);
+	brazoDer->setSprite(224, 160, 64, 160);
+	brazoDer->setPivot(32, 16);
+	brazoDer->mirror(1);
+	brazoDer->setPos(x+60, y-8);
+	
+	antebrazoDer = new limb(sprt, brazoDer);
+	antebrazoDer->setAngle(0);
+	antebrazoDer->setSprite(224, 160, 64, 160);
+	antebrazoDer->setPivot(32, 16);
+	antebrazoDer->mirror(1);
+	antebrazoDer->setPos(0, 140);
+	
+	manoDer = new limb(sprt, antebrazoDer);
+	manoDer->setAngle(0);
+	manoDer->setSprite(224, 96, 64, 64);
+	manoDer->setPivot(32, 16);
+	manoDer->mirror(1);
+	manoDer->mirror(1);
+	manoDer->setPos(0, 136);
+	
+}
+
+demon::~demon(){
+	if (brazoIzq != NULL){
+		delete brazoIzq;
+		brazoIzq = NULL;
+	}
+	
+	if (brazoDer != NULL){
+		delete brazoDer;
+		brazoDer = NULL;
+	}
+	
+	if (antebrazoIzq != NULL){
+		delete antebrazoIzq;
+		antebrazoIzq = NULL;
+	}
+	
+	if (antebrazoDer != NULL){
+		delete antebrazoDer;
+		antebrazoDer = NULL;
+	}
+	
+	if (manoIzq != NULL){
+		delete manoIzq;
+		manoIzq = NULL;
+	}
+	
+	if (manoDer != NULL){
+		delete manoDer;
+		manoDer = NULL;
+	}
+}
+	
+void demon::step(level* lvl){
+	angBrazoIzq += 1;
+	if (angBrazoIzq > 360){
+		angBrazoIzq = int(angBrazoIzq)%360;
+	}
+	brazoIzq->setAngle(angBrazoIzq);
+	antebrazoIzq->setAngle(angBrazoIzq);
+	manoIzq->setAngle(angBrazoIzq);
+	brazoDer->setAngle(-angBrazoIzq-180);
+	antebrazoDer->setAngle(-angBrazoIzq-180);
+	manoDer->setAngle(-angBrazoIzq-180);
+}
+
+void demon::draw(painter* pintor){
+	//cara y cuerpo
+	if (spritesheet != NULL){
+		pintor->drawEx(spritesheet, 0, 64, 192, 256, x-96, y-128, 192, 256, 0, 0);
+		pintor->drawEx(spritesheet, 160, 0, 64, 64, x-16, y-72, 64, 64, 0, 0);
+	}
+	
+	//brazos
+	manoDer->draw(pintor);
+	manoIzq->draw(pintor);
 }

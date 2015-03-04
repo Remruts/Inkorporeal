@@ -51,6 +51,10 @@ public:
 	
 	void clear(); //limpia la pantalla y updatea el shakeFactor
 	
+	//para rotaciones
+	void setPivot(int X, int Y);
+	void defaultPivot();
+	
 	//generador de colores aleatorio
 	void setSaturation(unsigned int S);
 	void setValue(unsigned int V);
@@ -77,6 +81,9 @@ private:
 	double maxShakeFactor;
 	double shakeFactor;
 	int shakeX, shakeY;
+	
+	//pivote para rotaciones
+	SDL_Point* pivot;
 	
 };
 

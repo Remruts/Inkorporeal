@@ -43,6 +43,9 @@ painter::painter(SDL_Renderer *screen){
 	shakeFactor = 0;
 	shakeX = 0;
 	shakeY = 0;
+	
+	//para rotaciones
+	pivot = NULL;
 }
 
 painter::~painter(){
@@ -65,6 +68,8 @@ painter::~painter(){
 		TTF_CloseFont(ubuntuFont48);
 		ubuntuFont48 = NULL;
 	}
+	
+	defaultPivot();
 	
 }
 
@@ -128,7 +133,7 @@ void painter::drawEx(LTexture *tex, int srcX, int srcY, int srcW, int srcH,
 	}
 	
 	
-	SDL_RenderCopyEx(canvas, tex->getTexture(), &rect, &screen_rect, angle, NULL, flp);
+	SDL_RenderCopyEx(canvas, tex->getTexture(), &rect, &screen_rect, angle, pivot, flp);
 	
 }
 
@@ -314,6 +319,22 @@ void painter::clear(){
 	}
 	
 	SDL_RenderClear(canvas);
+}
+
+void painter::setPivot(int X, int Y){
+	if (pivot == NULL){
+		pivot = new SDL_Point();
+	}
+	pivot->x = X;
+	pivot->y = Y;
+	
+}
+
+void painter::defaultPivot(){
+	if (pivot != NULL){
+		delete pivot;
+		pivot = NULL;
+	}
 }
 
 void painter::setSaturation(unsigned int S){
