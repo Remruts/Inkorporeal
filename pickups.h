@@ -9,7 +9,7 @@
 #include "animation.h"
 #include "level.h"
 #include "particles.h"
-#include "math.h"
+#include "cmath"
 
 // DEBERÍA HABER HECHO UNA CLASE "OBJETO/ENTIDAD" Y HEREDAR TODAS LAS COSAS!
 // PERO NOOOOO!

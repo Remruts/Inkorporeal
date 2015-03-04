@@ -9,7 +9,7 @@
 #include <vector>
 #include <stdlib.h>
 #include <time.h>
-#include <math.h>
+#include <cmath>
 
 using std::vector;
 
