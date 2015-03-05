@@ -227,7 +227,7 @@ juego::juego(painter* p, jukebox* b){
 		std::cout << "Error al cargar sonido de shutter " << std::endl;
 	}
 	
-	musicBank["levelMusic"] = bach->loadMusic("music/Nightmare.mp3");
+	musicBank["levelMusic"] = bach->loadMusic("music/Inkorporeal.mp3");
 	if (!musicBank["levelMusic"]){
 		std::cout << "Error al cargar música de nivel. " << std::endl;
 	}
