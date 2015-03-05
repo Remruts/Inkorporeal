@@ -26,7 +26,7 @@ priest::priest(LTexture* sprt, int X, int Y) : enemy(sprt, X, Y){
 	haloAngle = 0;
 	haloColor = 0;
 	
-	shadowDevil = new demon(spritesheet, x+156, y-32);
+	shadowDevil = new demon(spritesheet, x, y-32);
 }
 
 priest::~priest(){
@@ -121,16 +121,6 @@ void priest::draw(painter* pintor){
 	spritesheet->setAlpha(255);
 	//priest
 	pintor->draw(spritesheet, 32, 0, 32, 48, x, y-flap/8);
-	
-	/*
-	//demon	
-	pintor->drawEx(spritesheet, 0, 64, 192, 256, x-96, y-128, 192, 256, 0, 0);
-	pintor->drawEx(spritesheet, 160, 0, 64, 64, x-16, y-72, 64, 64, 0, 0);
-	pintor->setPivot(32, 16);
-	pintor->drawEx(spritesheet, 224, 160, 64, 160, x+40, y, 64, 160, 270+flap, 0);
-	pintor->drawEx(spritesheet, 224, 160, 64, 160, x-90, y, 64, 160, 90-flap, 1);
-	pintor->defaultPivot();
-	*/
 	
 	shadowDevil->draw(pintor);
 	
@@ -239,7 +229,8 @@ demon::demon(LTexture* sprt, int X, int Y){
 	miembroActual->setMaxAngles(90, 270);
 	miembroActual->setSprite(224, 160, 64, 160);
 	miembroActual->setPivot(32, 16);
-	miembroActual->setPos(x-100, y);
+	miembroActual->setPos(x-100, y+4);
+	miembroActual->mirror(1);
 	
 	// "Antebrazo"
 	miembroActual = brazoIzq->addLimb(sprt, 0);
@@ -248,6 +239,7 @@ demon::demon(LTexture* sprt, int X, int Y){
 	miembroActual->setSprite(224, 160, 64, 160);
 	miembroActual->setPivot(32, 16);
 	miembroActual->setPos(0, 140);
+	miembroActual->mirror(1);
 	
 	// "Mano"
 	miembroActual = brazoIzq->addLimb(sprt, 1);
@@ -256,6 +248,7 @@ demon::demon(LTexture* sprt, int X, int Y){
 	miembroActual->setSprite(224, 96, 64, 64);
 	miembroActual->setPivot(32, 16);
 	miembroActual->setPos(0, 138);
+	miembroActual->mirror(1);
 	
 	
 	// Construyo brazo derecho
@@ -265,8 +258,9 @@ demon::demon(LTexture* sprt, int X, int Y){
 	miembroActual->setMaxAngles(-90, 90);
 	miembroActual->setSprite(224, 160, 64, 160);
 	miembroActual->setPivot(32, 16);
+	miembroActual->setFlip(1);
 	miembroActual->mirror(1);
-	miembroActual->setPos(x+65, y);
+	miembroActual->setPos(x+75, y+32); //en mirrored queda bien
 	
 	// "Antebrazo"
 	miembroActual = brazoDer->addLimb(sprt, 0);
@@ -274,6 +268,7 @@ demon::demon(LTexture* sprt, int X, int Y){
 	miembroActual->setMaxAngles(-135, 135);
 	miembroActual->setSprite(224, 160, 64, 160);
 	miembroActual->setPivot(32, 16);
+	miembroActual->setFlip(1);
 	miembroActual->mirror(1);
 	miembroActual->setPos(0, 140);
 	
@@ -283,7 +278,7 @@ demon::demon(LTexture* sprt, int X, int Y){
 	miembroActual->setMaxAngles(-90, 90);
 	miembroActual->setSprite(224, 96, 64, 64);
 	miembroActual->setPivot(32, 16);
-	miembroActual->mirror(1);
+	miembroActual->setFlip(1);
 	miembroActual->mirror(1);
 	miembroActual->setPos(0, 136);
 	
@@ -298,16 +293,24 @@ demon::demon(LTexture* sprt, int X, int Y){
 	}
 	
 	
-	idleIzqAnim->addKeyframe(60, 135, 0);
-	idleIzqAnim->addKeyframe(60, 45, 1);
-	idleIzqAnim->addKeyframe(60, 45, 2);
-	idleIzqAnim->addKeyframe(120, 180, 0);
-	idleIzqAnim->addKeyframe(120, 0, 1);
-	idleIzqAnim->addKeyframe(120, 0, 2);
+	idleIzqAnim->addKeyframe(90, 135, 0);
+	idleIzqAnim->addKeyframe(90, 45, 1);
+	idleIzqAnim->addKeyframe(90, 0, 2);
+	idleIzqAnim->addKeyframe(180, 155, 0);
+	idleIzqAnim->addKeyframe(180, 25, 2);
 	
-	idleDerAnim->addKeyframe(60, -45, 0);
-	idleDerAnim->addKeyframe(120, 0, 0);
 	
+	idleDerAnim->addKeyframe(90, 45, 0);
+	idleDerAnim->addKeyframe(90, -45, 1);
+	idleDerAnim->addKeyframe(90, 0, 2);
+	idleDerAnim->addKeyframe(180, 25, 0);	
+	idleDerAnim->addKeyframe(180, -25, 2);
+	//idleDerAnim->addKeyframe(120, 0, 0);
+	//idleDerAnim->addKeyframe(120, 0, 1);
+	//idleDerAnim->addKeyframe(120, 0, 2);
+	
+	//idleDerAnim->addKeyframe(60, -90, 0);
+	//idleDerAnim->addKeyframe(120, 0, 0);
 	
 	currentIzqAnim = idleIzqAnim;
 	currentDerAnim = idleDerAnim;
@@ -356,8 +359,10 @@ void demon::step(level* lvl){
 void demon::draw(painter* pintor){
 	//cara y cuerpo
 	if (spritesheet != NULL){
-		pintor->drawEx(spritesheet, 0, 64, 224, 256, x-96, y-128, 224, 256, 0, 0);
-		pintor->drawEx(spritesheet, 160, 0, 64, 64, x-16, y-72, 64, 64, 0, 0);
+		//pintor->drawEx(spritesheet, 0, 64, 224, 256, x-96, y-128, 224, 256, 0, 0);
+		//pintor->drawEx(spritesheet, 160, 0, 64, 64, x-16, y-72, 64, 64, 0, 0);
+		pintor->drawEx(spritesheet, 0, 64, 224, 256, x-96, 759-y, 224, 256*0.7143, 0, 2);
+		pintor->drawEx(spritesheet, 160, 0, 64, 64, x-16, 432+(320-(y-108)), 64, 64*0.7143, 0, 2);
 	}
 	
 	brazoDer->draw(pintor);

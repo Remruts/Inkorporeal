@@ -24,6 +24,7 @@ limb::limb(LTexture* sprt, limb* padre){
 	parent  = padre;
 	
 	mirroring = 0;
+	flip = 0;
 	
 	minAngle = 0;
 	maxAngle = 360;
@@ -86,13 +87,18 @@ void limb::setSprite(int X, int Y, int tamX, int tamY){
 }
 
 //espejar: 0=no, 1=horizontal, 2=vertical, 3=ambos.
-void limb::mirror(int m) {
-	if (m<0){
-		m = 0;
-	} else if (m>3){
-		m = m%4;
+void limb::setFlip(int f) {
+	if (f < 0){
+		f = 0;
+	} else if (f > 3){
+		f = f%4;
 	}
 	
+	flip = f;
+}
+
+//Si debe dibjarse en el "espejo"
+void limb::mirror(bool m){
 	mirroring = m;
 }
 
@@ -125,8 +131,14 @@ void limb::getWorldPos(int &X, int &Y){
 		parentAngle = nuevoPadre->getWorldAngle();
 		
 		//primero calculo ángulo entre pivote padre y pivote hijo, y magnitud
-		dstX = (miembroActual->x - miembroActual->pivotX)-pivX;
-		dstY = (miembroActual->y - miembroActual->pivotY)-pivY;
+		dstX = ((miembroActual->x - miembroActual->pivotX)-pivX);
+		dstY = ((miembroActual->y - miembroActual->pivotY)-pivY);
+		
+		if (mirroring){
+			dstX = dstX*0.7143+sin(parentAngle/180.0*3.1415)*0.2857;
+			dstY = dstY*0.7143+sin(parentAngle/180.0*3.1415)*0.2857;
+		}
+				
 		magnitud = sqrt(dstX*dstX+dstY*dstY);
 		
 		//Luego calculo la posición real
@@ -136,9 +148,11 @@ void limb::getWorldPos(int &X, int &Y){
 		miembroActual = nuevoPadre;
 		nuevoPadre = miembroActual->parent;
 	}
-	
 	X += miembroActual->x;
-	Y += miembroActual->y;	
+	// 432 funciona para los brazos del demonio. Número pseudo-arbitrario.
+	// en realidad debería hacerse todo un cálculo loco con el tamaño del sprite y etc.
+	Y += (mirroring ? 432+(320-miembroActual->y*0.7143) : miembroActual->y);  
+	
 	
 }
 
@@ -153,6 +167,15 @@ double limb::getWorldAngle(){
 	if (res>360){
 		res = int(res)%360;
 	}
+	
+	//ángulo invertido
+	if (mirroring){
+		double radAngle = (res/180.0)*(3.1415);
+		double X = cos(radAngle);
+		double Y = -sin(radAngle);
+		res = 180*(atan2(Y, X)/3.1415);
+	} 
+		
 	return res;
 }
 
@@ -163,30 +186,22 @@ void limb::draw(painter* pintor){
 	getWorldPos(X, Y);
 	
 	pintor->setPivot(pivotX, pivotY);
-	pintor->drawEx(spritesheet, sprtX, sprtY, sprtSizeX, sprtSizeY, X, Y, 
-		sprtSizeX, sprtSizeY, getWorldAngle()-90, mirroring);
-	pintor->defaultPivot();
 	
-	/*
-	// Si quisiera dibujar todos los anteriores...
-	// Esto lo hacía antes de tener un esqueleto
-	// Es mejor usar la clase limbSkeleton
-	// y que el miembro se encargue de dibujarse a sí mismo únicamente
-	
-	int X, Y;
-	limb* miembro = this;
-	while(miembro != NULL){
-		
-		miembro->getWorldPos(X, Y);
-		
-		pintor->setPivot(miembro->pivotX, miembro->pivotY);
-		pintor->drawEx(miembro->spritesheet, miembro->sprtX, miembro->sprtY, miembro->sprtSizeX, miembro->sprtSizeY, X, Y, 
-			miembro->sprtSizeX, miembro->sprtSizeY, miembro->getWorldAngle()-90, miembro->mirroring);
-			
-		miembro = miembro->parent;
+	if (mirroring){
+		//dibujar en el "espejo"
+		double WorldAng = getWorldAngle()-90;
+		pintor->drawEx(spritesheet, sprtX, sprtY, sprtSizeX, sprtSizeY, X, Y, 
+			sprtSizeX*0.7143+sin(WorldAng/180.0*3.1415)*0.2857, 
+			sprtSizeY*0.7143+cos(WorldAng/180.0*3.1415)*0.2857, WorldAng, !flip);
+			// NO VOY A ACHICAR LA ESCALA, porque es horrible
+			// Update: Eso hice :/
+	} else {
+		pintor->drawEx(spritesheet, sprtX, sprtY, sprtSizeX, sprtSizeY, X, Y, 
+			sprtSizeX, sprtSizeY, getWorldAngle()-90, flip);
 	}
+	
 	pintor->defaultPivot();
-	*/
+		
 }
 //FIN LIMBS
 
@@ -313,9 +328,8 @@ bool limbAnim::isFinished(){
 }
 
 void limbAnim::step(){
+
 	if ((skel != NULL) && (skel->getLimbNum() > 0) && (frames.size() > 0)){
-		
-		currentFrame += 1;
 		
 		if (currentFrame > currentKeyframe->first){
 			if (currentKeyframe != frames.end()){
@@ -345,7 +359,12 @@ void limbAnim::step(){
 			while(it != (currentKeyframe->second).end()){
 				currentLimb = skel->getLimb(it->first); //limb
 				newAngle = it->second; //angle
-				proportion = (currentFrame - startTime)/double(currentKeyframe->first - startTime);
+				if (currentKeyframe->first - startTime > 0){
+					proportion = (currentFrame - startTime)/double(currentKeyframe->first - startTime);
+				} else {
+					proportion = 1;
+				}
+				
 				
 				/*
 				//debug
@@ -353,16 +372,18 @@ void limbAnim::step(){
 				std::cout << "currentLimb: " << (long int)(currentLimb) << std::endl;
 				std::cout << "limb: " << it->first << std::endl;
 				std::cout << "angle: " << it->second << std::endl;
+				std::cout << proportion << std::endl;
 				std::cout << std::endl;
 				*/
-			
+					
 				currentLimb->setAngle(lerp(startAngles[it->first], newAngle, proportion));
 			
 				it++;
 			}
 		}
 		
-		
+		//Acá abajo, para soporte de frame 0
+		currentFrame += 1;
 		
 	}	
 		

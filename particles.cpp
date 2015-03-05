@@ -106,7 +106,7 @@ void particle::setAngle(int dir){
 	}
 	angle = dir;
 	
-	int radAngle = (angle/180.0)*(3.1415);
+	double radAngle = (angle/180.0)*(3.1415);
 	double X = cos(radAngle);
 	double Y = -sin(radAngle);
 	invAngle = 180*(atan2(Y, X)/3.1415);
