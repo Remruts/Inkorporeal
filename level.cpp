@@ -780,14 +780,6 @@ void level::draw(){
 		puerta->draw(leonardo);
 	}
 	
-	// disparos jugador
-	vector<bullet*>::iterator it = bulletList.begin();
-	while (it != bulletList.end()){
-		if (*it != NULL)
-			(*it)->draw(leonardo);
-		it++;
-	}
-	
 	//enemigos
 	vector<enemy*>::iterator it2 = enemyList.begin();
 	while (it2 != enemyList.end()){
@@ -798,6 +790,15 @@ void level::draw(){
 		it2++;
 	}
 	
+	// disparos jugador
+	vector<bullet*>::iterator it = bulletList.begin();
+	while (it != bulletList.end()){
+		if (*it != NULL)
+			(*it)->draw(leonardo);
+		it++;
+	}
+	
+		
 	//balas enemigos
 	vector<enemyBullet*>::iterator it3 = enemyBulletList.begin();
 	while (it3 != enemyBulletList.end()){
@@ -810,10 +811,6 @@ void level::draw(){
 		llave->draw(leonardo);
 	}
 	
-	// jugador
-	if (jugador!=NULL)
-		jugador->draw(leonardo);
-		
 	//pickups
 	vector<pickup*>::iterator itPickup = pickupList.begin();
 	while (itPickup != pickupList.end()){
@@ -821,6 +818,10 @@ void level::draw(){
 			(*itPickup)->draw(leonardo);
 		itPickup++;
 	}
+	
+	// jugador
+	if (jugador!=NULL)
+		jugador->draw(leonardo);
 	
 	//partículas
 	vector<emitter*>::iterator itEmitter = emitterList.begin();

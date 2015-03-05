@@ -210,6 +210,11 @@ LTexture* painter::textureFromText(const string& textureText, int size, unsigned
 	return finalTex;
 }
 
+LTexture* painter::newBlankTexture(int w, int h){
+	LTexture* res = new LTexture(w, h, SDL_CreateTexture(canvas, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, w, h) );
+	return res;
+}
+
 void painter::freeTexture(LTexture* tex){
 	delete tex;
 	//LTexture hace SDL_DestroyTexture(tex);

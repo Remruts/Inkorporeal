@@ -21,7 +21,9 @@ public:
 	LTexture* loadTexture(const string&);
 	LTexture* textureFromSurface(SDL_Surface*);
 	LTexture* textureFromText(const string& textureText, int size, unsigned char r, unsigned char g, unsigned char b);
+	LTexture* newBlankTexture(int w, int h);
 	void freeTexture(LTexture*);
+	
 	
 	//
 	void draw(LTexture *tex, int srcX, int srcY, int srcW, int srcH, int screenX, int screenY);

@@ -229,8 +229,7 @@ demon::demon(LTexture* sprt, int X, int Y){
 	miembroActual->setMaxAngles(90, 270);
 	miembroActual->setSprite(224, 160, 64, 160);
 	miembroActual->setPivot(32, 16);
-	miembroActual->setPos(x-100, y+4);
-	miembroActual->mirror(1);
+	miembroActual->setPos(x-100, y+4);	
 	
 	// "Antebrazo"
 	miembroActual = brazoIzq->addLimb(sprt, 0);
@@ -238,8 +237,7 @@ demon::demon(LTexture* sprt, int X, int Y){
 	miembroActual->setMaxAngles(-135, 135);
 	miembroActual->setSprite(224, 160, 64, 160);
 	miembroActual->setPivot(32, 16);
-	miembroActual->setPos(0, 140);
-	miembroActual->mirror(1);
+	miembroActual->setPos(0, 140);	
 	
 	// "Mano"
 	miembroActual = brazoIzq->addLimb(sprt, 1);
@@ -247,8 +245,7 @@ demon::demon(LTexture* sprt, int X, int Y){
 	miembroActual->setMaxAngles(-90, 90);
 	miembroActual->setSprite(224, 96, 64, 64);
 	miembroActual->setPivot(32, 16);
-	miembroActual->setPos(0, 138);
-	miembroActual->mirror(1);
+	miembroActual->setPos(0, 138);	
 	
 	
 	// Construyo brazo derecho
@@ -258,9 +255,8 @@ demon::demon(LTexture* sprt, int X, int Y){
 	miembroActual->setMaxAngles(-90, 90);
 	miembroActual->setSprite(224, 160, 64, 160);
 	miembroActual->setPivot(32, 16);
-	miembroActual->setFlip(1);
-	miembroActual->mirror(1);
-	miembroActual->setPos(x+75, y+32); //en mirrored queda bien
+	miembroActual->setFlip(1);	
+	miembroActual->setPos(x+70, y); //en mirrored queda bien
 	
 	// "Antebrazo"
 	miembroActual = brazoDer->addLimb(sprt, 0);
@@ -268,9 +264,8 @@ demon::demon(LTexture* sprt, int X, int Y){
 	miembroActual->setMaxAngles(-135, 135);
 	miembroActual->setSprite(224, 160, 64, 160);
 	miembroActual->setPivot(32, 16);
-	miembroActual->setFlip(1);
-	miembroActual->mirror(1);
-	miembroActual->setPos(0, 140);
+	miembroActual->setFlip(1);	
+	miembroActual->setPos(32, 155);
 	
 	// "Mano"
 	miembroActual = brazoDer->addLimb(sprt, 1);
@@ -278,8 +273,7 @@ demon::demon(LTexture* sprt, int X, int Y){
 	miembroActual->setMaxAngles(-90, 90);
 	miembroActual->setSprite(224, 96, 64, 64);
 	miembroActual->setPivot(32, 16);
-	miembroActual->setFlip(1);
-	miembroActual->mirror(1);
+	miembroActual->setFlip(1);	
 	miembroActual->setPos(0, 136);
 	
 	//Animaciones:
@@ -288,10 +282,9 @@ demon::demon(LTexture* sprt, int X, int Y){
 	idleIzqAnim = new limbAnim(brazoIzq, 1);
 	idleDerAnim = new limbAnim(brazoDer, 1);
 	if (idleIzqAnim == NULL || idleDerAnim == NULL){
-		std::cout << "No pudieron crearse las animaciones Idle para los brazos" << std::endl;
+		std::cout << "No pudieron crearse las animaciones -idle- para los brazos" << std::endl;
 		exit(1);
 	}
-	
 	
 	idleIzqAnim->addKeyframe(90, 135, 0);
 	idleIzqAnim->addKeyframe(90, 45, 1);
@@ -299,21 +292,52 @@ demon::demon(LTexture* sprt, int X, int Y){
 	idleIzqAnim->addKeyframe(180, 155, 0);
 	idleIzqAnim->addKeyframe(180, 25, 2);
 	
-	
 	idleDerAnim->addKeyframe(90, 45, 0);
 	idleDerAnim->addKeyframe(90, -45, 1);
 	idleDerAnim->addKeyframe(90, 0, 2);
 	idleDerAnim->addKeyframe(180, 25, 0);	
 	idleDerAnim->addKeyframe(180, -25, 2);
-	//idleDerAnim->addKeyframe(120, 0, 0);
-	//idleDerAnim->addKeyframe(120, 0, 1);
-	//idleDerAnim->addKeyframe(120, 0, 2);
 	
-	//idleDerAnim->addKeyframe(60, -90, 0);
-	//idleDerAnim->addKeyframe(120, 0, 0);
+	//animaciones de "caer brazos"
+	fallingIzqAnim = new limbAnim(brazoIzq, 0);
+	fallingDerAnim = new limbAnim(brazoDer, 0);
+	if (fallingIzqAnim == NULL || fallingDerAnim == NULL){
+		std::cout << "No pudieron crearse las animaciones -falling- para los brazos" << std::endl;
+		exit(1);
+	}
 	
-	currentIzqAnim = idleIzqAnim;
-	currentDerAnim = idleDerAnim;
+	fallingIzqAnim->addKeyframe(120, 270, 0);
+	fallingIzqAnim->addKeyframe(120, 45, 1);
+	fallingIzqAnim->addKeyframe(120, 0, 2);
+	fallingIzqAnim->addKeyframe(150, 135, 0);
+		
+	fallingDerAnim->addKeyframe(120, -90, 0);
+	fallingDerAnim->addKeyframe(120, -45, 1);
+	fallingDerAnim->addKeyframe(120, 0, 2);
+	fallingDerAnim->addKeyframe(150, 45, 0);
+	
+	//animaciones de "cargar"
+	chargingIzqAnim = new limbAnim(brazoIzq, 0);
+	chargingDerAnim = new limbAnim(brazoDer, 0);
+	if (chargingIzqAnim == NULL || chargingDerAnim == NULL){
+		std::cout << "No pudieron crearse las animaciones -charging- para los brazos" << std::endl;
+		exit(1);
+	}
+	
+	chargingIzqAnim->addKeyframe(120, 200, 0);
+	chargingIzqAnim->addKeyframe(120, -90, 1);
+	chargingIzqAnim->addKeyframe(120, 0, 2);	
+	
+	chargingDerAnim->addKeyframe(120, -20, 0);
+	chargingDerAnim->addKeyframe(120, 90, 1);
+	chargingDerAnim->addKeyframe(120, 0, 2);
+	
+	
+	//Seteo animaciones actuales
+	currentIzqAnim = fallingIzqAnim;
+	currentDerAnim = fallingDerAnim;
+	
+	armsTexture = NULL;
 		
 }
 
@@ -365,6 +389,24 @@ void demon::draw(painter* pintor){
 		pintor->drawEx(spritesheet, 160, 0, 64, 64, x-16, 432+(320-(y-108)), 64, 64*0.7143, 0, 2);
 	}
 	
-	brazoDer->draw(pintor);
-	brazoIzq->draw(pintor);
+	if (armsTexture == NULL){
+		armsTexture = pintor->newBlankTexture(1366, 720);
+	}
+	//No hago un else, porque así se ejecuta lo de arriba primero
+	if (armsTexture != NULL){
+		pintor->setRenderTarget(armsTexture);
+		armsTexture->setBlendMode(1);
+		pintor->setColor(0, 0, 0, 0);
+		pintor->clear();
+		
+		brazoDer->draw(pintor);
+		brazoIzq->draw(pintor);
+		
+		pintor->resetRenderTarget();
+		armsTexture->setBlendMode(0);
+		pintor->setColor(0x17, 0x17, 0x17, 0xff);
+	}
+	//pintor->draw(armsTexture, 0, 0, 0, 0, 0, 0);
+	pintor->drawEx(armsTexture, 0, 0, 1366, 720, 0, 256, 1366, 720*0.7143, 0, 2);
+	
 }

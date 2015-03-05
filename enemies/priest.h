@@ -32,6 +32,7 @@ public:
 	void draw(painter*);
 private:
 	LTexture* spritesheet;
+	LTexture* armsTexture;
 	int x, y;
 	int face;
 	
@@ -42,6 +43,10 @@ private:
 	
 	//Animaciones de Idle;
 	limbAnim *idleIzqAnim, *idleDerAnim;
+	//Animaciones de brazos cayendo;
+	limbAnim *fallingIzqAnim, *fallingDerAnim;
+	//Animaciones de brazos cargando;
+	limbAnim *chargingIzqAnim, *chargingDerAnim;
 	
 	//animaciones actuales para brazo izquierdo y derecho respectivamente
 	limbAnim *currentIzqAnim, *currentDerAnim; 

@@ -23,7 +23,6 @@ limb::limb(LTexture* sprt, limb* padre){
 	angle = 0; 
 	parent  = padre;
 	
-	mirroring = 0;
 	flip = 0;
 	
 	minAngle = 0;
@@ -97,11 +96,6 @@ void limb::setFlip(int f) {
 	flip = f;
 }
 
-//Si debe dibjarse en el "espejo"
-void limb::mirror(bool m){
-	mirroring = m;
-}
-
 //setear posición
 void limb::setPos(int X, int Y){
 	x = X;
@@ -131,13 +125,8 @@ void limb::getWorldPos(int &X, int &Y){
 		parentAngle = nuevoPadre->getWorldAngle();
 		
 		//primero calculo ángulo entre pivote padre y pivote hijo, y magnitud
-		dstX = ((miembroActual->x - miembroActual->pivotX)-pivX);
-		dstY = ((miembroActual->y - miembroActual->pivotY)-pivY);
-		
-		if (mirroring){
-			dstX = dstX*0.7143+sin(parentAngle/180.0*3.1415)*0.2857;
-			dstY = dstY*0.7143+sin(parentAngle/180.0*3.1415)*0.2857;
-		}
+		dstX = (miembroActual->x - miembroActual->pivotX)-pivX;
+		dstY = (miembroActual->y - miembroActual->pivotY)-pivY;
 				
 		magnitud = sqrt(dstX*dstX+dstY*dstY);
 		
@@ -151,7 +140,7 @@ void limb::getWorldPos(int &X, int &Y){
 	X += miembroActual->x;
 	// 432 funciona para los brazos del demonio. Número pseudo-arbitrario.
 	// en realidad debería hacerse todo un cálculo loco con el tamaño del sprite y etc.
-	Y += (mirroring ? 432+(320-miembroActual->y*0.7143) : miembroActual->y);  
+	Y += miembroActual->y;
 	
 	
 }
@@ -168,14 +157,6 @@ double limb::getWorldAngle(){
 		res = int(res)%360;
 	}
 	
-	//ángulo invertido
-	if (mirroring){
-		double radAngle = (res/180.0)*(3.1415);
-		double X = cos(radAngle);
-		double Y = -sin(radAngle);
-		res = 180*(atan2(Y, X)/3.1415);
-	} 
-		
 	return res;
 }
 
@@ -186,20 +167,10 @@ void limb::draw(painter* pintor){
 	getWorldPos(X, Y);
 	
 	pintor->setPivot(pivotX, pivotY);
-	
-	if (mirroring){
-		//dibujar en el "espejo"
-		double WorldAng = getWorldAngle()-90;
-		pintor->drawEx(spritesheet, sprtX, sprtY, sprtSizeX, sprtSizeY, X, Y, 
-			sprtSizeX*0.7143+sin(WorldAng/180.0*3.1415)*0.2857, 
-			sprtSizeY*0.7143+cos(WorldAng/180.0*3.1415)*0.2857, WorldAng, !flip);
-			// NO VOY A ACHICAR LA ESCALA, porque es horrible
-			// Update: Eso hice :/
-	} else {
-		pintor->drawEx(spritesheet, sprtX, sprtY, sprtSizeX, sprtSizeY, X, Y, 
-			sprtSizeX, sprtSizeY, getWorldAngle()-90, flip);
-	}
-	
+
+	pintor->drawEx(spritesheet, sprtX, sprtY, sprtSizeX, sprtSizeY, X, Y, 
+		sprtSizeX, sprtSizeY, getWorldAngle()-90, flip);
+
 	pintor->defaultPivot();
 		
 }

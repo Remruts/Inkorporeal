@@ -10,9 +10,10 @@
 using std::vector;
 using std::map;
 
-// clase miembro
-// unidad constituyente de un esqueleto 
-// Es importante notar que el sprite tiene que ser dibujado "hacia abajo"
+// Clase miembro
+// Unidad constituyente de un esqueleto 
+// Es importante notar que el sprite tiene que ser dibujado "hacia abajo" 
+// [si esto es molestia, buscar la función "draw" y quitar el "-90"]
 class limb{
 public:
 	limb(LTexture* sprt, limb* parent);
@@ -28,8 +29,7 @@ public:
 	void setMaxAngles(double min, double max); //setea los ángulos máximo y mínimo. Debería ser (min <= max)
 	void setPivot(int X, int Y); //setear el pivote;
 	void setSprite(int X, int Y, int tamX, int tamY); //qué sprite va a ser dibujado
-	void setFlip(int f); // espejar: 0=no, 1=horizontal, 2=vertical, 3=ambos.
-	void mirror(bool m); // Si debe dibujarse para abajo [en el "espejo"]
+	void setFlip(int f); // espejar: 0=no, 1=horizontal, 2=vertical, 3=ambos.	
 	
 	void getWorldPos(int &X, int &Y); //posición real en el mundo
 	double getWorldAngle();	//ángulo real
@@ -46,7 +46,6 @@ private:
 	double angle; //ángulo en grados
 	double maxAngle, minAngle; //ángulos máximo y mínimo 
 	
-	bool mirroring;
 	int flip;
 	
 	limb* parent; //padre si tuviera
