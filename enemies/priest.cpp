@@ -219,68 +219,103 @@ void priest::drawHalo(painter* p, LTexture* cube, int x, int y, double direction
 demon::demon(LTexture* sprt, int X, int Y){
 	spritesheet = sprt;
 	
-	angBrazoIzq = 180;
-	angBrazoDer = 0;
-	angAnteIzq = 0;
-	angAnteDer = 0;
-	angManoDer = 0;
-	angManoIzq = 0;
-	
 	x = X;
 	y = Y;
 	
 	timer = 0;
+	limb* miembroActual = NULL;
 	
-	brazoIzq = new limb(sprt, NULL);
-	brazoIzq->setAngle(angBrazoIzq);
-	brazoIzq->setMaxAngles(90, 270);
-	brazoIzq->setSprite(224, 160, 64, 160);
-	brazoIzq->setPivot(32, 16);
-	brazoIzq->setPos(x-100, y);
+	brazoIzq = new limbSkeleton();
+	brazoDer = new limbSkeleton();
+	if (brazoIzq == NULL || brazoDer == NULL){
+		std::cout << "Algo horrible pasó con el sistema de animación por huesos al crear los esqueletos..." << std::endl;
+		exit(1);
+	}
+		
+	// Construyo brazo izquierdo
+	// "Brazo"
+	miembroActual = brazoIzq->addLimb(sprt, -1); 
+	miembroActual->setAngle(180);
+	miembroActual->setMaxAngles(90, 270);
+	miembroActual->setSprite(224, 160, 64, 160);
+	miembroActual->setPivot(32, 16);
+	miembroActual->setPos(x-100, y);
 	
-	antebrazoIzq = new limb(sprt, brazoIzq);
-	antebrazoIzq->setAngle(0);
-	antebrazoIzq->setMaxAngles(-135, 135);
-	antebrazoIzq->setSprite(224, 160, 64, 160);
-	antebrazoIzq->setPivot(32, 16);
-	antebrazoIzq->setPos(0, 140);
+	// "Antebrazo"
+	miembroActual = brazoIzq->addLimb(sprt, 0);
+	miembroActual->setAngle(0);
+	miembroActual->setMaxAngles(-135, 135);
+	miembroActual->setSprite(224, 160, 64, 160);
+	miembroActual->setPivot(32, 16);
+	miembroActual->setPos(0, 140);
 	
-	manoIzq = new limb(sprt, antebrazoIzq);
-	manoIzq->setAngle(0);
-	manoIzq->setMaxAngles(-90, 90);
-	manoIzq->setSprite(224, 96, 64, 64);
-	manoIzq->setPivot(32, 16);
-	manoIzq->setPos(0, 138);
+	// "Mano"
+	miembroActual = brazoIzq->addLimb(sprt, 1);
+	miembroActual->setAngle(0);
+	miembroActual->setMaxAngles(-90, 90);
+	miembroActual->setSprite(224, 96, 64, 64);
+	miembroActual->setPivot(32, 16);
+	miembroActual->setPos(0, 138);
 	
 	
-	brazoDer = new limb(sprt, NULL);
-	brazoDer->setAngle(angBrazoIzq-180);
-	brazoDer->setMaxAngles(-90, 90);
-	brazoDer->setSprite(224, 160, 64, 160);
-	brazoDer->setPivot(32, 16);
-	brazoDer->mirror(1);
-	brazoDer->setPos(x+65, y);
+	// Construyo brazo derecho
+	// "Brazo"
+	miembroActual = brazoDer->addLimb(sprt, -1);
+	miembroActual->setAngle(0);
+	miembroActual->setMaxAngles(-90, 90);
+	miembroActual->setSprite(224, 160, 64, 160);
+	miembroActual->setPivot(32, 16);
+	miembroActual->mirror(1);
+	miembroActual->setPos(x+65, y);
 	
-	antebrazoDer = new limb(sprt, brazoDer);
-	antebrazoDer->setAngle(0);
-	antebrazoDer->setMaxAngles(-135, 135);
-	antebrazoDer->setSprite(224, 160, 64, 160);
-	antebrazoDer->setPivot(32, 16);
-	antebrazoDer->mirror(1);
-	antebrazoDer->setPos(0, 140);
+	// "Antebrazo"
+	miembroActual = brazoDer->addLimb(sprt, 0);
+	miembroActual->setAngle(0);
+	miembroActual->setMaxAngles(-135, 135);
+	miembroActual->setSprite(224, 160, 64, 160);
+	miembroActual->setPivot(32, 16);
+	miembroActual->mirror(1);
+	miembroActual->setPos(0, 140);
 	
-	manoDer = new limb(sprt, antebrazoDer);
-	manoDer->setAngle(0);
-	manoDer->setMaxAngles(-90, 90);
-	manoDer->setSprite(224, 96, 64, 64);
-	manoDer->setPivot(32, 16);
-	manoDer->mirror(1);
-	manoDer->mirror(1);
-	manoDer->setPos(0, 136);
+	// "Mano"
+	miembroActual = brazoDer->addLimb(sprt, 1);
+	miembroActual->setAngle(0);
+	miembroActual->setMaxAngles(-90, 90);
+	miembroActual->setSprite(224, 96, 64, 64);
+	miembroActual->setPivot(32, 16);
+	miembroActual->mirror(1);
+	miembroActual->mirror(1);
+	miembroActual->setPos(0, 136);
 	
+	//Animaciones:
+	
+	//Animaciones Idle
+	idleIzqAnim = new limbAnim(brazoIzq, 1);
+	idleDerAnim = new limbAnim(brazoDer, 1);
+	if (idleIzqAnim == NULL || idleDerAnim == NULL){
+		std::cout << "No pudieron crearse las animaciones Idle para los brazos" << std::endl;
+		exit(1);
+	}
+	
+	
+	idleIzqAnim->addKeyframe(60, 135, 0);
+	idleIzqAnim->addKeyframe(60, 45, 1);
+	idleIzqAnim->addKeyframe(60, 45, 2);
+	idleIzqAnim->addKeyframe(120, 180, 0);
+	idleIzqAnim->addKeyframe(120, 0, 1);
+	idleIzqAnim->addKeyframe(120, 0, 2);
+	
+	idleDerAnim->addKeyframe(60, -45, 0);
+	idleDerAnim->addKeyframe(120, 0, 0);
+	
+	
+	currentIzqAnim = idleIzqAnim;
+	currentDerAnim = idleDerAnim;
+		
 }
 
 demon::~demon(){
+	
 	if (brazoIzq != NULL){
 		delete brazoIzq;
 		brazoIzq = NULL;
@@ -291,25 +326,18 @@ demon::~demon(){
 		brazoDer = NULL;
 	}
 	
-	if (antebrazoIzq != NULL){
-		delete antebrazoIzq;
-		antebrazoIzq = NULL;
+	
+	if (idleIzqAnim != NULL){
+		delete idleIzqAnim;
+		idleIzqAnim = NULL;
 	}
 	
-	if (antebrazoDer != NULL){
-		delete antebrazoDer;
-		antebrazoDer = NULL;
+	if (idleDerAnim != NULL){
+		delete idleDerAnim;
+		idleDerAnim = NULL;
 	}
 	
-	if (manoIzq != NULL){
-		delete manoIzq;
-		manoIzq = NULL;
-	}
 	
-	if (manoDer != NULL){
-		delete manoDer;
-		manoDer = NULL;
-	}
 }
 	
 void demon::step(level* lvl){
@@ -319,33 +347,10 @@ void demon::step(level* lvl){
 		timer = int(timer)%360;
 	}
 	
-	double angMin, angMax;
-	double t = (sin(double(timer)/180.0*3.1415)+1)/2; 
-	
-	//calculo ángulos
-	brazoIzq->getMaxAngles(angMin, angMax);
-	angBrazoIzq = (1-t)*angMin+t*angMax;
-	brazoDer->getMaxAngles(angMax, angMin); //al revés, porque es el brazo derecho
-	angBrazoDer = (1-t)*angMin+t*angMax;
-	
-	antebrazoIzq->getMaxAngles(angMax, angMin);
-	angAnteIzq = (1-t)*angMin+t*angMax;
-	antebrazoDer->getMaxAngles(angMin, angMax); //al revés, porque es el antebrazo derecho
-	angAnteDer = (1-t)*angMin+t*angMax;
-	
-	manoIzq->getMaxAngles(angMax, angMin);
-	angManoIzq = (1-t)*angMin+t*angMax;
-	manoDer->getMaxAngles(angMin, angMax); //al revés, porque es la mano derecha
-	angManoDer = (1-t)*angMin+t*angMax;
-	
-	
-	//seteo ángulos
-	brazoIzq->setAngle(angBrazoIzq);
-	antebrazoIzq->setAngle(angAnteIzq);
-	manoIzq->setAngle(angManoIzq);
-	brazoDer->setAngle(angBrazoDer);
-	antebrazoDer->setAngle(angAnteDer);
-	manoDer->setAngle(angManoDer);
+	if (currentIzqAnim != NULL)
+		currentIzqAnim->step();
+	if (currentDerAnim != NULL)
+		currentDerAnim->step();	
 }
 
 void demon::draw(painter* pintor){
@@ -355,7 +360,6 @@ void demon::draw(painter* pintor){
 		pintor->drawEx(spritesheet, 160, 0, 64, 64, x-16, y-72, 64, 64, 0, 0);
 	}
 	
-	//brazos
-	manoDer->draw(pintor);
-	manoIzq->draw(pintor);
+	brazoDer->draw(pintor);
+	brazoIzq->draw(pintor);
 }

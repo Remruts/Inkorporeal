@@ -35,12 +35,17 @@ private:
 	int x, y;
 	int face;
 	
-	double angBrazoIzq, angBrazoDer, angAnteIzq, angAnteDer, angManoIzq, angManoDer;
 	double timer;
 	
-	limb *brazoIzq, *brazoDer; //brazos
-	limb *antebrazoIzq, *antebrazoDer; //antebrazos
-	limb *manoIzq, *manoDer; //manos
+	//esqueletos para brazos
+	limbSkeleton *brazoIzq, *brazoDer; 
+	
+	//Animaciones de Idle;
+	limbAnim *idleIzqAnim, *idleDerAnim;
+	
+	//animaciones actuales para brazo izquierdo y derecho respectivamente
+	limbAnim *currentIzqAnim, *currentDerAnim; 
+
 };
 
 #endif

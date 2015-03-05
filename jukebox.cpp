@@ -4,6 +4,7 @@ jukebox::jukebox(){
 	Mix_AllocateChannels(24); //24 canales es suficiente?
 	setGeneralSoundVolume(0.4);
 	musicSetVolume(0.8);
+	delay = 0;
 }
 
 jukebox::~jukebox(){
