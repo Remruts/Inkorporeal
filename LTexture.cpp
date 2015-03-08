@@ -11,6 +11,9 @@ LTexture::LTexture(int width, int height, SDL_Texture* texture){
 	r = 255;
 	g = 255;
 	b = 255;
+	
+	//como default;
+	SDL_SetTextureBlendMode(tex, SDL_BLENDMODE_BLEND);
 }
 
 LTexture::~LTexture(){

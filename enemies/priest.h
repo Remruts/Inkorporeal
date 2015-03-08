@@ -6,27 +6,147 @@
 #include <cmath>
 
 class demon;
+class bossState;
 
 class priest : public enemy{
 public:
 	priest(LTexture* sprt, int x, int y);
-	~priest();	
+	~priest();
+	
+	double getTimer();
+	void setTimer(double);
+	
+	void setNextState(bossState*);
+	void setDevilAnim(const string&);
 	
 	virtual void step(level*);
 	virtual void draw(painter*);
+	
 private:
+	
 	void drawHalo(painter* p, LTexture* cube, int x, int y, double direction, int size, int counter, int colour);
-	animation* movingAnim;
+	
 	double timer;
 	double haloAngle;
 	int haloColor;
+	
+	animation* movingAnim;
 	demon* shadowDevil;
+	bossState* state;
+	bossState* nextState;
 };
 
+//Estados...
+class bossState{
+public:
+	virtual ~bossState(){}
+	virtual void step(level* lvl, priest* p){}
+	virtual void enter(level* lvl, priest* p){}
+	virtual void exit(level* lvl, priest* p){}
+};
+
+class stIdle : public bossState{
+public:
+	stIdle();
+	~stIdle();
+	virtual void step(level* lvl, priest* p);
+	virtual void enter(level* lvl, priest* p);
+	virtual void exit(level* lvl, priest* p);
+};
+
+class stTeleport : public bossState{
+public:
+	stTeleport();
+	~stTeleport();
+
+	virtual void step(level* lvl, priest* p);
+	virtual void enter(level* lvl, priest* p);
+	virtual void exit(level* lvl, priest* p);
+
+private:
+	int nextX, nextY;
+	static unsigned int teleportNum;
+};
+
+class stDemonCrush : public bossState{
+public:
+	stDemonCrush();
+	~stDemonCrush();
+
+	virtual void step(level* lvl, priest* p);
+	virtual void enter(level* lvl, priest* p);
+	virtual void exit(level* lvl, priest* p);
+
+};
+
+class stDemonShoot : public bossState{
+public:
+	stDemonShoot();
+	~stDemonShoot();
+
+	virtual void step(level* lvl, priest* p);
+	virtual void enter(level* lvl, priest* p);
+	virtual void exit(level* lvl, priest* p);
+
+};
+
+class stDemonCharge : public bossState{
+public:
+	stDemonCharge();
+	~stDemonCharge();
+
+	virtual void step(level* lvl, priest* p);
+	virtual void enter(level* lvl, priest* p);
+	virtual void exit(level* lvl, priest* p);
+private:
+	bool charged;
+
+};
+
+class stPillars : public bossState{
+public:
+	stPillars();
+	~stPillars();
+
+	virtual void step(level* lvl, priest* p);
+	virtual void enter(level* lvl, priest* p);
+	virtual void exit(level* lvl, priest* p);
+private:
+	bool fire;
+	int pattern;
+};
+
+class stThrowMine : public bossState{
+public:
+	stThrowMine();
+	~stThrowMine();
+
+	virtual void step(level* lvl, priest* p);
+	virtual void enter(level* lvl, priest* p);
+	virtual void exit(level* lvl, priest* p);
+private:
+	int nextX, nextY;
+};
+
+class stMultishot : public bossState{
+public:
+	stMultishot();
+	~stMultishot();
+
+	virtual void step(level* lvl, priest* p);
+	virtual void enter(level* lvl, priest* p);
+	virtual void exit(level* lvl, priest* p);
+};
+//-----------------------------------------------
+
+
+//demonio
 class demon {
 public:
 	demon(LTexture* sprt, int X, int Y);
 	~demon();
+	
+	void setAnimation(const string&);
 	
 	void step(level*);
 	void draw(painter*);
@@ -41,15 +161,22 @@ private:
 	//esqueletos para brazos
 	limbSkeleton *brazoIzq, *brazoDer; 
 	
-	//Animaciones de Idle;
+	//Animaciones de Idle
 	limbAnim *idleIzqAnim, *idleDerAnim;
-	//Animaciones de brazos cayendo;
+	//Animaciones de brazos cayendo
 	limbAnim *fallingIzqAnim, *fallingDerAnim;
-	//Animaciones de brazos cargando;
+	//Animaciones de brazos cargando
 	limbAnim *chargingIzqAnim, *chargingDerAnim;
+	//Animaciones de release
+	limbAnim *releaseIzqAnim, *releaseDerAnim;
+	//Animaciones de disparo
+	limbAnim *shootIzqAnim, *shootDerAnim;
 	
 	//animaciones actuales para brazo izquierdo y derecho respectivamente
-	limbAnim *currentIzqAnim, *currentDerAnim; 
+	limbAnim *currentIzqAnim, *currentDerAnim; 	
+	// Nombre de la animación actual
+	// Esto es un extra sin relevancia. Puede ser de utilidad, pero no me sirve ahora
+	string currentAnim; 
 
 };
 

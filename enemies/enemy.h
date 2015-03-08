@@ -20,8 +20,13 @@ public:
 	virtual void step(level*);
 	virtual void draw(painter*);
 	
+	void setPos(int x, int y);
+	
 	void getPos(int &x, int &y) const;
+	
+	int getLives();
 	int getMaxLives();
+	
 	SDL_Rect* getColBox();
 	
 	virtual void getHurt();

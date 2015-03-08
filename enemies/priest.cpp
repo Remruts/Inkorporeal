@@ -16,7 +16,7 @@ priest::priest(LTexture* sprt, int X, int Y) : enemy(sprt, X, Y){
 	alpha = 170;
 	
 	colBox.x = x+4;
-	colBox.y = y;
+	colBox.y = y+12;
 	colBox.w = 24;
 	colBox.h = 32;
 	
@@ -27,6 +27,10 @@ priest::priest(LTexture* sprt, int X, int Y) : enemy(sprt, X, Y){
 	haloColor = 0;
 	
 	shadowDevil = new demon(spritesheet, x, y-32);
+	
+	nextState = NULL;
+	state = new stIdle();
+	state->enter(NULL, this);
 }
 
 priest::~priest(){
@@ -43,47 +47,69 @@ priest::~priest(){
 	}
 }
 
+void priest::setTimer(double t){
+	timer = t;
+	if (timer < 1){
+		timer = 1;
+	}
+}
+
+double priest::getTimer(){
+	return timer;
+}
+
+void priest::setNextState(bossState* st){
+	if ((st != NULL) && (nextState != NULL)){
+		if (state != nextState){
+			delete nextState;
+		}
+	}
+	nextState = st;
+}
+
+void priest::setDevilAnim(const string& str){
+	shadowDevil->setAnimation(str);
+}
+
 void priest::step(level* lvl){
 	if (alive){
 	
-		if (hurt && hurtTimer >= 2){
-			//lvl->playSound("priestSound");
-		}
-		
 		timer -= 1;
-		
+
 		if (timer <= 0){
-			timer = rand()%30+30;
-		}
-	
-		if (((x >= 1088) && (spdX > 0)) || ((x <= 224) && (spdX < 0))){
-			spdX = -spdX*2;
-		}
-		if (((y+32 >= 416) && (spdY > 0)) || ((y <= 32) && (spdY < 0))){
-			spdY = -spdY*2;
+			if (state != NULL){
+				state->exit(lvl, this);
+				delete state;
+				state = NULL;
+			}
+			
+			state = nextState;
+			state->enter(lvl, this);
 		}
 		
+		state->step(lvl, this);
+		enemy::step(lvl);
+	
+		if (shadowDevil != NULL){
+			shadowDevil->step(lvl);
+		}
+	
+		colBox.x = x+4;
+		colBox.y = y+12;
+	
+		haloAngle += 0.5;
+		if (haloAngle >= 360){
+			haloAngle -= 360;
+		}
+	
+		if (lives/double(maxLives) <= 0.25){
+			haloColor = 1;
+		} else {
+			haloColor = 0;
+		}
+
 	}
 	
-	enemy::step(lvl);
-	
-	if (shadowDevil != NULL){
-		shadowDevil->step(lvl);
-	}
-	
-	colBox.x = x+4;
-	colBox.y = y;
-	
-	haloAngle += 0.5;
-	if (haloAngle >= 360){
-		haloAngle -= 360;
-	}
-	
-	if (lives/double(maxLives) <= 0.25){
-		haloColor = 1;
-	} else {
-		haloColor = 0;
-	}
 }
 
 void priest::draw(painter* pintor){
@@ -122,7 +148,12 @@ void priest::draw(painter* pintor){
 	//priest
 	pintor->draw(spritesheet, 32, 0, 32, 48, x, y-flap/8);
 	
+	//demonio
 	shadowDevil->draw(pintor);
+	
+	//debug
+	//pintor->setColor(200, 0, 0, 255);
+	//pintor->drawRect(colBox.x, colBox.y, colBox.w, colBox.h, 0);
 	
 	//barra
 	pintor->setColor(0x17, 0x17, 0x17, 255);
@@ -133,6 +164,7 @@ void priest::draw(painter* pintor){
 	pintor->drawRect(260, 64, 820, 16, 0);
 	pintor->drawRect(259, 63, 822, 18, 0);
 	pintor->setColor(0x17, 0x17, 0x17, 255);
+	
 }
 
 //size es 1, 2, 4, 8, 16, etc
@@ -203,7 +235,335 @@ void priest::drawHalo(painter* p, LTexture* cube, int x, int y, double direction
 		}
 	}
 }
+
+//---------------------------------------------------------------------------------
+//ESTADOS
+
+stIdle::stIdle(){
+	
+}
+
+stIdle::~stIdle(){
+	
+}
+
+void stIdle::step(level* lvl, priest* p){
+	
+}
+
+void stIdle::enter(level* lvl, priest* p){
+	double proportion = p->getLives()/double(p->getMaxLives());
+	bossState* nextSt = NULL; 
+	//int chances = rand()%80+1;
+
+	p->setTimer(120+300*proportion);
+	/*
+	if (chances < 10){
+		
+	} else if (chances < 20){
+		
+	} else if (chances < 30){
+		
+	} else if (chances < 40){
+		
+	} else if (chances < 50){
+		
+	} else if (chances < 60){
+		
+	} else if (chances < 70){
+		
+	} else {
+		
+	}
+	*/
+	//nextSt = new stTeleport();
+	nextSt = new stDemonCrush();
+	
+	p->setNextState(nextSt);
+	p->setDevilAnim("idle");
+}
+
+void stIdle::exit(level* lvl, priest* p){
+	
+}
+
+//teleport
+unsigned int stTeleport::teleportNum = 0;
+
+stTeleport::stTeleport(){
+	teleportNum++;
+	//std::cout << "teleNum " << teleportNum << std::endl;
+}
+
+stTeleport::~stTeleport(){
+	
+}
+
+void stTeleport::step(level* lvl, priest* p){
+	//WIP cambiar efectos
+	lvl->addEmitter(new hurtEffect(lvl->getEffectSheet(), nextX, nextY+16));
+}
+
+void stTeleport::enter(level* lvl, priest* p){
+	double proportion = p->getLives()/double(p->getMaxLives());
+	int X, Y;
+	p->getPos(X, Y);
+	
+	nextX = 256+rand()%832;
+	nextY = 240+rand()%120;
+	
+	if (abs(nextX-X) < 150){
+		if (X < 683){
+			nextX = 672+rand()%208;
+		} else {
+			nextX = 256+rand()%208;
+		}
+	}
+	
+	p->setTimer(30+30*proportion);
+	
+	if ((rand()%3 == 0) || (teleportNum > 4) ){
+		p->setNextState(new stIdle());
+		teleportNum = 0;
+	} else {
+		if (proportion < 0.5){
+			p->setNextState(new stThrowMine());
+		} else {
+			p->setNextState(new stTeleport());
+		}
+		
+	}
+	
+	//p->setDevilAnim("idle");
+}
+
+void stTeleport::exit(level* lvl, priest* p){
+	int X, Y;
+	p->getPos(X, Y);
+	//WIP cambiar efectos
+	lvl->addEmitter(new starEffect(lvl->getEffectSheet(), X, Y+16));
+	p->setPos(nextX, nextY);
+}
+
+
+//stDemonCrush
+stDemonCrush::stDemonCrush(){
+	
+}
+
+stDemonCrush::~stDemonCrush(){
+	
+}
+
+void stDemonCrush::step(level* lvl, priest* p){
+	
+}
+
+void stDemonCrush::enter(level* lvl, priest* p){
+	//double proportion = p->getLives()/double(p->getMaxLives());
+	
+	p->setTimer(160);
+	
+	p->setNextState(new stIdle());
+	p->setDevilAnim("falling");
+}
+
+void stDemonCrush::exit(level* lvl, priest* p){
+	//TODO crear balas
+}
+
+//stDemonShoot
+stDemonShoot::stDemonShoot(){
+	
+}
+
+stDemonShoot::~stDemonShoot(){
+	
+}
+
+void stDemonShoot::step(level* lvl, priest* p){
+	
+}
+
+void stDemonShoot::enter(level* lvl, priest* p){
+	//double proportion = p->getLives()/double(p->getMaxLives());
+	
+	p->setTimer(160);
+	
+	p->setNextState(new stIdle());
+	p->setDevilAnim("shoot");
+}
+
+void stDemonShoot::exit(level* lvl, priest* p){
+	//TODO crear balas
+}
+
+//stDemonCharge
+stDemonCharge::stDemonCharge(){
+	charged = 0;
+}
+
+stDemonCharge::~stDemonCharge(){
+	
+}
+
+void stDemonCharge::step(level* lvl, priest* p){
+	if ((!charged) && (p->getTimer() <= 35)){
+		charged = 1;
+		p->setDevilAnim("release");
+		//TODO disparar	+ efecto shockwave
+	}
+	
+	if (!charged){
+		//TODO bola de energía
+	}
+}
+
+void stDemonCharge::enter(level* lvl, priest* p){
+	//double proportion = p->getLives()/double(p->getMaxLives());
+	
+	p->setTimer(320);
+	
+	p->setNextState(new stIdle());
+	p->setDevilAnim("charging");
+}
+
+void stDemonCharge::exit(level* lvl, priest* p){
+
+}
+
+//stPillars
+stPillars::stPillars(){
+	fire = 0;
+	pattern = 0;
+}
+
+stPillars::~stPillars(){
+	
+}
+
+void stPillars::step(level* lvl, priest* p){
+	/*
+	double T = p->getTimer();
+	double dT = T/160.0;
+	
+	Pillar* toSpawn;
+	if (fire){
+		toSpawn = new firePillar();
+	} else {
+		toSpawn = new beamPillar();
+	}
+	
+	if (int(T)%20 == 0){
+		switch(pattern){
+		case 0:
+			lvl->addEnemyBullet(toSpawn, 224+(int(T)%20)*100,120);
+		break;
+		case 1:
+			lvl->addEnemyBullet(toSpawn, 764-(int(T)%20)*100,120);
+		break:
+		case 2:
+			lvl->addEnemyBullet(toSpawn, 224+(int(T)%20)*100,120);
+			lvl->addEnemyBullet(toSpawn, 764-(int(T)%20)*100,120);
+		break;
+		}
+	}	
+	*/
+}
+
+void stPillars::enter(level* lvl, priest* p){
+	double proportion = p->getLives()/double(p->getMaxLives());
+	
+	if (proportion < 0.5){
+		pattern = rand()%3;
+	} else {
+		pattern = rand()%2;
+	}
+	
+	fire = rand()%2;
+	
+	p->setTimer(160);
+	
+	p->setNextState(new stIdle());
+	p->setDevilAnim("release");
+}
+
+void stPillars::exit(level* lvl, priest* p){
+
+}
+
+//stThrowMine
+stThrowMine::stThrowMine(){
+	
+}
+
+stThrowMine::~stThrowMine(){
+	
+}
+
+void stThrowMine::step(level* lvl, priest* p){
+	//WIP cambiar efectos
+	lvl->addEmitter(new starEffect(lvl->getEffectSheet(), nextX, nextY+16));
+}
+
+void stThrowMine::enter(level* lvl, priest* p){
+			
+	int X, Y;
+	p->getPos(X, Y);
+
+	nextX = 256+rand()%832;
+	nextY = 240+rand()%120;
+
+	if (abs(nextX-X) < 150){
+		if (X < 683){
+			nextX = 672+rand()%208;
+		} else {
+			nextX = 256+rand()%208;
+		}
+	}
+	
+	p->setTimer(30);
+	p->setNextState(new stTeleport());		
+}
+
+void stThrowMine::exit(level* lvl, priest* p){
+	int X, Y;
+	p->getPos(X, Y);
+	
+	//WIP cambiar efectos
+	//lvl->addEnemyBullet(new bossMine(), x, y+16);
+	lvl->addEmitter(new starEffect(lvl->getEffectSheet(), X, Y+16));
+	p->setPos(nextX, nextY);
+}
+
+//stMultishot
+stMultishot::stMultishot(){
+
+}
+
+stMultishot::~stMultishot(){
+	
+}
+
+void stMultishot::step(level* lvl, priest* p){
+	//efecto de cargar
+}
+
+void stMultishot::enter(level* lvl, priest* p){
+	double proportion = p->getLives()/double(p->getMaxLives());
+	
+	p->setTimer(30+30*proportion);	
+	p->setNextState(new stIdle());
+}
+
+void stMultishot::exit(level* lvl, priest* p){
+	//disparar balas para todos lados
+}
+
+
 //FIN PRIEST
+
+//----------------------------------------------------
 
 //DEMON
 demon::demon(LTexture* sprt, int X, int Y){
@@ -332,10 +692,52 @@ demon::demon(LTexture* sprt, int X, int Y){
 	chargingDerAnim->addKeyframe(120, 90, 1);
 	chargingDerAnim->addKeyframe(120, 0, 2);
 	
+	//animaciones de "release"
+	releaseIzqAnim = new limbAnim(brazoIzq, 0);
+	releaseDerAnim = new limbAnim(brazoDer, 0);
+	if (releaseIzqAnim == NULL || releaseDerAnim == NULL){
+		std::cout << "No pudieron crearse las animaciones -release- para los brazos" << std::endl;
+		exit(1);
+	}
 	
+	releaseIzqAnim->addKeyframe(30, 270, 0);
+	releaseIzqAnim->addKeyframe(30, 0, 1);
+	releaseIzqAnim->addKeyframe(30, 0, 2);	
+	
+	releaseDerAnim->addKeyframe(30, -90, 0);
+	releaseDerAnim->addKeyframe(30, 0, 1);
+	releaseDerAnim->addKeyframe(30, 0, 2);
+	
+	//animaciones de disparo
+	shootIzqAnim = new limbAnim(brazoIzq, 0);
+	shootDerAnim = new limbAnim(brazoDer, 0);
+	if (shootIzqAnim == NULL || shootDerAnim == NULL){
+		std::cout << "No pudieron crearse las animaciones -disparo- para los brazos" << std::endl;
+		exit(1);
+	}
+	
+	shootIzqAnim->addKeyframe(60, 180, 0);
+	shootIzqAnim->addKeyframe(60, 0, 1);
+	shootIzqAnim->addKeyframe(60, 0, 2);
+	shootIzqAnim->addKeyframe(70, 240, 0);
+	shootIzqAnim->addKeyframe(70, 90, 1);
+	shootIzqAnim->addKeyframe(70, 45, 2);
+	shootIzqAnim->addKeyframe(80, 235, 0);
+	shootIzqAnim->addKeyframe(80, 0, 2);
+	
+	shootDerAnim->addKeyframe(60, 0, 0);
+	shootDerAnim->addKeyframe(60, 0, 1);
+	shootDerAnim->addKeyframe(60, 0, 2);
+	shootDerAnim->addKeyframe(70, -55, 0);
+	shootDerAnim->addKeyframe(70, -90, 1);
+	shootDerAnim->addKeyframe(70, -45, 2);
+	shootDerAnim->addKeyframe(80, -50, 0);
+	shootDerAnim->addKeyframe(80, 0, 2);
+		
 	//Seteo animaciones actuales
-	currentIzqAnim = fallingIzqAnim;
-	currentDerAnim = fallingDerAnim;
+	currentIzqAnim = idleIzqAnim;
+	currentDerAnim = idleDerAnim;
+	currentAnim = "idle";
 	
 	armsTexture = NULL;
 		
@@ -366,6 +768,34 @@ demon::~demon(){
 	
 	
 }
+
+void demon::setAnimation(const string& str){
+		
+	if (str == "idle"){
+		currentDerAnim = idleDerAnim;
+		currentIzqAnim = idleIzqAnim;
+	} else if (str == "falling"){
+		currentDerAnim = fallingDerAnim;
+		currentIzqAnim = fallingIzqAnim;
+	} else if (str == "charging"){
+		currentDerAnim = chargingDerAnim;
+		currentIzqAnim = chargingIzqAnim;
+	} else if (str == "release"){
+		currentDerAnim = releaseDerAnim;
+		currentIzqAnim = releaseIzqAnim;
+	} else if (str == "shoot"){
+		currentDerAnim = shootDerAnim;
+		currentIzqAnim = shootIzqAnim;
+	} else {
+		return;
+	}
+	
+	currentAnim = str;
+	
+	currentDerAnim->reset();
+	currentIzqAnim->reset();
+}
+
 	
 void demon::step(level* lvl){
 	
@@ -373,11 +803,12 @@ void demon::step(level* lvl){
 	if (timer > 360){
 		timer = int(timer)%360;
 	}
-	
+			
 	if (currentIzqAnim != NULL)
 		currentIzqAnim->step();
 	if (currentDerAnim != NULL)
 		currentDerAnim->step();	
+	
 }
 
 void demon::draw(painter* pintor){
@@ -390,12 +821,12 @@ void demon::draw(painter* pintor){
 	}
 	
 	if (armsTexture == NULL){
-		armsTexture = pintor->newBlankTexture(1366, 720);
+		//La textura es muy grande, pero meh...
+		armsTexture = pintor->newBlankTexture(1366, 448);
 	}
 	//No hago un else, porque así se ejecuta lo de arriba primero
 	if (armsTexture != NULL){
 		pintor->setRenderTarget(armsTexture);
-		armsTexture->setBlendMode(1);
 		pintor->setColor(0, 0, 0, 0);
 		pintor->clear();
 		
@@ -403,10 +834,9 @@ void demon::draw(painter* pintor){
 		brazoIzq->draw(pintor);
 		
 		pintor->resetRenderTarget();
-		armsTexture->setBlendMode(0);
 		pintor->setColor(0x17, 0x17, 0x17, 0xff);
 	}
 	//pintor->draw(armsTexture, 0, 0, 0, 0, 0, 0);
-	pintor->drawEx(armsTexture, 0, 0, 1366, 720, 0, 256, 1366, 720*0.7143, 0, 2);
+	pintor->drawEx(armsTexture, 0, 0, 1366, 448, 0, 448, 1366, 448*0.7143, 0, 2);
 	
 }

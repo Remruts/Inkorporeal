@@ -159,6 +159,11 @@ bool enemy::isAlive(){
 	return alive;
 }
 
+void enemy::setPos(int X, int Y){
+	x = X;
+	y = Y;
+}
+
 void enemy::getPos(int &X, int &Y) const{	
 	X = x;
 	Y = y;
@@ -178,6 +183,10 @@ void enemy::getHurt(){
 
 int enemy::getMaxLives(){
 	return maxLives;
+}
+
+int enemy::getLives(){
+	return lives;
 }
 
 enemyBullet::enemyBullet(LTexture* sprt, int X, int Y, double SPDX, double SPDY){

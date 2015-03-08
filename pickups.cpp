@@ -174,7 +174,7 @@ bool pickup::isPickable(){
 
 //BEGIN COIN
 
-coin::coin(LTexture* sprt, int X, int Y) : pickup(sprt, X, Y, 400){
+coin::coin(LTexture* sprt, int X, int Y) : pickup(sprt, X, Y, 480){
 	srand(time(NULL)+(X+Y)*(long int)(this));
 	
 	int random = (1-(rand()%2)*2);
