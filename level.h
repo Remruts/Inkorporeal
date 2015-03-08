@@ -78,7 +78,8 @@ public:
 	
 	// No lo pienso arreglar.
 	// En vez de eso, vamos a crear una función que me devuelva el spritesheet de efectos.
-	LTexture* getEffectSheet();
+	LTexture* getEffectSheet();	
+	void getRandomColor(unsigned int &R, unsigned int &G, unsigned int &B);
 	
 	void addPoints(int points, int x, int y);
 	void addLife();

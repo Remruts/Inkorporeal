@@ -139,13 +139,7 @@ cherubilArrow::~cherubilArrow(){
 }
 
 void cherubilArrow::step(level* lvl){
-	
-	/*
-	if (life == 0){
-		lvl->addEmitter(new fireEmitter(lvl->getEffectSheet(), x, y));
-	}
-	*/
-			
+		
 	enemyBullet::step(lvl);
 	
 	colBox.x = x+8;
@@ -171,59 +165,4 @@ void cherubilArrow::draw(painter* picasso){
 	currentAnim->setStretch(0);
 	spritesheet->setAlpha(255);
 }
-/*
-fireEmitter::fireEmitter(LTexture* sprt, int X, int Y) : emitter(sprt, 1, X, Y){
-	timer = 1;
-	maxTimer = 1;
-	rate = 8;
-}
 
-fireEmitter::~fireEmitter(){
-	
-}
-
-void fireEmitter::emit(){
-
-	particle* part = NULL;
-	double spdX, spdY, speed;
-	if (life >= life/5){
-		for (int i = 0; i < rate; i++){
-			speed = (rand()%21-20)/10;
-			spdX = cos((i/double(rate))*2*3.1415)*speed;
-			spdY = sin((i/double(rate))*2*3.1415)*speed;
-		
-			part = new particle(spritesheet, x, y, rand()%3+12);
-			part->setSpeed(spdX, spdY);
-			part->setSpriteSize(32);
-			part->setSprite(4);
-			part->setGravity(true);
-			part->setGravityDir(270);
-			part->setScale(0.8);
-			part->setAlpha(255);
-			part->setBlend(1);	
-			part->setColor(30, 30, 30);
-			part->setFriction(1);
-			part->setPermanence(false);
-			particles.push_back(part);
-		}
-	}
-}
-
-void fireEmitter::step(level* lvl){
-	vector<particle*>::iterator it = particles.begin();
-	while(it != particles.end()){
-		if ((*it) != NULL && (*it)->isAlive()){
-			(*it)->setAlpha(((*it)->getLife()/double((*it)->getMaxLife()))*255);
-			//(*it)->setColor(200, ((*it)->getLife()/double((*it)->getMaxLife()))*220, 0);
-			it++;
-		} else {
-			if (*it != NULL)
-				delete *it;
-			*it = NULL;
-			
-			it = particles.erase(it);
-		}
-	}
-	emitter::step(lvl);
-}
-*/

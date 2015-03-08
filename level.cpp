@@ -902,6 +902,10 @@ LTexture* level::getEffectSheet(){
 	return effectSheet;
 }
 
+void level::getRandomColor(unsigned int &R, unsigned int &G, unsigned int &B){
+	leonardo->getRandomColor(R, G, B);
+}
+
 //determina si un punto está sobre algo sólido
 bool level::isSolid(int x, int y) const{
 	

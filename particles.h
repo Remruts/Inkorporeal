@@ -170,4 +170,28 @@ private:
 	
 };
 
+class plasmaEffect : public emitter{
+public:
+	plasmaEffect(LTexture* sprt, int X, int Y, int R, int G, int B);
+	~plasmaEffect();
+	
+	void step(level* lvl);
+	void emit();
+private:
+	int r, g, b;
+};
+
+class waveEffect : public emitter{
+public:
+	waveEffect(LTexture* sprt, int X, int Y, int R, int G, int B, double tam, int life);
+	~waveEffect();
+	
+	void step(level* lvl);
+	void emit();
+private:
+	int r, g, b;
+	double size;
+	int partLife;
+};
+
 #endif

@@ -66,11 +66,13 @@ public:
 	void getPos(int &x, int &y) const;
 	SDL_Rect* getColBox();
 	
+	void setSpeed(double SPDX, double SPDY);
+	
 	bool isAlive();
 	virtual void die();
 	
 protected:
-	int x, y;
+	double x, y;
 	double spdX, spdY;
 	double accelX, accelY;
 	int visible;

@@ -194,8 +194,8 @@ enemyBullet::enemyBullet(LTexture* sprt, int X, int Y, double SPDX, double SPDY)
 	currentAnim = NULL;
 	angle = 0;
 	
-	x = X;
-	y = Y;
+	x = double(X);
+	y = double(Y);
 	
 	spritesheet = sprt;
 	
@@ -242,28 +242,22 @@ void enemyBullet::step(level* lvl){
 		colBox.x = x;
 		colBox.y = y;
 		
-		if (spdX > 0){
-			
+		if (spdX > 0){			
 			spdX -= accelX;
 		
 			if (spdX <= 0.1){
 				spdX = 0;
-			}
-		
-			x += int(spdX);
-			
+			}						
 		}
-		if (spdX <= 0){
-		
+		if (spdX <= 0){		
 			spdX += accelX;
 		
 			if (spdX >= -0.1){
 				spdX = 0;
-			}
-			
-			x -= int(abs(spdX));
-			
+			}								
 		}
+		
+		x += spdX;
 		
 		spdY += accelY;
 		
@@ -271,7 +265,6 @@ void enemyBullet::step(level* lvl){
 			spdY = 15;
 		
 		y += int(spdY);
-		
 
 	}
 	if (currentAnim != NULL)
@@ -286,26 +279,26 @@ void enemyBullet::draw(painter* disney){
 			spritesheet->setAlpha(alpha);
 			
 			if ((visible == 0) || (visible == 2)){
-				currentAnim->draw(disney, x, y);
+				currentAnim->draw(disney, int(x), int(y));
 			}
 			
 			if (visible == 0){
 				currentAnim->setStretch(1);
 				spritesheet->setAlpha(10);
-				currentAnim->draw(disney, x, y);
+				currentAnim->draw(disney, int(x), int(y));
 				spritesheet->setAlpha(alpha);
 				currentAnim->setStretch(0);
 			}
 			
 			if (visible == 1){
 				spritesheet->setAlpha(10);
-				currentAnim->draw(disney, x, y);
+				currentAnim->draw(disney, int(x), int(y));
 				spritesheet->setAlpha(alpha);
 			}
 			
 			if ((visible == 1) || (visible == 2)){
 				currentAnim->setStretch(1);
-				currentAnim->draw(disney, x, y);
+				currentAnim->draw(disney, int(x), int(y));
 				currentAnim->setStretch(0);
 			}
 		}
@@ -317,12 +310,17 @@ bool enemyBullet::isAlive(){
 }
 
 void enemyBullet::getPos(int &X, int &Y) const{	
-	X = x;
-	Y = y;
+	X = int(x);
+	Y = int(y);
 }
 
 SDL_Rect* enemyBullet::getColBox(){
 	return &colBox;
+}
+
+void enemyBullet::setSpeed(double SPDX, double SPDY){
+	spdX = SPDX;
+	spdY = SPDY;
 }
 
 void enemyBullet::die(){

@@ -20,7 +20,7 @@ priest::priest(LTexture* sprt, int X, int Y) : enemy(sprt, X, Y){
 	colBox.w = 24;
 	colBox.h = 32;
 	
-	lives = 200;
+	lives = 10;
 	maxLives = lives;
 	
 	haloAngle = 0;
@@ -237,6 +237,195 @@ void priest::drawHalo(painter* p, LTexture* cube, int x, int y, double direction
 }
 
 //---------------------------------------------------------------------------------
+//BALAS
+//sineBullet
+sineBullet::sineBullet(LTexture* sprt, int X, int Y, bool side) : enemyBullet(sprt, X, Y, 2*(side*2-1), 0){
+	
+	currentAnim = NULL;
+	
+	visible = 1;
+	angle = 0;
+	
+	life = 600;
+	
+	colBox.x = x;
+	colBox.y = y;
+	colBox.w = 32;
+	colBox.h = 32;
+	alpha = 200;
+	
+	timer = 0;
+	
+}
+
+sineBullet::~sineBullet(){
+	
+}
+
+void sineBullet::step(level* lvl){
+	
+	timer-=10;
+	if (timer<0)
+		timer = 360+int(timer)%360;
+	
+	if (life == 0){
+		lvl->addEmitter(new plasmaEffect(spritesheet, x, y, 0, 200, 0));
+	}
+	
+	y += 3*sin(timer/180.0*3.1415); //+0.5
+	
+	enemyBullet::step(lvl);
+		
+	colBox.x = x;
+	colBox.y = y;
+}
+
+void sineBullet::draw(painter* picasso){	
+	int scale = (rand()%41)/10;
+	spritesheet->setBlendMode(1);
+		
+	spritesheet->setAlpha(5);
+	spritesheet->setColor(0, 200, 0);
+	picasso->drawEx(spritesheet, 32, 64, 32, 32, x-16-scale/2, y-48-scale/2, 64+scale, 64+scale, 0, 2);
+	spritesheet->setColor(0xff, 0xff, 0xff);
+	picasso->drawEx(spritesheet, 32, 64, 32, 32, x-scale/2, y-32-scale/2, 32+scale, 32+scale, 0, 2);
+	
+	spritesheet->setAlpha(255);
+	spritesheet->setColor(0, 200, 0);
+	picasso->drawEx(spritesheet, 32, 64, 32, 32, x-16-scale/2, 448+(320-y*0.7143)-(48-scale/2)*0.7143, 64+scale, (64+scale)*0.7143, 0, 2);
+	spritesheet->setColor(0xff, 0xff, 0xff);
+	picasso->drawEx(spritesheet, 32, 64, 32, 32, x-scale/2, 448+(320-y*0.7143)-(32-scale/2)*0.7143, 32+scale, (32+scale)*0.7143, 0, 2);
+	
+	spritesheet->setColor(0xff, 0xff, 0xff);
+	spritesheet->setBlendMode(0);
+}
+
+//regularBullet
+regularBullet::regularBullet(LTexture* sprt, int X, int Y, double spdX, double spdY) : enemyBullet(sprt, X, Y, spdX, spdY){
+	
+	currentAnim = NULL;
+	
+	visible = 1;
+	angle = 0;
+	
+	life = 600;
+	
+	colBox.x = x-16;
+	colBox.y = y-16;
+	colBox.w = 32;
+	colBox.h = 32;
+	alpha = 200;
+	
+	r = 255;
+	g = 255;
+	b = 255;
+	
+	size = 1;
+	
+}
+
+regularBullet::~regularBullet(){
+	
+}
+
+void regularBullet::setColor(int R, int G, int B){
+	r = (unsigned int)(R);
+	g = (unsigned int)(G);
+	b = (unsigned int)(B);
+}
+
+void regularBullet::setSize(double s){
+	if (s>0){
+		size = s;
+	}
+	colBox.x = x;
+	colBox.y = y-16*size;
+	colBox.w = 32*size;
+	colBox.h = 32*size;
+}
+
+void regularBullet::setVisible(int v){
+	if (v >= 0 && v < 3)
+		visible = v;
+}
+
+void regularBullet::step(level* lvl){
+	
+	if (life == 0){
+		lvl->addEmitter(new plasmaEffect(spritesheet, x, y, int(r), int(g), int(b)));
+	}
+	
+	enemyBullet::step(lvl);
+		
+	colBox.x = x;
+	colBox.y = y-32*size;
+}
+
+void regularBullet::draw(painter* picasso){	
+	int scale = (rand()%41)/10;
+	spritesheet->setBlendMode(1);
+	
+	if (visible == 1){
+		spritesheet->setAlpha(5);
+	}
+	spritesheet->setColor(int(r), int(g), int(b));
+	picasso->drawEx(spritesheet, 32, 64, 32, 32, x-16*size-scale/2, y-48*size-scale/2, 64*size, 64*size, 0, 2);
+	spritesheet->setColor(0xff, 0xff, 0xff);
+	picasso->drawEx(spritesheet, 32, 64, 32, 32, x-scale/2, y-32*size-scale/2, 32*size, 32*size, 0, 2);
+	
+	spritesheet->setAlpha(5);
+	if (visible > 0){
+		spritesheet->setAlpha(255);
+	}	
+	spritesheet->setColor(int(r), int(g), int(b));
+	picasso->drawEx(spritesheet, 32, 64, 32, 32, x-16*size-scale/2, 448+(320-y*0.7143)-(48*size-scale/2)*0.7143, 
+		64*size+scale, (64*size+scale)*0.7143, 0, 2);
+	spritesheet->setColor(0xff, 0xff, 0xff);
+	picasso->drawEx(spritesheet, 32, 64, 32, 32, x-scale/2, 448+(320-y*0.7143)-(32*size-scale/2)*0.7143, 
+		32*size+scale, (32*size+scale)*0.7143, 0, 2);
+		
+	spritesheet->setAlpha(255);
+	//debug
+	//picasso->setColor(0xff, 0x00, 0x00, 0xff);
+	//picasso->drawRect(colBox.x, colBox.y, colBox.w, colBox.h, 0);
+	//picasso->setColor(0xff, 0xff, 0xff, 0xff);
+	
+	spritesheet->setColor(0xff, 0xff, 0xff);
+	spritesheet->setBlendMode(0);
+}
+
+//Bala que gira
+spinningBullet::spinningBullet(LTexture* sprt, int X, int Y, double dir, double spd) 
+  : regularBullet(sprt, X, Y, cos(dir/180.0*3.1415)*spd, sin(dir/180.0*3.1415)*spd){
+  
+	direction = dir;
+	speed = spd;
+	life = 300;
+	
+}
+
+spinningBullet::~spinningBullet(){
+	
+}
+
+void spinningBullet::step(level* lvl){
+	direction += 1;
+	if (direction > 360){
+		direction = int(direction)%360;
+	}
+	
+	spdX = cos(direction/180.0*3.1415)*speed;
+	spdY = sin(direction/180.0*3.1415)*speed;
+	
+	regularBullet::step(lvl);
+}
+
+void spinningBullet::draw(painter* pintor){
+	regularBullet::draw(pintor);
+}
+
+
+//---------------------------------------------------------------------------------
 //ESTADOS
 
 stIdle::stIdle(){
@@ -277,7 +466,9 @@ void stIdle::enter(level* lvl, priest* p){
 	}
 	*/
 	//nextSt = new stTeleport();
-	nextSt = new stDemonCrush();
+	//nextSt = new stDemonCrush();
+	//nextSt = new stDemonShoot();
+	nextSt = new stMultishot();
 	
 	p->setNextState(nextSt);
 	p->setDevilAnim("idle");
@@ -356,20 +547,30 @@ stDemonCrush::~stDemonCrush(){
 }
 
 void stDemonCrush::step(level* lvl, priest* p){
-	
+
 }
 
 void stDemonCrush::enter(level* lvl, priest* p){
 	//double proportion = p->getLives()/double(p->getMaxLives());
 	
-	p->setTimer(160);
+	p->setTimer(150);
 	
 	p->setNextState(new stIdle());
 	p->setDevilAnim("falling");
 }
 
 void stDemonCrush::exit(level* lvl, priest* p){
-	//TODO crear balas
+	lvl->shake(2, 30);
+	
+	int X, Y;
+	p->getPos(X, Y);
+	
+	lvl->addEmitter(new waveEffect(lvl->getEffectSheet(), 324, 384, 0, 200, 0, 2, 30));
+	lvl->addEnemyBullet(new sineBullet(lvl->getEffectSheet(), 324, 384, true));
+	lvl->addEnemyBullet(new sineBullet(lvl->getEffectSheet(), 324, 384, false));
+	lvl->addEmitter(new waveEffect(lvl->getEffectSheet(), 1042, 384, 0, 200, 0, 2, 30));
+	lvl->addEnemyBullet(new sineBullet(lvl->getEffectSheet(), 1042, 384, false));
+	lvl->addEnemyBullet(new sineBullet(lvl->getEffectSheet(), 1042, 384, true));
 }
 
 //stDemonShoot
@@ -382,7 +583,63 @@ stDemonShoot::~stDemonShoot(){
 }
 
 void stDemonShoot::step(level* lvl, priest* p){
-	
+	if (p->getTimer() == 100){
+		double proportion = (p->getLives()/double(p->getMaxLives()));
+		double speed = 3+2*proportion;
+		
+		int playerX, playerY, X, Y;
+		lvl->getPlayerPos(playerX, playerY);
+		
+		X = playerX - 300;
+		Y = playerY - 300;
+		
+		double normalized = sqrt(X*X + Y*Y);
+		
+		lvl->addEmitter(new waveEffect(lvl->getEffectSheet(), 300, 300, 0, 0, 200, 2, 30));
+		lvl->addEmitter(new waveEffect(lvl->getEffectSheet(), 300, 200, 0, 0, 200, 2, 30));
+		lvl->addEmitter(new waveEffect(lvl->getEffectSheet(), 1042, 300, 0, 0, 200, 2, 30));
+		lvl->addEmitter(new waveEffect(lvl->getEffectSheet(), 1042, 200, 0, 0, 200, 2, 30));
+		
+		regularBullet* bullet = new regularBullet(lvl->getEffectSheet(), 300, 300, 
+			speed*(double(X)/normalized), (speed+1)*(double(Y)/normalized));
+		bullet->setColor(0, 0, 200);
+		bullet->setSize(2-proportion);
+		bullet->setVisible(1);
+		lvl->addEnemyBullet(bullet);
+		
+		X = playerX - 300;
+		Y = playerY - 200;
+		normalized = sqrt(X*X + Y*Y);
+		
+		bullet = new regularBullet(lvl->getEffectSheet(), 300, 200, 
+			speed*(double(X)/normalized), speed*(double(Y)/normalized));
+		bullet->setColor(0, 0, 200);
+		bullet->setSize(2-proportion);
+		bullet->setVisible(1);
+		lvl->addEnemyBullet(bullet);
+		
+		X = playerX - 1042;
+		Y = playerY - 300;
+		normalized = sqrt(X*X + Y*Y);
+		
+		bullet = new regularBullet(lvl->getEffectSheet(), 1042, 300, 
+			speed*(double(X)/normalized), (speed+1)*(double(Y)/normalized));
+		bullet->setColor(0, 0, 200);
+		bullet->setSize(2-proportion);
+		bullet->setVisible(1);
+		lvl->addEnemyBullet(bullet);
+		
+		X = playerX - 1042;
+		Y = playerY - 200;
+		normalized = sqrt(X*X + Y*Y);
+		
+		bullet = new regularBullet(lvl->getEffectSheet(), 1042, 200, 
+			speed*(double(X)/normalized), speed*(double(Y)/normalized));
+		bullet->setColor(0, 0, 200);
+		bullet->setSize(2-proportion);
+		bullet->setVisible(1);
+		lvl->addEnemyBullet(bullet);
+	}
 }
 
 void stDemonShoot::enter(level* lvl, priest* p){
@@ -395,7 +652,7 @@ void stDemonShoot::enter(level* lvl, priest* p){
 }
 
 void stDemonShoot::exit(level* lvl, priest* p){
-	//TODO crear balas
+	
 }
 
 //stDemonCharge
@@ -546,18 +803,49 @@ stMultishot::~stMultishot(){
 }
 
 void stMultishot::step(level* lvl, priest* p){
-	//efecto de cargar
+	double proportion = p->getLives()/double(p->getMaxLives());
+	int X, Y;
+	p->getPos(X, Y);
+
+	regularBullet* bullet;
+	unsigned int r, g, b;
+	double angle;
+	double startAngle = rand()%361;
+	double speed = 2+3*proportion;
+	
+	if (int(p->getTimer())%20 == 0){
+		lvl->addEmitter(new waveEffect(lvl->getEffectSheet(), X, Y, 255, 255, 255, 5, 30));
+		//disparar balas para todos lados
+		for (int i = 0; i< 10; ++i){
+			angle = int((i/10.0)*360+startAngle)%360;
+	
+			bullet = new spinningBullet(lvl->getEffectSheet(), X+8, Y+32, angle, speed);
+	
+			lvl->getRandomColor(r, g, b);
+			bullet->setColor(int(r), int(g), int(b));
+	
+			bullet->setSize(0.5);
+			bullet->setVisible(0);
+			lvl->addEnemyBullet(bullet);
+		}
+	}
 }
 
 void stMultishot::enter(level* lvl, priest* p){
 	double proportion = p->getLives()/double(p->getMaxLives());
+	int X, Y;
+	p->getPos(X, Y);
 	
-	p->setTimer(30+30*proportion);	
-	p->setNextState(new stIdle());
+	lvl->addEmitter(new waveEffect(lvl->getEffectSheet(), X, Y, 255, 255, 255, 5, 30));
+	//WIP teleport
+	p->setPos(670, 244);
+	
+	p->setTimer(30+40*(1-proportion));
+	p->setNextState(new stTeleport());
 }
 
 void stMultishot::exit(level* lvl, priest* p){
-	//disparar balas para todos lados
+	
 }
 
 

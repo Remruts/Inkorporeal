@@ -36,6 +36,45 @@ private:
 	bossState* nextState;
 };
 
+//BALAS
+class sineBullet : public enemyBullet{
+public:
+	sineBullet(LTexture* sprt, int X, int Y, bool side);
+	~sineBullet();
+	
+	void step(level*);
+	void draw(painter*);
+private:
+	double timer;
+};
+
+class regularBullet : public enemyBullet{
+public:
+	regularBullet(LTexture* sprt, int X, int Y, double spdX, double spdY);
+	virtual ~regularBullet();
+	
+	void setColor(int R, int G, int B);
+	void setSize(double s);
+	void setVisible(int v);
+	
+	virtual void step(level*);
+	virtual void draw(painter*);
+protected:
+	unsigned int r, g, b;
+	double size;
+};
+
+class spinningBullet : public regularBullet{
+public:
+	spinningBullet(LTexture* sprt, int X, int Y, double dir, double spd);
+	~spinningBullet();
+	
+	void step(level*);
+	void draw(painter*);
+private:
+	double direction, speed;
+};
+
 //Estados...
 class bossState{
 public:

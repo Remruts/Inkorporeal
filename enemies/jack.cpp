@@ -185,26 +185,24 @@ void fireEmitter::emit(){
 
 	particle* part = NULL;
 	double spdX, spdY, speed;
-	if (life >= life/5){
-		for (int i = 0; i < rate; i++){
-			speed = (rand()%21-20)/10;
-			spdX = cos((i/double(rate))*2*3.1415)*speed;
-			spdY = sin((i/double(rate))*2*3.1415)*speed;
-		
-			part = new particle(spritesheet, x, y, rand()%3+12);
-			part->setSpeed(spdX, spdY);
-			part->setSpriteSize(32);
-			part->setSprite(4);
-			part->setGravity(true);
-			part->setGravityDir(270);
-			part->setScale(0.8);
-			part->setAlpha(255);
-			part->setBlend(1);	
-			part->setColor(30, 30, 30);
-			part->setFriction(1);
-			part->setPermanence(false);
-			particles.push_back(part);
-		}
+	for (int i = 0; i < rate; i++){
+		speed = (rand()%21-20)/10;
+		spdX = cos((i/double(rate))*2*3.1415)*speed;
+		spdY = sin((i/double(rate))*2*3.1415)*speed;
+	
+		part = new particle(spritesheet, x, y, rand()%3+12);
+		part->setSpeed(spdX, spdY);
+		part->setSpriteSize(32);
+		part->setSprite(4);
+		part->setGravity(true);
+		part->setGravityDir(270);
+		part->setScale(0.8);
+		part->setAlpha(255);
+		part->setBlend(1);	
+		part->setColor(30, 30, 30);
+		part->setFriction(1);
+		part->setPermanence(false);
+		particles.push_back(part);
 	}
 }
 
