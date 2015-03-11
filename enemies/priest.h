@@ -19,6 +19,8 @@ public:
 	void setNextState(bossState*);
 	void setDevilAnim(const string&);
 	
+	LTexture* getSpriteSheet();
+	
 	virtual void step(level*);
 	virtual void draw(painter*);
 	
@@ -74,6 +76,19 @@ public:
 private:
 	double direction, speed;
 };
+
+class bossMine : public enemyBullet{
+public:
+	bossMine(LTexture* sprt, int X, int Y);
+	~bossMine();
+	
+	void step(level*);
+	void draw(painter*);
+private:
+	animation* mineAnim;
+	bool exploded;
+};
+
 
 //Estados...
 class bossState{

@@ -199,18 +199,18 @@ void particle::draw(painter* picasso, LTexture* background){
 	
 		picasso->drawEx(spritesheet, (sprite*spriteSize)%spritesheet->getWidth(), 
 			((sprite*spriteSize)/spritesheet->getWidth())*spriteSize, 
-			spriteSize, spriteSize, x, y, spriteSize*scaleX, spriteSize*scaleY, angle, 0);
+			spriteSize, spriteSize, int(x), int(y), spriteSize*scaleX, spriteSize*scaleY, angle, 0);
 			
 		picasso->drawEx(spritesheet, (sprite*spriteSize)%spritesheet->getWidth(), 
 			((sprite*spriteSize)/spritesheet->getWidth())*spriteSize, 
-			spriteSize, spriteSize, x, 448+(320-y*0.7143-spriteSize*scaleY*0.7143), 
+			spriteSize, spriteSize, int(x), 448+(320-int(y)*0.7143-spriteSize*scaleY*0.7143), 
 			spriteSize*scaleX, spriteSize*scaleY*0.7143, invAngle, 2); //espejado
 	}	
 	
 	if ((life == 1) && permanent){
 		picasso->setRenderTarget(background);
 		picasso->drawEx(spritesheet, (sprite*spriteSize)%spritesheet->getWidth(), (sprite*spriteSize)/spritesheet->getWidth(), 
-			spriteSize, spriteSize, x-192, y, spriteSize*scaleX, spriteSize*scaleY, angle, 0);
+			spriteSize, spriteSize, int(x)-192, int(y), spriteSize*scaleX, spriteSize*scaleY, angle, 0);
 		picasso->resetRenderTarget();
 	}
 	
@@ -739,6 +739,26 @@ waveEffect::waveEffect(LTexture* sprt, int X, int Y, int R, int G, int B, double
 	if (partLife < 1){
 		partLife = 1;
 	}
+	
+	invert = false;
+}
+
+waveEffect::waveEffect(LTexture* sprt, int X, int Y, int R, int G, int B, double tam, int Life, bool Invert) : emitter(sprt, 1, X, Y){
+	timer = 1;
+	maxTimer = 1;
+	rate = 5+rand()%3;
+	
+	r = R;
+	g = G;
+	b = B;
+	
+	size = tam;
+	partLife = Life;
+	if (partLife < 1){
+		partLife = 1;
+	}
+	
+	invert = Invert;
 }
 
 waveEffect::~waveEffect(){
@@ -750,11 +770,19 @@ void waveEffect::emit(){
 	particle* part = NULL;
 			
 	part = new particle(spritesheet, x, y, partLife);
-	part->setSpeed(-(size*28/double(partLife)), -(size*28/double(partLife)));
+	if (invert){
+		part->setSpeed(size*32/double(partLife), size*32/double(partLife));
+	} else{
+		part->setSpeed(-(size*28/double(partLife)), -(size*28/double(partLife)));
+	}	
 	part->setSpriteSize(64);
 	part->setSprite(4);
 	part->setGravity(false);
-	part->setScale(0.1);
+	if (invert){
+		part->setScale(1);
+	} else {
+		part->setScale(0.1);
+	}	
 	part->setAlpha(255);
 	part->setBlend(1);
 	part->setColor(r, g, b);
@@ -771,7 +799,12 @@ void waveEffect::step(level* lvl){
 		if ((*it) != NULL && (*it)->isAlive()){
 			proportion = ((*it)->getLife()/double((*it)->getMaxLife()));
 			(*it)->setAlpha(proportion*255);
-			(*it)->setScale((1.1-proportion)*size);
+			if (invert){
+				(*it)->setScale(proportion*size);
+			} else {
+				(*it)->setScale((1.1-proportion)*size);
+			}
+			
 			it++;
 		} else {
 			if (*it != NULL)
@@ -782,4 +815,101 @@ void waveEffect::step(level* lvl){
 		}
 	}
 	emitter::step(lvl);
+}
+
+//explosionEffect
+explosionEffect::explosionEffect(LTexture* sprt, int X, int Y) : emitter(sprt, 1, X, Y){
+	timer = 1;
+	maxTimer = 1;
+	rate = 8+rand()%3;
+}
+
+explosionEffect::~explosionEffect(){
+	
+}
+
+void explosionEffect::step(level* lvl){
+	vector<particle*>::iterator it = particles.begin();
+	double proportion;
+	while(it != particles.end()){
+		if ((*it) != NULL && (*it)->isAlive()){
+			proportion = ((*it)->getLife()/double((*it)->getMaxLife()));
+			(*it)->setAlpha(proportion*255);
+			(*it)->setColor(200*proportion, 100*proportion*proportion, 32*proportion);
+			//(*it)->setScale(proportion*size);
+			it++;
+		} else {
+			if (*it != NULL)
+				delete *it;
+			*it = NULL;
+			
+			it = particles.erase(it);
+		}
+	}
+	emitter::step(lvl);
+}
+
+void explosionEffect::emit(){
+	particle* part = NULL;
+	double spdX, spdY, speed, angle;
+	double randomAngle = ((rand()%11)/10.0)*2*3.1415;
+	
+	for (int i = 0; i < rate; i++){
+		angle = (i/double(rate))*2*3.1415 + randomAngle;
+		speed = 5;
+		spdX = cos(angle)*speed;
+		spdY = sin(angle)*speed;
+		
+		part = new particle(spritesheet, x+cos(angle)*16+rand()%9-4, y+sin(angle)*16+rand()%9-4, 15);
+		part->setSpeed(spdX, spdY);
+		part->setSpriteSize(32);
+		part->setSprite(rand()%8);
+		part->setGravity(false);
+		part->setScale(1);
+		part->setAlpha(200);
+		part->setBlend(1);	
+		part->setColor(200, 100, 32);
+		part->setFriction(1);
+		part->setPermanence(false);
+		particles.push_back(part);
+	}
+	for (int i = 0; i < rate; i++){
+		angle = (i/double(rate))*2*3.1415 + randomAngle/2;
+		speed = 1;
+		spdX = cos(angle)*speed;
+		spdY = sin(angle)*speed;
+		
+		part = new particle(spritesheet, x+cos(angle)*16+rand()%17-8, y+sin(angle)*16+rand()%17-8, 15);
+		part->setSpeed(spdX, spdY);
+		part->setSpriteSize(32);
+		part->setSprite(rand()%8);
+		part->setGravity(false);
+		part->setScale(1);
+		part->setAlpha(200);
+		part->setBlend(1);	
+		part->setColor(200, 100, 32);
+		part->setFriction(1);
+		part->setPermanence(false);
+		particles.push_back(part);
+	}	
+	for (int i = 0; i < rate; i++){
+		angle = (i/double(rate))*2*3.1415;
+		speed = 1;
+		spdX = cos(angle)*speed;
+		spdY = sin(angle)*speed;
+		
+		part = new particle(spritesheet, x+cos(angle)*4, y+sin(angle)*4, 15);
+		part->setSpeed(spdX, spdY);
+		part->setSpriteSize(32);
+		part->setSprite(9);
+		part->setGravity(false);
+		part->setScale(1);
+		part->setAlpha(200);
+		part->setBlend(1);	
+		part->setColor(200, 100, 32);
+		part->setFriction(1);
+		part->setPermanence(false);
+		particles.push_back(part);
+	}
+	
 }

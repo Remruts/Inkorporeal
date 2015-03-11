@@ -52,7 +52,7 @@ public:
 	void draw(painter*, LTexture*);
 	
 private:
-	int x, y;
+	double x, y;
 	double spdX, spdY;
 	double scaleX, scaleY;
 	int sprite;
@@ -184,6 +184,7 @@ private:
 class waveEffect : public emitter{
 public:
 	waveEffect(LTexture* sprt, int X, int Y, int R, int G, int B, double tam, int life);
+	waveEffect(LTexture* sprt, int X, int Y, int R, int G, int B, double tam, int life, bool Invert);
 	~waveEffect();
 	
 	void step(level* lvl);
@@ -192,6 +193,17 @@ private:
 	int r, g, b;
 	double size;
 	int partLife;
+	bool invert;
+};
+
+//las explosiones más simples y truchas del mundo
+class explosionEffect : public emitter{
+public:
+	explosionEffect(LTexture* sprt, int X, int Y);
+	~explosionEffect();
+	
+	void step(level* lvl);
+	void emit();	
 };
 
 #endif

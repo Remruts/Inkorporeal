@@ -71,6 +71,10 @@ void priest::setDevilAnim(const string& str){
 	shadowDevil->setAnimation(str);
 }
 
+LTexture* priest::getSpriteSheet(){
+	return spritesheet;
+}
+
 void priest::step(level* lvl){
 	if (alive){
 	
@@ -424,6 +428,112 @@ void spinningBullet::draw(painter* pintor){
 	regularBullet::draw(pintor);
 }
 
+//MINE
+bossMine::bossMine(LTexture* sprt, int X, int Y) : enemyBullet(sprt, X, Y, 0, 0){
+	unsigned int frms[] = {9};
+	mineAnim = new animation(1, 0, false, spritesheet, frms, 32);
+	currentAnim = mineAnim;
+	
+	visible = 0;
+	
+	life = 300;
+	maxLife = life;
+	
+	colBox.x = x+4;
+	colBox.y = y+4;
+	colBox.w = 24;
+	colBox.h = 24;
+
+	exploded = false;
+}
+
+bossMine::~bossMine(){
+	if (mineAnim != NULL){
+		delete mineAnim;
+		mineAnim = NULL;
+	}
+
+}
+	
+void bossMine::step(level* lvl){
+	
+	if (alive){
+		
+		int playerX, playerY;
+		lvl->getPlayerPos(playerX, playerY);
+	
+		playerX = playerX - x;
+		playerY = playerY - y;
+		double distance = sqrt(playerX*playerX + playerY*playerY);
+	
+		if (distance < 100 && !exploded){
+			spdX += double(playerX)/distance;
+			spdY += double(playerY)/distance;
+		} else {
+			spdX *= 0.98;
+			spdY *= 0.98;
+		}
+		
+		if (spdX > 1){
+			spdX = 1;
+		} else if (spdX < -1){
+			spdX = -1;
+		}
+		
+		if (spdY > 2){
+			spdY = 2;
+		} else if (spdY < -2){
+			spdY = -2;
+		}
+		
+		if (life == 10){
+			colBox.x = x-8;
+			colBox.y = y-8;
+			colBox.w = 48;
+			colBox.h = 48;
+			
+			lvl->addEmitter(new explosionEffect(lvl->getEffectSheet(), x, y));
+			lvl->shake(1, 30);
+			exploded = true;
+		}
+		
+		if (life == 0 && !exploded){
+			lvl->addEmitter(new explosionEffect(lvl->getEffectSheet(), x, y));
+			lvl->shake(1, 30);
+			exploded = true;
+		}
+	
+		if (life%60 == 0 && !exploded){
+			lvl->addEmitter(new waveEffect(lvl->getEffectSheet(), x+8, y+8, 200, 0, 0, 2, 20));
+		}
+
+		enemyBullet::step(lvl);
+		
+		if (exploded){
+			colBox.x = x-8;
+			colBox.y = y-8;
+		} else {
+			colBox.x = x+4;
+			colBox.y = y+4;			
+		}
+	}
+	
+	
+}
+
+void bossMine::draw(painter* pintor){
+	double proportion = life/double(maxLife);
+	spritesheet->setColor(255, 255*proportion, 255*proportion);
+	if (!exploded){
+		enemyBullet::draw(pintor);
+	}
+	spritesheet->setColor(255, 255, 255);
+		
+	//debug
+	//pintor->setColor(200, 0, 0, 255);
+	//pintor->drawRect(colBox.x, colBox.y, colBox.w, colBox.h, 0);
+	//pintor->setColor(0x17, 0x17, 0x17, 0xff);
+}
 
 //---------------------------------------------------------------------------------
 //ESTADOS
@@ -468,7 +578,8 @@ void stIdle::enter(level* lvl, priest* p){
 	//nextSt = new stTeleport();
 	//nextSt = new stDemonCrush();
 	//nextSt = new stDemonShoot();
-	nextSt = new stMultishot();
+	//nextSt = new stMultishot();
+	nextSt = new stThrowMine();
 	
 	p->setNextState(nextSt);
 	p->setDevilAnim("idle");
@@ -492,7 +603,9 @@ stTeleport::~stTeleport(){
 
 void stTeleport::step(level* lvl, priest* p){
 	//WIP cambiar efectos
-	lvl->addEmitter(new hurtEffect(lvl->getEffectSheet(), nextX, nextY+16));
+	if (p->getTimer() == 15){
+		lvl->addEmitter(new hurtEffect(lvl->getEffectSheet(), nextX+12, nextY+20));
+	}
 }
 
 void stTeleport::enter(level* lvl, priest* p){
@@ -510,6 +623,8 @@ void stTeleport::enter(level* lvl, priest* p){
 			nextX = 256+rand()%208;
 		}
 	}
+	
+	lvl->addEmitter(new waveEffect(lvl->getEffectSheet(), nextX-32, nextY-32, 255, 255, 0, 2, 30, 1));
 	
 	p->setTimer(30+30*proportion);
 	
@@ -533,7 +648,7 @@ void stTeleport::exit(level* lvl, priest* p){
 	p->getPos(X, Y);
 	//WIP cambiar efectos
 	lvl->addEmitter(new starEffect(lvl->getEffectSheet(), X, Y+16));
-	p->setPos(nextX, nextY);
+	p->setPos(nextX, nextY);	
 }
 
 
@@ -759,8 +874,9 @@ stThrowMine::~stThrowMine(){
 }
 
 void stThrowMine::step(level* lvl, priest* p){
-	//WIP cambiar efectos
-	lvl->addEmitter(new starEffect(lvl->getEffectSheet(), nextX, nextY+16));
+	if (p->getTimer() == 5){
+		lvl->addEmitter(new hurtEffect(lvl->getEffectSheet(), nextX+12, nextY+20));
+	}
 }
 
 void stThrowMine::enter(level* lvl, priest* p){
@@ -779,6 +895,8 @@ void stThrowMine::enter(level* lvl, priest* p){
 		}
 	}
 	
+	lvl->addEmitter(new waveEffect(lvl->getEffectSheet(), nextX-32, nextY-32, 255, 255, 0, 2, 30, 1));
+	
 	p->setTimer(30);
 	p->setNextState(new stTeleport());		
 }
@@ -788,7 +906,7 @@ void stThrowMine::exit(level* lvl, priest* p){
 	p->getPos(X, Y);
 	
 	//WIP cambiar efectos
-	//lvl->addEnemyBullet(new bossMine(), x, y+16);
+	lvl->addEnemyBullet(new bossMine(p->getSpriteSheet(), X, Y+16));
 	lvl->addEmitter(new starEffect(lvl->getEffectSheet(), X, Y+16));
 	p->setPos(nextX, nextY);
 }

@@ -201,6 +201,7 @@ enemyBullet::enemyBullet(LTexture* sprt, int X, int Y, double SPDX, double SPDY)
 	
 	alive = true;
 	life = -1;
+	maxLife = life;
 	
 	spdX = SPDX;
 	spdY = SPDY;
