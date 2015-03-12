@@ -126,6 +126,9 @@ private:
 	
 	lvlState currentState; 	//indica si el nivel se está jugando, se ganó o se perdió
 	bool finished; 			//indica si terminó el nivel
+	int fadeTimer;			//timer para fade a negro
+	bool fade;				//indica si hay fade
+	LTexture* fadeTexture;
 	
 	jukebox* bach;
 	map<string, Mix_Chunk*>* soundBank; //sonidos
@@ -164,11 +167,12 @@ private:
 	key* llave;
 	
 	int shakeTimer;
-	
+		
 	LTexture* testText; //Texto de prueba
 	LTexture* pointsText; //texto de puntos
 	LTexture* pointsText2; //texto de puntos2
 	
+
 	unsigned int levelnum;
 	LTexture* levelNumText;
 	LTexture* bossText;

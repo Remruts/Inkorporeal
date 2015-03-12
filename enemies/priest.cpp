@@ -20,7 +20,7 @@ priest::priest(LTexture* sprt, int X, int Y) : enemy(sprt, X-16, Y){
 	colBox.w = 24;
 	colBox.h = 32;
 	
-	lives = 200;
+	lives = 170;
 	maxLives = lives;
 	
 	haloAngle = 0;
@@ -550,16 +550,19 @@ void bossMine::step(level* lvl){
 			lvl->addEmitter(new explosionEffect(lvl->getEffectSheet(), x, y));
 			lvl->shake(1, 30);
 			exploded = true;
+			lvl->playSound("explosionSound");
 		}
 		
 		if (life == 0 && !exploded){
 			lvl->addEmitter(new explosionEffect(lvl->getEffectSheet(), x, y));
 			lvl->shake(1, 30);
 			exploded = true;
+			lvl->playSound("explosionSound");
 		}
 	
 		if (life%60 == 0 && !exploded){
 			lvl->addEmitter(new waveEffect(lvl->getEffectSheet(), x+8, y+8, 200, 0, 0, 2, 20));
+			lvl->playSound("pipSound");
 		}
 
 		enemyBullet::step(lvl);
@@ -648,6 +651,10 @@ void lightPillarEffect::step(level* lvl){
 			lvl->addEnemyBullet(new bossPillar(NULL, x-24));
 		}
 		
+		if (life == 270){
+			lvl->playSound("beamSound");
+		}
+		
 		if (life > 300){
 			scale = 0.05;
 			alpha = 128;
@@ -721,11 +728,13 @@ void stIdle::step(level* lvl, priest* p){
 void stIdle::enter(level* lvl, priest* p){
 	double proportion = p->getLives()/double(p->getMaxLives());
 	bossState* nextSt = NULL; 
+	string prevState = p->getPrevState();
+	
 	int chances = rand()%70+1;
-	if (p->getPrevState() == "stPillars"){
-		p->setTimer(240+290*proportion*proportion);
+	if (prevState == "stPillars"){
+		p->setTimer(300+240*proportion*proportion);
 	} else {
-		p->setTimer(30+380*proportion*proportion);
+		p->setTimer(90+380*proportion*proportion);
 	}
 	
 
@@ -742,9 +751,11 @@ void stIdle::enter(level* lvl, priest* p){
 	} else if (chances < 60){
 		nextSt = new stThrowMine();		
 	} else {
-		if (p->getPrevState() == "stPillars"){
+		if (prevState == "stPillars"){
 			nextSt = new stDemonCharge();
-		} else {
+		} else if (prevState == "stDemonCrush"){
+			nextSt = new stTeleport();
+		}else {
 			nextSt = new stPillars();
 		}		
 	}
@@ -780,6 +791,7 @@ stTeleport::~stTeleport(){
 void stTeleport::step(level* lvl, priest* p){
 	if (int(p->getTimer()) == 15){
 		lvl->addEmitter(new hurtEffect(lvl->getEffectSheet(), nextX+12, nextY+20));
+		lvl->playSound("coinSound2");
 	}
 }
 
@@ -809,6 +821,7 @@ void stTeleport::enter(level* lvl, priest* p){
 	} else {
 		if (proportion < 0.5){
 			p->setNextState(new stThrowMine());
+			teleportNum++;
 		} else {
 			p->setNextState(new stTeleport());
 		}
@@ -823,7 +836,8 @@ void stTeleport::exit(level* lvl, priest* p){
 	p->getPos(X, Y);
 	lvl->addEmitter(new starEffect(lvl->getEffectSheet(), X, Y+16));
 	p->setPos(nextX, nextY);
-	p->setPrevState("stTeleport");	
+	p->setPrevState("stTeleport");
+	lvl->playSound("dashSound");
 }
 
 
@@ -862,6 +876,7 @@ void stDemonCrush::exit(level* lvl, priest* p){
 	lvl->addEnemyBullet(new sineBullet(lvl->getEffectSheet(), 1042, 384, false));
 	lvl->addEnemyBullet(new sineBullet(lvl->getEffectSheet(), 1042, 384, true));
 	p->setPrevState("stDemonCrush");
+	lvl->playSound("getHitSound");
 }
 
 //stDemonShoot
@@ -930,6 +945,8 @@ void stDemonShoot::step(level* lvl, priest* p){
 		bullet->setSize(2-proportion);
 		bullet->setVisible(1);
 		lvl->addEnemyBullet(bullet);
+		
+		lvl->playSound("shootSound2");
 	}
 }
 
@@ -979,6 +996,7 @@ void stDemonCharge::step(level* lvl, priest* p){
 			bullet->setSize(1);
 			lvl->addEnemyBullet(bullet);
 		}
+		lvl->playSound("shootSound2");
 	}
 	
 	if (!charged && (timer <= 200)){
@@ -991,6 +1009,10 @@ void stDemonCharge::step(level* lvl, priest* p){
 		
 		if (timer%60 == 0){
 			lvl->addEmitter(new waveEffect(lvl->getEffectSheet(), X-16, Y-16, 200, 0, 0, 5, 30));
+		}
+		
+		if (timer%30 == 0){
+			lvl->playSound("wubSound");
 		}
 	}
 }
@@ -1024,19 +1046,23 @@ void stPillars::step(level* lvl, priest* p){
 	if (int(T)%20 == 0){
 		switch(pattern){
 		case 0:
+			lvl->playSound("keyAppearsSound");
 			p->addPillar(lvl, 188+(int(T)/20)*100);
 		break;
 		case 1:
+			lvl->playSound("keyAppearsSound");
 			p->addPillar(lvl, 1156-(int(T)/20)*100);
 		break;
 		case 2:
 			if (T > 80){
+				lvl->playSound("keyAppearsSound");
 				p->addPillar(lvl, 188+(int(T)/20)*100);
 				p->addPillar(lvl, 1156-(int(T)/20)*100);
 			}			
 		break;
 		case 3:
 			if (T >60){
+				lvl->playSound("keyAppearsSound");
 				p->addPillar(lvl, (int(T)/20)*64);
 				p->addPillar(lvl, 1344-(int(T)/20)*64);
 			}			
@@ -1077,6 +1103,7 @@ stThrowMine::~stThrowMine(){
 void stThrowMine::step(level* lvl, priest* p){
 	if (p->getTimer() == 5){
 		lvl->addEmitter(new hurtEffect(lvl->getEffectSheet(), nextX+12, nextY+20));
+		lvl->playSound("coinSound2");
 	}
 }
 
@@ -1109,6 +1136,7 @@ void stThrowMine::exit(level* lvl, priest* p){
 	lvl->addEnemyBullet(new bossMine(p->getSpriteSheet(), X, Y+16));
 	lvl->addEmitter(new starEffect(lvl->getEffectSheet(), X, Y+16));
 	p->setPos(nextX, nextY);
+	lvl->playSound("dashSound");
 	p->setPrevState("stThrowMine");
 }
 
@@ -1136,6 +1164,7 @@ void stMultishot::step(level* lvl, priest* p){
 	if (timer < 30+40*(1-proportion)){
 		if (timer%20 == 0){
 			lvl->addEmitter(new waveEffect(lvl->getEffectSheet(), X, Y, 255, 255, 255, 5, 30));
+			lvl->playSound("shootSound2");
 			//disparar balas para todos lados
 			for (int i = 0; i< 10; ++i){
 				angle = int((i/10.0)*360+startAngle)%360;
@@ -1152,11 +1181,14 @@ void stMultishot::step(level* lvl, priest* p){
 		}
 	} else if (timer < 45+40*(1-proportion)){
 		lvl->addEmitter(new hurtEffect(lvl->getEffectSheet(), X+12, 264));
+	} else if (timer == 45+40*(1-proportion)){
+		lvl->playSound("coinSound2");
 	}
 	
 	if (timer == int(30+40*(1-proportion))){
 		lvl->addEmitter(new starEffect(lvl->getEffectSheet(), X, Y+16));
 		p->setPos(X, 244);
+		lvl->playSound("dashSound");
 	} 
 	
 }

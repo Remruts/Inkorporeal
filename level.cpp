@@ -38,7 +38,6 @@ level::level(const string & filename, juego* game){
 	musicBank = game->getMusicBank();
 	
 	hardcoreMode = game->getMode();
-	std::cout << ((hardcoreMode) ? "HARDCORE 1337" : "n00b") << std::endl; 
 	highscore = game->getHighscore();
 	
 	//Determino el número de nivel
@@ -118,6 +117,14 @@ level::level(const string & filename, juego* game){
 	
 	llave = NULL;
 	shakeTimer = 0;
+	fadeTimer = 600;
+	fade = 0;
+	
+	fadeTexture = leonardo->newBlankTexture(1366, 768);
+	leonardo->setRenderTarget(fadeTexture);
+	leonardo->setColor(0x17, 0x17, 0x17, 255);
+	leonardo->clear();
+	leonardo->resetRenderTarget();
 	
 	//bach->playMusic((*musicBank)["levelMusic"], 1, 0);
 	
@@ -154,6 +161,11 @@ level::~level(){
 	if (background != NULL){
 		leonardo->freeTexture(background);
 		background = NULL;
+	}
+	
+	if (fadeTexture != NULL){
+		leonardo->freeTexture(fadeTexture);
+		fadeTexture = NULL;
 	}
 
 	vector<bullet*>::iterator it = bulletList.begin();
@@ -488,16 +500,17 @@ void level::updateEnemies(){
 				}
 				
 				addPoints((*it)->getMaxLives()*100, x, y);
-
-				if (hardcoreMode){
-					if (enemyList.size() == 1){
-						addKey(x, y);
+				if ((lvlType == 1) && (llave == NULL)){
+					if (hardcoreMode){
+						if (enemyList.size() == 1){
+							addKey(x, y);
+						}
+					} else{
+						if (rand()%enemyList.size() == 0){
+							addKey(x, y);
+						}
 					}
-				} else{
-					if ((lvlType == 1) && (llave == NULL) && (rand()%enemyList.size() == 0)){
-						addKey(x, y);
-					}
-				}
+				}			
 				
 				delete *it;
 				*it = NULL;
@@ -699,11 +712,40 @@ void level::update(control* c){
 	updateEmitters();
 	updatePoints();
 	
+	if (fade){
+		fadeTimer -= 1;
+		if (fadeTimer%30 == 0)
+			playSound("explosionSound");
+			
+		addEmitter(new explosionEffect(effectSheet, 224+rand()%880, 64+rand()%322));
+		addEmitter(new colourExplosion(effectSheet, 224+rand()%880, 64+rand()%322, leonardo));
+		
+		if (fadeTimer <= 0){
+			currentState = stWin;
+			fadeTimer = 0;
+		}
+	}
+		
 	
 	if (jugador->getLives() <= 0){
 		currentState = stLose;
-	} else if (enemyList.size() == 0){
-		//currentState = stWin;
+	} else if (!fade && (enemyList.size() == 0)){
+		
+		if (lvlType == 3){
+					
+			vector<enemyBullet*>::iterator it3 = enemyBulletList.begin();
+			while (it3 != enemyBulletList.end()){
+				if ((*it3) != NULL && (*it3)->isAlive()){
+					(*it3)->die();							
+				}
+				it3++;
+			}
+			
+			playSound("screamSound");
+			shake(1, 600);
+			fade = 1;										
+		}
+		
 	}
 	if ((currentState == stWin) || (currentState == stLose)){
 		finished = true;
@@ -851,6 +893,11 @@ void level::draw(){
 	}
 	
 	drawPoints();
+	
+	if (fade){
+		fadeTexture->setAlpha((1-(fadeTimer/300.0))*255);
+		leonardo->draw(fadeTexture, 0, 0, 0, 0, 0, 0);
+	}
 }
 
 void level::drawPoints(){

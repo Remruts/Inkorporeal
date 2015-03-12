@@ -219,6 +219,8 @@ void Engine::draw(){
 	
 	game->draw();
 	
+	//si se quisieran ver los frames
+	/*
 	++frameCount;
 	
 	if (SDL_GetTicks() > lastTime + 1000){
@@ -234,6 +236,7 @@ void Engine::draw(){
 		picasso->freeTexture(fpsText);
 		fpsText = NULL;
 	}
+	*/
 	
 	SDL_RenderPresent(gRenderer);	//Update screen 
 		

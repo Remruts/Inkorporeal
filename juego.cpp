@@ -148,6 +148,12 @@ juego::juego(painter* p, jukebox* b){
 		std::cout << "Error al cargar sonido de moneda. " << std::endl;
 	}
 	
+	soundBank["coinSound2"] = bach->loadSound("sounds/ching.wav");
+	bach->soundSetVolume(soundBank["coinSound2"], 0.2);
+	if (!soundBank["coinSound2"]){
+		std::cout << "Error al cargar sonido de moneda 2. " << std::endl;
+	}
+	
 	soundBank["dashSound"] = bach->loadSound("sounds/firethrow.wav");
 	bach->soundSetVolume(soundBank["dashSound"], 0.6);
 	if (!soundBank["dashSound"]){
@@ -216,15 +222,44 @@ juego::juego(painter* p, jukebox* b){
 		std::cout << "Error al cargar sonido de llave2 " << std::endl;
 	}
 	
+	soundBank["wubSound"] = bach->loadSound("sounds/wub.wav");
+	bach->soundSetVolume(soundBank["wubSound"], 0.6);
+	if (!soundBank["wubSound"]){
+		std::cout << "Error al cargar sonido de wub " << std::endl;
+	}
+	
 	soundBank["selectSound"] = bach->loadSound("sounds/tut.wav");
 	bach->soundSetVolume(soundBank["selectSound"], 0.6);
 	if (!soundBank["selectSound"]){
 		std::cout << "Error al cargar sonido de selección " << std::endl;
 	}
 	
+	soundBank["pipSound"] = bach->loadSound("sounds/pip.wav");
+	bach->soundSetVolume(soundBank["pipSound"], 0.6);
+	if (!soundBank["pipSound"]){
+		std::cout << "Error al cargar sonido de pip " << std::endl;
+	}
+	
+	soundBank["bubbleSound"] = bach->loadSound("sounds/bubble.wav");
+	bach->soundSetVolume(soundBank["bubbleSound"], 0.6);
+	if (!soundBank["bubbleSound"]){
+		std::cout << "Error al cargar sonido de burbuja " << std::endl;
+	}
+	
+	soundBank["beamSound"] = bach->loadSound("sounds/beam.wav");
+	bach->soundSetVolume(soundBank["beamSound"], 0.6);
+	if (!soundBank["beamSound"]){
+		std::cout << "Error al cargar sonido de rayo " << std::endl;
+	}	
+	
 	soundBank["shutterSound"] = bach->loadSound("sounds/shutter.wav");
 	if (!soundBank["shutterSound"]){
 		std::cout << "Error al cargar sonido de shutter " << std::endl;
+	}
+	
+	soundBank["screamSound"] = bach->loadSound("sounds/scream0.wav");
+	if (!soundBank["screamSound"]){
+		std::cout << "Error al cargar sonido de grito " << std::endl;
 	}
 	
 	musicBank["levelMusic"] = bach->loadMusic("music/Inkorporeal.mp3");
@@ -239,7 +274,7 @@ juego::juego(painter* p, jukebox* b){
 	jugador = new player(playerSprites);
 	
 	levelNum = 0;
-	maxLevel = 13;
+	maxLevel = 14;
 	transTimer = 3.0;
 	effectTimer = 0;
 	

@@ -1,0 +1,55 @@
+// NIVEL 14
+// Final boss
+// Mantener orden de secciones o se arruina todo
+// Si una línea empieza con "espacio" o "/", es salteada
+
+>type
+3 // 0=no lock, 1=lock, 2=boss, 3=final boss?
+
+//Si no hay 4 números, se arruina todo.
+>tiles
+1 // rug: 0=no, 1=yes
+0 // wall: 0=black, 1=bird, 2=egg, 3=purple, 4=green
+0 // papering: 0=none, 1=purple, 2=green, 3=red, 4=wood
+1 // floor: 0=bricks, 1=black, 2=black/red, 3=black/purple, 4=red, 5=purple, 6=green, 7=marble
+
+// Mapa de sectores sólidos
+// 59x14 caracteres [real: 30x14 tiles]
+// Si no mide eso, se arruina todo.
+// # significa sólido. Cualquier otra cosa no lo es [aunque yo uso "espacio"].
+// El caracter separador '|' es mentira, pero tiene que haber algo entre cada tile
+// Lo hice así sólo para que se vea mejor
+// Debería haber hecho que los "0"s sean moneditas... y "H"s corazones
+// Update: Eso hice
+>map
+#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#
+#| | | | | | | | | | | | | | | | | | | | | | | | | | | | |#
+#| | | | | | | | | | | | | | | | | | | | | | | | | | | | |#
+#| | | | | | | | | | | | | | | | | | | | | | | | | | | | |#
+#| | | | | | | | | | | | | | | | | | | | | | | | | | | | |#
+#| | | | | | | | | | | | | | | | | | | | | | | | | | | | |#
+#| | | | | | | | | | | | | | | | | | | | | | | | | | | | |#
+#| | | | | | | | | | | | | | | | | | | | | | | | | | | | |#
+#| | | | | | | | | | | | | | | | | | | | | | | | | | | | |#
+#| | | | | | | | | | | | | | | | | | | | | | | | | | | | |#
+#| | | | | | | | | | | | | | | | | | | | | | | | | | | | |#
+#| | | | | | | | | | | | | | | | | | | | | | | | | | | | |#
+#| | | | | | | | | | | | | | | | | | | | | | | | | | | | |#
+#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#
+
+//formato: name x y
+// y si no, se arruina todo
+>props
+
+>enemies
+// name x/32 y/32
+//
+priest 15 10
+
+>items
+// name x/32 y/32
+//DEPRECATED
+
+//Todos los .lvl deben terminar en >end
+>end
+//A nadie le importa lo que escribas acá
