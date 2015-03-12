@@ -203,7 +203,7 @@ public:
 	~explosionEffect();
 	
 	void step(level* lvl);
-	void emit();	
+	void emit();
 };
 
 #endif

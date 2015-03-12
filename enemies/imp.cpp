@@ -77,7 +77,6 @@ void imp::step(level* lvl){
 		timer -= 0.1;
 		
 		if (timer <= 0){
-			srand(time(NULL)+(long int)(this));
 			timer = 2+rand()%4;
 			
 			if (rand()%5 == 0 && onGround){

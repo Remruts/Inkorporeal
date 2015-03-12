@@ -2,7 +2,7 @@
 #include "enemy.h"
 #include <iostream>
 
-priest::priest(LTexture* sprt, int X, int Y) : enemy(sprt, X, Y){
+priest::priest(LTexture* sprt, int X, int Y) : enemy(sprt, X-16, Y){
 	//unsigned int frms[] = {0, 1, 2};
 	//movingAnim = new animation(1, 0.2, true, spritesheet, frms, 32);
 	//currentAnim = movingAnim;
@@ -20,17 +20,18 @@ priest::priest(LTexture* sprt, int X, int Y) : enemy(sprt, X, Y){
 	colBox.w = 24;
 	colBox.h = 32;
 	
-	lives = 10;
+	lives = 200;
 	maxLives = lives;
 	
 	haloAngle = 0;
 	haloColor = 0;
 	
-	shadowDevil = new demon(spritesheet, x, y-32);
+	shadowDevil = new demon(spritesheet, 656, y-32);
 	
 	nextState = NULL;
 	state = new stIdle();
 	state->enter(NULL, this);
+	prevState = "stIdle";
 }
 
 priest::~priest(){
@@ -44,6 +45,17 @@ priest::~priest(){
 	if (shadowDevil != NULL){
 		delete shadowDevil;
 		shadowDevil = NULL;
+	}
+	
+	vector<lightPillarEffect*>::iterator it = pillars.begin();
+	while (it != pillars.end()){
+		if (*it != NULL){
+			delete *it;
+			*it = NULL;
+			it = pillars.erase(it);
+		}else{
+			it++;	
+		}
 	}
 }
 
@@ -67,8 +79,20 @@ void priest::setNextState(bossState* st){
 	nextState = st;
 }
 
+void priest::setPrevState(const string& str){
+	prevState = str;
+}
+
+string priest::getPrevState(){
+	return prevState;
+}
+
 void priest::setDevilAnim(const string& str){
 	shadowDevil->setAnimation(str);
+}
+
+void priest::addPillar(level* lvl, int X){
+	pillars.push_back(new lightPillarEffect(lvl->getEffectSheet(), X));
 }
 
 LTexture* priest::getSpriteSheet(){
@@ -111,6 +135,22 @@ void priest::step(level* lvl){
 		} else {
 			haloColor = 0;
 		}
+		
+		vector<lightPillarEffect*>::iterator it = pillars.begin();
+		while (it != pillars.end()){			
+			if (*it != NULL){
+				if ((*it)->isAlive()){
+					(*it)->step(lvl);
+					it++;
+				} else {
+					delete *it;
+					*it = NULL;
+					it = pillars.erase(it);
+				}				
+			}else{
+				it++;	
+			}
+		}
 
 	}
 	
@@ -122,6 +162,16 @@ void priest::draw(painter* pintor){
 	//for (int i = 0; i < 28; ++i)
 	//	drawHalo(pintor, spritesheet, 224+i*33, 400, 270, 1, 3, 1);
 	
+	//pilares de luz
+	vector<lightPillarEffect*>::iterator it = pillars.begin();
+	while (it != pillars.end()){
+		if (*it != NULL){
+			(*it)->draw(pintor);
+		}
+		it++;		
+	}
+	
+	//halo
 	int dir;
 	for (int i = 0; i<15; ++i){
 		dir = i*24+haloAngle;
@@ -353,6 +403,11 @@ void regularBullet::setVisible(int v){
 		visible = v;
 }
 
+void regularBullet::setLife(int l){
+	if (l > 0)
+		life = l;
+}
+
 void regularBullet::step(level* lvl){
 	
 	if (life == 0){
@@ -535,6 +590,119 @@ void bossMine::draw(painter* pintor){
 	//pintor->setColor(0x17, 0x17, 0x17, 0xff);
 }
 
+//bossPillar
+bossPillar::bossPillar(LTexture* sprt, int X) : enemyBullet(sprt, X, 96, 0, 0){
+	currentAnim = NULL;
+		
+	visible = 0;
+	
+	life = 1;
+	maxLife = life;
+	
+	colBox.x = x;
+	colBox.y = y;
+	colBox.w = 48;
+	colBox.h = 320;
+}
+
+bossPillar::~bossPillar(){
+	
+}
+
+void bossPillar::step(level* lvl){
+	enemyBullet::step(lvl);
+	
+	colBox.x = x;
+	colBox.y = y;
+}
+
+void bossPillar::draw(painter* pintor){
+	//pintor->setColor(0, 200, 0, 255);
+	//pintor->drawRect(colBox.x, colBox.y, colBox.w, colBox.h, 0);
+	//pintor->setColor(0x17, 0x17, 0x17, 0xff);
+}
+
+//lightPillarEffect
+lightPillarEffect::lightPillarEffect(LTexture* sprt, int X){
+	spritesheet = sprt;
+	x = X;
+	alpha = 255;
+	scale = 0.1;
+	life = 360;
+	maxLife = life;
+	alive = true;
+}
+
+lightPillarEffect::~lightPillarEffect(){
+	
+}
+
+bool lightPillarEffect::isAlive(){
+	return alive;	
+}
+
+void lightPillarEffect::step(level* lvl){
+	if (alive){
+		life -= 1;
+		if (life <= 270 && life > 30){
+			lvl->addEnemyBullet(new bossPillar(NULL, x-24));
+		}
+		
+		if (life > 300){
+			scale = 0.05;
+			alpha = 128;
+		} else if (life > 270){
+			scale = 1-((life-270)/30.0);
+			if (scale < 0.05){
+				scale = 0.05;
+			}
+			alpha = 100 + 155*scale;
+		} else if (life < 30){
+			scale = life/30.0;
+			if (scale < 0.05){
+				scale = 0.05;
+			}
+			alpha = scale*255;
+		} else {
+			scale = 1;
+			alpha = 255;
+		}	
+		
+		
+		if (life <= 0){
+			alive = false;
+		}
+	}
+	
+}
+
+void lightPillarEffect::draw(painter* pintor){
+	if (alive){
+	
+		spritesheet->setBlendMode(1);
+		spritesheet->setAlpha(alpha);
+
+		if (life <= 300){
+			scale += (rand()%16)/100.0;
+		} else {
+			scale += (rand()%6)/100.0;
+		}
+		
+		for (int i = 0; i < 5; ++i){
+			pintor->drawEx(spritesheet, 0, 192, 64, 64, x-32*scale, 96+i*64, 64*scale, 64, 0, 0);
+		}
+		if (life <= 30){
+			spritesheet->setAlpha(255*scale);
+		} else{
+			spritesheet->setAlpha(255);
+		}
+		for (int i = 0; i < 4 ; ++i)
+			pintor->drawEx(spritesheet, 0, 128, 64, 64, x-48, 93, 96, 16, 0, 0);
+		spritesheet->setBlendMode(0);
+		spritesheet->setAlpha(255);		
+	}	
+}
+
 //---------------------------------------------------------------------------------
 //ESTADOS
 
@@ -553,33 +721,41 @@ void stIdle::step(level* lvl, priest* p){
 void stIdle::enter(level* lvl, priest* p){
 	double proportion = p->getLives()/double(p->getMaxLives());
 	bossState* nextSt = NULL; 
-	//int chances = rand()%80+1;
-
-	p->setTimer(120+300*proportion);
-	/*
-	if (chances < 10){
-		
-	} else if (chances < 20){
-		
-	} else if (chances < 30){
-		
-	} else if (chances < 40){
-		
-	} else if (chances < 50){
-		
-	} else if (chances < 60){
-		
-	} else if (chances < 70){
-		
+	int chances = rand()%70+1;
+	if (p->getPrevState() == "stPillars"){
+		p->setTimer(240+290*proportion*proportion);
 	} else {
-		
+		p->setTimer(30+380*proportion*proportion);
 	}
-	*/
+	
+
+	if (chances < 10){
+		nextSt = new stTeleport();
+	} else if (chances < 20){
+		nextSt = new stDemonCrush();
+	} else if (chances < 30){
+		nextSt = new stDemonShoot();
+	} else if (chances < 40){
+		nextSt = new stMultishot();
+	} else if (chances < 50){
+		nextSt = new stDemonCharge();
+	} else if (chances < 60){
+		nextSt = new stThrowMine();		
+	} else {
+		if (p->getPrevState() == "stPillars"){
+			nextSt = new stDemonCharge();
+		} else {
+			nextSt = new stPillars();
+		}		
+	}
+	
 	//nextSt = new stTeleport();
 	//nextSt = new stDemonCrush();
 	//nextSt = new stDemonShoot();
 	//nextSt = new stMultishot();
-	nextSt = new stThrowMine();
+	//nextSt = new stThrowMine();
+	//nextSt = new stPillars();
+	//nextSt = new stDemonCharge();
 	
 	p->setNextState(nextSt);
 	p->setDevilAnim("idle");
@@ -602,8 +778,7 @@ stTeleport::~stTeleport(){
 }
 
 void stTeleport::step(level* lvl, priest* p){
-	//WIP cambiar efectos
-	if (p->getTimer() == 15){
+	if (int(p->getTimer()) == 15){
 		lvl->addEmitter(new hurtEffect(lvl->getEffectSheet(), nextX+12, nextY+20));
 	}
 }
@@ -646,9 +821,9 @@ void stTeleport::enter(level* lvl, priest* p){
 void stTeleport::exit(level* lvl, priest* p){
 	int X, Y;
 	p->getPos(X, Y);
-	//WIP cambiar efectos
 	lvl->addEmitter(new starEffect(lvl->getEffectSheet(), X, Y+16));
-	p->setPos(nextX, nextY);	
+	p->setPos(nextX, nextY);
+	p->setPrevState("stTeleport");	
 }
 
 
@@ -686,6 +861,7 @@ void stDemonCrush::exit(level* lvl, priest* p){
 	lvl->addEmitter(new waveEffect(lvl->getEffectSheet(), 1042, 384, 0, 200, 0, 2, 30));
 	lvl->addEnemyBullet(new sineBullet(lvl->getEffectSheet(), 1042, 384, false));
 	lvl->addEnemyBullet(new sineBullet(lvl->getEffectSheet(), 1042, 384, true));
+	p->setPrevState("stDemonCrush");
 }
 
 //stDemonShoot
@@ -698,7 +874,7 @@ stDemonShoot::~stDemonShoot(){
 }
 
 void stDemonShoot::step(level* lvl, priest* p){
-	if (p->getTimer() == 100){
+	if (int(p->getTimer()) == 100){
 		double proportion = (p->getLives()/double(p->getMaxLives()));
 		double speed = 3+2*proportion;
 		
@@ -767,7 +943,7 @@ void stDemonShoot::enter(level* lvl, priest* p){
 }
 
 void stDemonShoot::exit(level* lvl, priest* p){
-	
+	p->setPrevState("stDemonShoot");
 }
 
 //stDemonCharge
@@ -780,14 +956,42 @@ stDemonCharge::~stDemonCharge(){
 }
 
 void stDemonCharge::step(level* lvl, priest* p){
-	if ((!charged) && (p->getTimer() <= 35)){
+	int X, Y;
+	X = 656;
+	Y = 320;
+	int timer = p->getTimer();
+	
+	regularBullet* bullet;
+	
+	if ((!charged) && (timer <= 35)){
 		charged = 1;
 		p->setDevilAnim("release");
-		//TODO disparar	+ efecto shockwave
+		lvl->shake(1, 30);
+		lvl->addEmitter(new waveEffect(lvl->getEffectSheet(), X-16, Y-16, 200, 0, 0, 5, 30));
+		
+		
+		double angle;
+		for (int i = 0; i< 16; ++i){
+			angle = (i/16.0)*2*3.1415;
+			bullet = new regularBullet(lvl->getEffectSheet(), X, Y, cos(angle)*3, sin(angle)*4);
+			bullet->setVisible(1);
+			bullet->setColor(200, 0, 0);
+			bullet->setSize(1);
+			lvl->addEnemyBullet(bullet);
+		}
 	}
 	
-	if (!charged){
-		//TODO bola de energía
+	if (!charged && (timer <= 200)){
+		bullet = new regularBullet(lvl->getEffectSheet(), X+8+rand()%65-32, Y+rand()%65-32, 0, 0);
+		bullet->setVisible(1);
+		bullet->setColor(200, 0, 0);
+		bullet->setSize(1);
+		bullet->setLife(1);
+		lvl->addEnemyBullet(bullet);
+		
+		if (timer%60 == 0){
+			lvl->addEmitter(new waveEffect(lvl->getEffectSheet(), X-16, Y-16, 200, 0, 0, 5, 30));
+		}
 	}
 }
 
@@ -801,12 +1005,11 @@ void stDemonCharge::enter(level* lvl, priest* p){
 }
 
 void stDemonCharge::exit(level* lvl, priest* p){
-
+	p->setPrevState("stDemonCharge");
 }
 
 //stPillars
 stPillars::stPillars(){
-	fire = 0;
 	pattern = 0;
 }
 
@@ -815,53 +1018,51 @@ stPillars::~stPillars(){
 }
 
 void stPillars::step(level* lvl, priest* p){
-	/*
+	
 	double T = p->getTimer();
-	double dT = T/160.0;
-	
-	Pillar* toSpawn;
-	if (fire){
-		toSpawn = new firePillar();
-	} else {
-		toSpawn = new beamPillar();
-	}
-	
+		
 	if (int(T)%20 == 0){
 		switch(pattern){
 		case 0:
-			lvl->addEnemyBullet(toSpawn, 224+(int(T)%20)*100,120);
+			p->addPillar(lvl, 188+(int(T)/20)*100);
 		break;
 		case 1:
-			lvl->addEnemyBullet(toSpawn, 764-(int(T)%20)*100,120);
-		break:
+			p->addPillar(lvl, 1156-(int(T)/20)*100);
+		break;
 		case 2:
-			lvl->addEnemyBullet(toSpawn, 224+(int(T)%20)*100,120);
-			lvl->addEnemyBullet(toSpawn, 764-(int(T)%20)*100,120);
+			if (T > 80){
+				p->addPillar(lvl, 188+(int(T)/20)*100);
+				p->addPillar(lvl, 1156-(int(T)/20)*100);
+			}			
+		break;
+		case 3:
+			if (T >60){
+				p->addPillar(lvl, (int(T)/20)*64);
+				p->addPillar(lvl, 1344-(int(T)/20)*64);
+			}			
 		break;
 		}
-	}	
-	*/
+	}
 }
 
 void stPillars::enter(level* lvl, priest* p){
 	double proportion = p->getLives()/double(p->getMaxLives());
 	
 	if (proportion < 0.5){
-		pattern = rand()%3;
+		pattern = rand()%4;
 	} else {
 		pattern = rand()%2;
 	}
 	
-	fire = rand()%2;
-	
-	p->setTimer(160);
+	p->setTimer(180);
 	
 	p->setNextState(new stIdle());
 	p->setDevilAnim("release");
+		
 }
 
 void stPillars::exit(level* lvl, priest* p){
-
+	p->setPrevState("stPillars");
 }
 
 //stThrowMine
@@ -905,10 +1106,10 @@ void stThrowMine::exit(level* lvl, priest* p){
 	int X, Y;
 	p->getPos(X, Y);
 	
-	//WIP cambiar efectos
 	lvl->addEnemyBullet(new bossMine(p->getSpriteSheet(), X, Y+16));
 	lvl->addEmitter(new starEffect(lvl->getEffectSheet(), X, Y+16));
 	p->setPos(nextX, nextY);
+	p->setPrevState("stThrowMine");
 }
 
 //stMultishot
@@ -924,29 +1125,40 @@ void stMultishot::step(level* lvl, priest* p){
 	double proportion = p->getLives()/double(p->getMaxLives());
 	int X, Y;
 	p->getPos(X, Y);
+	
+	int timer = p->getTimer();
 
 	regularBullet* bullet;
 	unsigned int r, g, b;
 	double angle;
 	double startAngle = rand()%361;
 	double speed = 2+3*proportion;
+	if (timer < 30+40*(1-proportion)){
+		if (timer%20 == 0){
+			lvl->addEmitter(new waveEffect(lvl->getEffectSheet(), X, Y, 255, 255, 255, 5, 30));
+			//disparar balas para todos lados
+			for (int i = 0; i< 10; ++i){
+				angle = int((i/10.0)*360+startAngle)%360;
 	
-	if (int(p->getTimer())%20 == 0){
-		lvl->addEmitter(new waveEffect(lvl->getEffectSheet(), X, Y, 255, 255, 255, 5, 30));
-		//disparar balas para todos lados
-		for (int i = 0; i< 10; ++i){
-			angle = int((i/10.0)*360+startAngle)%360;
+				bullet = new spinningBullet(lvl->getEffectSheet(), X+8, Y+32, angle, speed);
 	
-			bullet = new spinningBullet(lvl->getEffectSheet(), X+8, Y+32, angle, speed);
+				lvl->getRandomColor(r, g, b);
+				bullet->setColor(int(r), int(g), int(b));
 	
-			lvl->getRandomColor(r, g, b);
-			bullet->setColor(int(r), int(g), int(b));
-	
-			bullet->setSize(0.5);
-			bullet->setVisible(0);
-			lvl->addEnemyBullet(bullet);
+				bullet->setSize(0.5);
+				bullet->setVisible(0);
+				lvl->addEnemyBullet(bullet);
+			}
 		}
+	} else if (timer < 45+40*(1-proportion)){
+		lvl->addEmitter(new hurtEffect(lvl->getEffectSheet(), X+12, 264));
 	}
+	
+	if (timer == int(30+40*(1-proportion))){
+		lvl->addEmitter(new starEffect(lvl->getEffectSheet(), X, Y+16));
+		p->setPos(X, 244);
+	} 
+	
 }
 
 void stMultishot::enter(level* lvl, priest* p){
@@ -954,16 +1166,14 @@ void stMultishot::enter(level* lvl, priest* p){
 	int X, Y;
 	p->getPos(X, Y);
 	
-	lvl->addEmitter(new waveEffect(lvl->getEffectSheet(), X, Y, 255, 255, 255, 5, 30));
-	//WIP teleport
-	p->setPos(670, 244);
+	lvl->addEmitter(new waveEffect(lvl->getEffectSheet(), X-36, 200, 255, 255, 0, 2, 30, 1));
 	
-	p->setTimer(30+40*(1-proportion));
+	p->setTimer(60+40*(1-proportion));
 	p->setNextState(new stTeleport());
 }
 
 void stMultishot::exit(level* lvl, priest* p){
-	
+	p->setPrevState("stMultishot");
 }
 
 

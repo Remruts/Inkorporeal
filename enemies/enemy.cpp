@@ -32,7 +32,6 @@ enemy::enemy(LTexture* sprt, int X, int Y){
 	
 	facingRight = true;
 	
-	srand(time(NULL)*(x+y));
 	alpha = 255;
 	
 }
@@ -216,7 +215,6 @@ enemyBullet::enemyBullet(LTexture* sprt, int X, int Y, double SPDX, double SPDY)
 	
 	visible = 0;
 	
-	srand(time(NULL)*(x+y));
 	alpha = 255;
 }
 

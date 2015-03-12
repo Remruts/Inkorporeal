@@ -121,6 +121,8 @@ level::level(const string & filename, juego* game){
 	
 	//bach->playMusic((*musicBank)["levelMusic"], 1, 0);
 	
+	//random seed a tiempo
+	srand(time(NULL));	
 }
 
 level::~level(){

@@ -175,7 +175,6 @@ bool pickup::isPickable(){
 //BEGIN COIN
 
 coin::coin(LTexture* sprt, int X, int Y) : pickup(sprt, X, Y, 480){
-	srand(time(NULL)+(X+Y)*(long int)(this));
 	
 	int random = (1-(rand()%2)*2);
 	
@@ -318,7 +317,6 @@ void floatingCoin::draw(painter* disney){
 //BEGIN HEART
 
 heart::heart(LTexture* sprt, int X, int Y) : pickup(sprt, X, Y, 600){
-	srand(time(NULL)+(X+Y)*(long int)(this));
 	
 	spdX = 0;
 	spdY = -2 - (rand()%200/100.0);

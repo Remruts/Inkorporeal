@@ -7,6 +7,7 @@
 
 class demon;
 class bossState;
+class lightPillarEffect;
 
 class priest : public enemy{
 public:
@@ -17,7 +18,11 @@ public:
 	void setTimer(double);
 	
 	void setNextState(bossState*);
+	void setPrevState(const string&);
+	string getPrevState();
 	void setDevilAnim(const string&);
+	
+	void addPillar(level* lvl, int X);
 	
 	LTexture* getSpriteSheet();
 	
@@ -35,7 +40,10 @@ private:
 	animation* movingAnim;
 	demon* shadowDevil;
 	bossState* state;
+	string prevState;
 	bossState* nextState;
+	
+	vector<lightPillarEffect*> pillars;
 };
 
 //BALAS
@@ -58,6 +66,7 @@ public:
 	void setColor(int R, int G, int B);
 	void setSize(double s);
 	void setVisible(int v);
+	void setLife(int l);
 	
 	virtual void step(level*);
 	virtual void draw(painter*);
@@ -87,6 +96,33 @@ public:
 private:
 	animation* mineAnim;
 	bool exploded;
+};
+
+class bossPillar : public enemyBullet{
+public:
+	bossPillar(LTexture* sprt, int X);
+	~bossPillar();
+	
+	void step(level*);
+	void draw(painter*);
+};
+
+class lightPillarEffect{
+public:
+	lightPillarEffect(LTexture* sprt, int X);
+	~lightPillarEffect();
+	
+	bool isAlive();
+	
+	void step(level*);
+	void draw(painter*);
+private:
+	LTexture* spritesheet;
+	double scale;
+	int alpha;
+	int x;
+	int life, maxLife;
+	bool alive;
 };
 
 
@@ -166,7 +202,6 @@ public:
 	virtual void enter(level* lvl, priest* p);
 	virtual void exit(level* lvl, priest* p);
 private:
-	bool fire;
 	int pattern;
 };
 

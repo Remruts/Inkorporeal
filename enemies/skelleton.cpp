@@ -79,7 +79,6 @@ void skelleton::step(level* lvl){
 		timer -= 0.1;
 		
 		if (timer <= 0){
-			srand(time(NULL)+(long int)(this));
 			timer = 10+rand()%10;
 			
 			/* jumping

@@ -322,8 +322,6 @@ colourExplosion::~colourExplosion(){
 }
 	
 void colourExplosion::emit(){
-	srand(time(NULL)*(x+y));
-	
 	particle* part = NULL;
 	double spdX, spdY, speed;
 	for (int i = 0; i < rate; i++){
@@ -374,7 +372,6 @@ coinSparkle::~coinSparkle(){
 }
 	
 void coinSparkle::emit(){
-	srand(time(NULL)*(x+y));
 	
 	particle* part = NULL;
 	double spdX, spdY, speed;
@@ -913,3 +910,4 @@ void explosionEffect::emit(){
 	}
 	
 }
+

@@ -64,7 +64,6 @@ void demobat::step(level* lvl){
 		timer -= 0.1;
 		
 		if (timer <= 0){
-			srand(time(NULL)+(long int)(this));
 			timer = 1+rand()%3;
 			spdY = -7;
 			lvl->playSound("batSound");

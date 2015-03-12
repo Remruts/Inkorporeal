@@ -618,7 +618,6 @@ upSmoke::~upSmoke(){
 }
 	
 void upSmoke::emit(){
-	srand(time(NULL)*(x+y));
 	
 	particle* part = NULL;
 	double spdX, spdY, speed;
@@ -679,7 +678,6 @@ circleEmitter::~circleEmitter(){
 }
 	
 void circleEmitter::emit(){
-	srand(time(NULL)*(x+y));
 	
 	particle* part = NULL;
 	//double spdX, spdY, speed;
