@@ -57,6 +57,18 @@ priest::~priest(){
 			it++;	
 		}
 	}
+	
+	if (state != NULL){
+		if (nextState == state)
+			nextState = NULL;
+		delete state;
+		state = NULL;
+	}
+	
+	if (nextState != NULL){
+		delete nextState;
+		nextState = NULL;
+	}
 }
 
 void priest::setTimer(double t){
@@ -1414,6 +1426,45 @@ demon::~demon(){
 		idleDerAnim = NULL;
 	}
 	
+	if (fallingIzqAnim != NULL){
+		delete fallingIzqAnim;
+		fallingIzqAnim = NULL;
+	}
+	
+	if (fallingDerAnim != NULL){
+		delete fallingDerAnim;
+		fallingDerAnim = NULL;
+	}
+	
+	if (chargingIzqAnim != NULL){
+		delete chargingIzqAnim;
+		chargingIzqAnim = NULL;
+	}
+	
+	if (chargingDerAnim != NULL){
+		delete chargingDerAnim;
+		chargingDerAnim = NULL;
+	}
+	
+	if (releaseIzqAnim != NULL){
+		delete releaseIzqAnim;
+		releaseIzqAnim = NULL;
+	}
+	
+	if (releaseDerAnim != NULL){
+		delete releaseDerAnim;
+		releaseDerAnim = NULL;
+	}
+	
+	if (shootIzqAnim != NULL){
+		delete shootIzqAnim;
+		shootIzqAnim = NULL;
+	}
+	
+	if (shootDerAnim != NULL){
+		delete shootDerAnim;
+		shootDerAnim = NULL;
+	}
 	
 }
 

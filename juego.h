@@ -21,6 +21,7 @@ class menu;
 class intro;
 class outro;
 class smokeCloud;
+class credits;
 
 using std::map;
 using std::string;
@@ -31,7 +32,7 @@ class juego{
 public:
 
 	enum gameState {stPressStart, stMainMenu, stIntro, stPlaying, 
-		stTransition0, stTransition1, stGameOver, stPaused, stOutro};
+		stTransition0, stTransition1, stGameOver, stPaused, stOutro, stCredits};
 	
 	juego(painter*, jukebox*);
 	~juego();
@@ -117,6 +118,7 @@ private:
 	menu* mainMenu;
 	intro* introScreen;
 	outro* outroScreen;
+	credits* creditsScreen;
 };
 
 class menu{
@@ -209,6 +211,22 @@ private:
 	int life, maxLife;
 	double angle;
 	bool alive;
+};
+
+class credits{
+public:
+	credits(painter*);
+	~credits();
+	
+	bool isAlive();
+	
+	void step();
+	void draw(painter*);
+private:
+	bool alive;
+	LTexture* text;
+	int currentText;
+	double timer;
 };
 
 #endif

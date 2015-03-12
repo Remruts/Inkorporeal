@@ -278,15 +278,16 @@ juego::juego(painter* p, jukebox* b){
 	transTimer = 3.0;
 	effectTimer = 0;
 	
-	introScreen = new intro(this);
-	outroScreen = new outro(this);
+	introScreen = new intro(this); //creo la intro
+	outroScreen = new outro(this); //creo el outro
 	mainMenu = new menu(this); //creo el menu
+	creditsScreen = NULL; //inicializo puntero a pantalla de creditos en NULL
 	//Cargo el nivel
 	currentLevel = new level("levels/level0.lvl", this);
-	//currentScreen = stPressStart;
+	currentScreen = stPressStart;
 	//nextScreen = stIntro;
 	currentScreen = stTransition0;
-	nextScreen = stPlaying;
+	//nextScreen = stPlaying;
 	//nextScreen = stOutro;
 	//bach->playMusic(musicBank["levelMusic"], 1, 0);
 }
@@ -407,6 +408,12 @@ juego::~juego(){
 		delete outroScreen;
 		outroScreen = NULL;
 	}
+	
+	if (creditsScreen != NULL){
+		delete creditsScreen;
+		creditsScreen = NULL;
+	}
+	
 }
 
 bool juego::isRunning(){
@@ -416,10 +423,10 @@ bool juego::isRunning(){
 void juego::step(control* c){
 	
 	if (c->esc){
-		running = false; //For debugging purposes
-		return;
+		//For debugging purposes
+		//running = false;
+		//return;
 		
-		/*
 		c->esc = false;
 		if ((currentScreen == stPlaying || currentScreen == stPaused)){
 			if (currentLevel != NULL){
@@ -438,7 +445,6 @@ void juego::step(control* c){
 			running = false;
 			return; 
 		}
-		*/
 	}
 	
 	if (c->evScreenshot){
@@ -554,7 +560,9 @@ void juego::step(control* c){
 			if (!outroScreen->isAlive() || ((c->evShoot) || (c->evMelee) || (c->evStart) )){
 			
 				outroScreen->reset();
-				nextScreen = stPressStart;
+				nextScreen = stCredits;
+				creditsScreen = new credits(leonardo);
+				//nextScreen = stPressStart;
 				currentScreen = stTransition0;
 				transTimer = 3.0;
 				
@@ -562,7 +570,25 @@ void juego::step(control* c){
 				c->evMelee = false;
 				c->evStart = false;
 			}
-		} 		
+		} 
+	}
+	
+	if (currentScreen == stCredits){
+		if (creditsScreen != NULL){
+			if (creditsScreen->isAlive()){
+				creditsScreen->step();
+			} else {
+				delete creditsScreen;
+				creditsScreen = NULL;
+				nextScreen = stPressStart;
+				currentScreen = stTransition0;
+				transTimer = 3.0;
+				
+				c->evShoot = false;
+				c->evMelee = false;
+				c->evStart = false;
+			}			
+		}
 	}
 	
 	if (currentScreen == stTransition0){
@@ -693,6 +719,13 @@ void juego::draw(){
 		}
 	}
 	
+	if (currentScreen == stCredits){
+		if (creditsScreen != NULL){
+			leonardo->clear();
+			creditsScreen->draw(leonardo);
+		}
+	}
+	
 	if (currentScreen == stPlaying){
 		leonardo->setColor(0x17, 0x17, 0x17, 255);
 		if (currentLevel!=NULL){
@@ -711,6 +744,7 @@ void juego::draw(){
 		leonardo->setColor(0x17, 0x17, 0x17, 255);
 	}
 	
+		
 	if (currentScreen == stTransition0){
 		if (transTimer > 2.0){
 			leonardo->setBlendMode(1);
@@ -781,8 +815,7 @@ void juego::draw(){
 				leonardo->setColor(0x17, 0x17, 0x17, 255);
 			}
 			
-		}
-		
+		}		
 		
 	}
 }
@@ -1261,7 +1294,7 @@ outro::outro(juego* game){
 	alive = true;
 	timer = 360.0;
 	timer2 = 300.0;
-	
+	rnum = (rand()%9)-4;
 }
 
 outro::~outro(){
@@ -1434,3 +1467,104 @@ void smokeCloud::draw(painter* pintor){
 	sprite->setBlendMode(0);
 }
 //end smokeCloud
+
+
+//start credits
+credits::credits(painter* picasso){
+	alive = true;
+	text = picasso->textureFromText("A game by Andreas Sturmer", 3, 0xff, 0xff, 0xff);
+	if (text == NULL){
+		std::cout << std::endl;
+		std::cout << "Sorry, no nice credits for you :(" << std::endl;
+		std::cout << std::endl;
+		std::cout << "A game by Andreas Sturmer" << std::endl;
+	}
+	timer = 0;
+	currentText = 0;
+}
+
+credits::~credits(){
+	if (text != NULL){	
+		delete text;
+		text = NULL;
+	}
+}
+	
+bool credits::isAlive(){
+	return alive;
+}
+	
+void credits::step(){
+	if (alive){
+		timer+=1;
+		if (timer > 200){
+			timer = 0;
+		}
+	
+		if (timer > 179 && currentText == 3){
+			timer = 179;
+			alive = false;
+		}
+	}	
+}
+
+void credits::draw(painter* picasso){
+	if (timer == 180){
+	
+		if (text != NULL){
+			picasso->freeTexture(text);
+			text = NULL;
+		}
+		
+		switch (currentText){
+		case 0:
+			text = picasso->textureFromText("Music by Patrick Sturmer", 3, 0xff, 0xff, 0xff);
+			if (text == NULL){
+				std::cout << std::endl;
+				std::cout << "Music by Patrick Sturmer" << std::endl;
+			}
+		break;
+		case 1:
+			text = picasso->textureFromText("Thank you for playing!", 3, 0xff, 0xff, 0xff);
+			if (text == NULL){
+				std::cout << std::endl;
+				std::cout << "Thank you for playing!" << std::endl;
+			}
+		break;
+		case 2:
+			text = picasso->textureFromText("THE END", 3, 0xff, 0xff, 0xff);
+			if (text == NULL){
+				std::cout << std::endl;
+				std::cout << "THE END" << std::endl;
+			}
+			timer = 0;
+		break;
+		}
+		currentText++;
+	}
+	
+	if (text != NULL){
+		
+		if (timer < 180){
+			if (timer >= 90 && currentText == 3){
+				text->setAlpha(255);
+			} else {
+				text->setAlpha(255*sin(timer/180.0*3.1415));
+			}			
+		} else {
+			text->setAlpha(0);
+		}
+		
+		if (currentText < 3){
+			picasso->draw(text, 0, 0, 0, 0, 100+timer/2+180*currentText, 100+100*currentText);
+		} else {
+			int w = text->getWidth();
+			int h = text->getHeight();
+			picasso->drawEx(text, 0, 0, w, h, 683-w/2-int(w*timer/180.0)/2, 384-h/2-int(h*timer/180.0), 
+				w+int(w*timer/180.0), h+int(h*timer/180.0), 0, 0);
+		}
+		
+	}
+	
+}
+//end credits
