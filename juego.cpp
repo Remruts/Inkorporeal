@@ -262,10 +262,35 @@ juego::juego(painter* p, jukebox* b){
 		std::cout << "Error al cargar sonido de grito " << std::endl;
 	}
 	
-	musicBank["levelMusic"] = bach->loadMusic("music/Inkorporeal.mp3");
-	if (!musicBank["levelMusic"]){
-		std::cout << "Error al cargar música de nivel. " << std::endl;
+	musicBank["levelMusic1"] = bach->loadMusic("music/Inkorporeal.wav");
+	if (!musicBank["levelMusic1"]){
+		std::cout << "Error al cargar música de nivel 1/2. " << std::endl;
 	}
+	
+	musicBank["levelMusic2"] = bach->loadMusic("music/Inkorporeal.wav");
+	if (!musicBank["levelMusic2"]){
+		std::cout << "Error al cargar música de nivel 2/2. " << std::endl;
+	}
+	
+	musicBank["bossMusic"] = bach->loadMusic("music/Inkorporeal.wav");
+	if (!musicBank["bossMusic"]){
+		std::cout << "Error al cargar música de jefe. " << std::endl;
+	}
+	
+	musicBank["finalBossMusic"] = bach->loadMusic("music/Inkorporeal.wav");
+	if (!musicBank["finalBossMusic"]){
+		std::cout << "Error al cargar música de jefe final. " << std::endl;
+	}
+	
+	musicBank["menuMusic"] = bach->loadMusic("music/Inkorporeal.wav");
+	if (!musicBank["menuMusic"]){
+		std::cout << "Error al cargar música de menú. " << std::endl;
+	}
+	
+	musicBank["gameOverMusic"] = bach->loadMusic("music/Inkorporeal.wav");
+	if (!musicBank["gameOverMusic"]){
+		std::cout << "Error al cargar música de gameOver. " << std::endl;
+	}	
 	
 	hardcoreMode = false;
 	highscore = 0;
@@ -289,7 +314,7 @@ juego::juego(painter* p, jukebox* b){
 	currentScreen = stTransition0;
 	//nextScreen = stPlaying;
 	//nextScreen = stOutro;
-	//bach->playMusic(musicBank["levelMusic"], 1, 0);
+	bach->playMusic(musicBank["menuMusic"], 1, 0);
 }
 
 juego::~juego(){
@@ -421,7 +446,6 @@ bool juego::isRunning(){
 }
 
 void juego::step(control* c){
-	
 	if (c->esc){
 		//For debugging purposes
 		//running = false;
@@ -441,6 +465,9 @@ void juego::step(control* c){
 			levelNum = 0;
 			jugador = new player(playerSprites);
 			currentLevel = new level(string("levels/level")+std::to_string(levelNum)+string(".lvl"), this);
+			if (bach->musicIsPlaying()){
+				bach->haltMusic(1);
+			}
 		} else if (currentScreen == stPressStart || currentScreen == stMainMenu){
 			running = false;
 			return; 
@@ -473,6 +500,10 @@ void juego::step(control* c){
 		if(mainMenu->goToNext() > 0){
 			hardcoreMode = mainMenu->goToNext()-1;
 			
+			if (bach->musicIsPlaying()){
+				bach->haltMusic(1);
+			}
+			
 			nextScreen = stIntro;
 			currentScreen = stTransition0;
 			
@@ -492,12 +523,20 @@ void juego::step(control* c){
 					
 					nextScreen = stPlaying;
 					currentScreen = stTransition0;
-					
+											
 					levelNum += 1;
 					if (levelNum > maxLevel){
 						nextScreen = stOutro;
 						levelNum = 0;
 					}
+					
+					switch(levelNum){
+					case 5: case 6: case 7: case 8:	case 13: case 14:
+						if (bach->musicIsPlaying()){
+							bach->haltMusic(1);
+						}
+					break;
+					}					
 										
 					jugador->reset();
 					jugador->step(currentLevel);
@@ -516,6 +555,10 @@ void juego::step(control* c){
 					delete jugador;
 					jugador = NULL;
 					currentLevel = NULL;
+					
+					if (bach->musicIsPlaying()){
+						bach->haltMusic(1);
+					}
 					
 					currentScreen = stTransition1;
 					transTimer = 3.0;
@@ -593,6 +636,26 @@ void juego::step(control* c){
 	
 	if (currentScreen == stTransition0){
 		transTimer -= 0.03;
+		
+		// música hardcodeada
+		// en principio iba a ser integrada a los archivos de niveles, 
+		// pero a esta altura no tengo ganas
+		if ((transTimer <= 1.5) && (!bach->musicIsPlaying())){
+			if (nextScreen == stPressStart){
+				bach->playMusic(musicBank["menuMusic"], 1, 0);
+			} else if (nextScreen == stPlaying){
+				if ((levelNum != 0) && (levelNum < 5)){
+					bach->playMusic(musicBank["levelMusic1"], 1, 0);
+				} else if (levelNum == 7){
+					bach->playMusic(musicBank["bossMusic"], 1, 0);
+				} else if (levelNum == 14){
+					bach->playMusic(musicBank["finalBossMusic"], 1, 0);
+				} else if (levelNum >= 8){
+					bach->playMusic(musicBank["levelMusic2"], 1, 0);
+				}
+			}						
+		}
+		
 		if (transTimer <= 0){
 			currentScreen = nextScreen;
 			transTimer = 3;
@@ -605,14 +668,20 @@ void juego::step(control* c){
 			currentScreen = stGameOver;
 			transTimer = 0;
 			continueSelected = true;
+			if (hardcoreMode && bach->musicIsPlaying()){
+				bach->haltMusic(0);
+			}
 		}
 	}
 	
-	if (currentScreen == stGameOver){	
+	if (currentScreen == stGameOver){
 		if (hardcoreMode){
 			transTimer += 0.02;
 			if (transTimer > 1){
 				transTimer = 1;
+			}
+			if (!bach->musicIsPlaying()){
+				bach->playMusic(musicBank["gameOverMusic"], 1, 0);
 			}
 		}
 		
@@ -620,6 +689,10 @@ void juego::step(control* c){
 			//currentScreen = stMainMenu;
 			bach->playSound(soundBank["dashSound"]);
 			if (hardcoreMode){
+				
+				if (bach->musicIsPlaying()){
+					bach->haltMusic(1);
+				}
 				
 				currentScreen = stTransition0;
 				nextScreen = stPressStart;
@@ -636,6 +709,7 @@ void juego::step(control* c){
 					jugador = new player(playerSprites);
 					currentLevel = new level(string("levels/level")+std::to_string(levelNum)+string(".lvl"), this);
 					
+					bach->haltMusic(0);
 					currentScreen = stTransition0;
 					nextScreen = stPlaying;
 					transTimer = 3.0;
@@ -655,7 +729,7 @@ void juego::step(control* c){
 			c->evStart = false;
 		}
 		
-		if (c->evLeft || c->evRight){
+		if ((c->evLeft || c->evRight) && !hardcoreMode){
 			bach->playSound(soundBank["selectSound"]);
 			continueSelected = !continueSelected;
 			c->evLeft = false;
@@ -786,7 +860,7 @@ void juego::draw(){
 		} else if (nextScreen == stPressStart){
 		
 			if (transTimer <= 1.5){
-				effectTimer = 360;
+				effectTimer = 270;
 			
 				leonardo->draw(titleScreen, 0, 0, 0, 0, 220, 64);
 				

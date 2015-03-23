@@ -23,6 +23,7 @@ public:
 	Mix_Music *loadMusic(const string & path);
 	void freeMusic(Mix_Music*);
 	void playMusic(Mix_Music*, bool loop, bool fadeIn);
+	void rewindMusic();
 	void pauseMusic();
 	void resumeMusic();
 	void haltMusic(bool fadeOut);
@@ -36,9 +37,10 @@ public:
 private:
 	float soundVolume, musicVolume;
 	int fadeTime;
+	
 	// Este "delay" existe para que no se escuchen sonidos muy juntos, produciendo ruido
 	// además, achica la cantidad de "canales" que son necesarios para el audio
-	float delay; 
+	float delay;
 };
 
 #endif

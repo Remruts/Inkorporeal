@@ -18,7 +18,7 @@
 
 > Known bugs
 	- Errores de colisión. Como las monedas y Alex quedándose atrapadas entre los bloques.
-
+	- ALT-TAB resulta en aceleración del juego, lo que resulta en muerte instantánea si hay enemigos y no se pausó. No sé porqué.
 
 > Notas
 	- Hay un Makefile, así que en Linux sólo debería hacerse "make"

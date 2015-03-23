@@ -13,7 +13,7 @@ skelleton::skelleton(LTexture* sprt, int X, int Y) : enemy(sprt, X, Y){
 	
 	shooting = 0;
 	
-	timer = 2.0;
+	timer = 10+rand()%10;
 	accel = 0.01;
 	maxSpeedX = 1.5;
 	maxSpeedY = 12;

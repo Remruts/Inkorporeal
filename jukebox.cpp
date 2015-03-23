@@ -2,13 +2,16 @@
 
 jukebox::jukebox(){
 	Mix_AllocateChannels(24); //24 canales es suficiente?
-	setGeneralSoundVolume(0.4);
-	musicSetVolume(0.8);
+	setGeneralSoundVolume(0.6);
+	musicSetVolume(0.5);
 	delay = 0;
+	fadeTime = 1500;
 }
 
 jukebox::~jukebox(){
-	
+	if (musicIsPlaying()){
+		haltMusic(0);
+	}
 }
 
 //sound
@@ -74,11 +77,15 @@ void jukebox::playMusic(Mix_Music* music, bool loop, bool fadeIn){
 	} else{
 		error = Mix_PlayMusic(music, (loop ? -1: 1));
 	}
-	
+		
 	if (error == -1){
 		std::cout << "Couldn't play music. Error: " << Mix_GetError() << std::endl;
 	}
 	
+}
+
+void jukebox::rewindMusic(){
+	Mix_RewindMusic();
 }
 
 void jukebox::pauseMusic(){
