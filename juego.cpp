@@ -262,32 +262,32 @@ juego::juego(painter* p, jukebox* b){
 		std::cout << "Error al cargar sonido de grito " << std::endl;
 	}
 	
-	musicBank["levelMusic1"] = bach->loadMusic("music/Inkorporeal.wav");
+	musicBank["levelMusic1"] = bach->loadMusic("music/Inkorporeal.ogg");
 	if (!musicBank["levelMusic1"]){
 		std::cout << "Error al cargar música de nivel 1/2. " << std::endl;
 	}
 	
-	musicBank["levelMusic2"] = bach->loadMusic("music/Inkorporeal.wav");
+	musicBank["levelMusic2"] = bach->loadMusic("music/level2.ogg");
 	if (!musicBank["levelMusic2"]){
 		std::cout << "Error al cargar música de nivel 2/2. " << std::endl;
 	}
 	
-	musicBank["bossMusic"] = bach->loadMusic("music/Inkorporeal.wav");
+	musicBank["bossMusic"] = bach->loadMusic("music/boss.ogg");
 	if (!musicBank["bossMusic"]){
 		std::cout << "Error al cargar música de jefe. " << std::endl;
 	}
 	
-	musicBank["finalBossMusic"] = bach->loadMusic("music/Inkorporeal.wav");
+	musicBank["finalBossMusic"] = bach->loadMusic("music/finalBoss.ogg");
 	if (!musicBank["finalBossMusic"]){
 		std::cout << "Error al cargar música de jefe final. " << std::endl;
 	}
 	
-	musicBank["menuMusic"] = bach->loadMusic("music/Inkorporeal.wav");
+	musicBank["menuMusic"] = bach->loadMusic("music/waiting.ogg");
 	if (!musicBank["menuMusic"]){
 		std::cout << "Error al cargar música de menú. " << std::endl;
 	}
 	
-	musicBank["gameOverMusic"] = bach->loadMusic("music/Inkorporeal.wav");
+	musicBank["gameOverMusic"] = bach->loadMusic("music/gameover.ogg");
 	if (!musicBank["gameOverMusic"]){
 		std::cout << "Error al cargar música de gameOver. " << std::endl;
 	}	
@@ -668,8 +668,8 @@ void juego::step(control* c){
 			currentScreen = stGameOver;
 			transTimer = 0;
 			continueSelected = true;
-			if (hardcoreMode && bach->musicIsPlaying()){
-				bach->haltMusic(0);
+			if (hardcoreMode){
+				bach->playMusic(musicBank["gameOverMusic"], 0, 0);
 			}
 		}
 	}
@@ -679,10 +679,7 @@ void juego::step(control* c){
 			transTimer += 0.02;
 			if (transTimer > 1){
 				transTimer = 1;
-			}
-			if (!bach->musicIsPlaying()){
-				bach->playMusic(musicBank["gameOverMusic"], 1, 0);
-			}
+			}			
 		}
 		
 		if ((c->evShoot) || (c->evMelee) || (c->evStart) ){
@@ -720,6 +717,10 @@ void juego::step(control* c){
 					leonardo->drawRect(0, 0, 1366, 768, 1);
 					leonardo->setColor(0x17, 0x17, 0x17, 255);
 					hardcoreMode = true;
+					
+					if (!bach->musicIsPlaying()){
+						bach->playMusic(musicBank["gameOverMusic"], 0, 0);
+					}
 					
 				}
 			}
