@@ -420,6 +420,12 @@ void level::updatePlayer(control *c){
 			}
 		}
 		
+		jugador->getPos(playerX, playerY);
+		if ((playerX >= 1120) || (playerX <= 192) || (playerY >= 416) || (playerY <= 0)){
+			jugador->reset();
+			jugador->getHurt(this);
+		}
+		
 		/*
 		if ( (spdX > 0 && solid[iesimo]) || 
 			((spdX < 0 && solid[iesimo])) ){
