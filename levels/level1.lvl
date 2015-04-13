@@ -10,7 +10,7 @@
 1 // rug: 0=no, 1=yes
 1 // wall: 0=black, 1=bird, 2=egg, 3=purple, 4=green
 0 // papering: 0=none, 1=purple, 2=green, 3=red, 4=wood
-3 // floor: 0=bricks, 1=black, 2=black/red, 3=black/purple, 4=red, 5=purple, 6=green, 7=marble
+2 // floor: 0=bricks, 1=black, 2=black/red, 3=black/purple, 4=red, 5=purple, 6=green, 7=marble
 
 // Mapa de sectores sólidos
 // 59x14 caracteres [real: 30x14 tiles]
@@ -68,7 +68,7 @@ florero0 212 237
 //abajo der
 mesa0 512 256
 vela0 512 239
-silla1 480 256
+silla0 480 256
 //velas
 vela1 140 340
 vela1 300 340
@@ -120,6 +120,7 @@ monedita 21 2
 monedita 22 2
 monedita 22 3
 monedita 3 3
+monedita 10 3
 monedita 11 3
 monedita 12 3
 monedita 7 6

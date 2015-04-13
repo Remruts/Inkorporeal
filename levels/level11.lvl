@@ -1,0 +1,80 @@
+// NIVEL 11
+// Este nivel me gusta. Es simple, pero interesante
+// Es posible agarrar todos los corazones
+// Mantener orden de secciones o se arruina todo
+// Si una línea empieza con "espacio" o "/", es salteada
+
+>type
+1 // 0=no lock, 1=lock, 2=boss, 3=final boss?
+
+//Si no hay 4 números, se arruina todo.
+>tiles
+1 // rug: 0=no, 1=yes
+3 // wall: 0=black, 1=bird, 2=egg, 3=purple, 4=green
+0 // papering: 0=none, 1=purple, 2=green, 3=red, 4=wood
+3 // floor: 0=bricks, 1=black, 2=black/red, 3=black/purple, 4=red, 5=purple, 6=green, 7=marble
+
+// Mapa de sectores sólidos
+// 59x14 caracteres [real: 30x14 tiles]
+// Si no mide eso, se arruina todo.
+// # significa sólido. Cualquier otra cosa no lo es [aunque yo uso "espacio"].
+// El caracter separador '|' es mentira, pero tiene que haber algo entre cada tile
+// Lo hice así sólo para que se vea mejor
+// Debería haber hecho que los "0"s sean moneditas... y "H"s corazones
+// Update: Eso hice
+>map
+#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#
+#| | | | | | | | | |0|#|0| | |#| | |0|#|0| | | | | | | | |#
+#|H|0|0| | | | | | |#|#|#| | |#| | |#|#|#| | | | | |0|0|H|#
+#|#|#|#| | | | | | | |#| | | |#| | | |#| | | | | | |#|#|#|#
+#| | | | | | | | | | | | | |H|#|H| | | | | | | | | | | | |#
+#| | | | |0| | | | | | | | |#|#|#| | | | | | | |0| | | | |#
+#| | | |#|#|#| | | | | | | | |#| | | | | | | |#|#|#| | | |#
+#| | | | | | | | | | |#| | | |#| | | |#| | | | | | | | | |#
+#|0|0|0| | | | | | |#|#|#| | | | | |#|#|#| | | | | |0|0|0|#
+#|#|#|#| | | | | | | |#| | | | | | | |#| | | | | | |#|#|#|#
+#| | | | | | | | | | |#| | | | | | | |#| | | | | | | | | |#
+#| | | | | | | | | | |#|0|0|0|#|0|0|0|#| | | | | | | | | |#
+#| | | | | | | | | | |#|0|0|#|#|#|0|0|#| | | | | | | | | |#
+#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#
+
+//formato: name x y
+// y si no, se arruina todo
+>props
+//izquierda
+cadena0 128 32
+cadena0 128 64
+cadena0 128 96
+cadena0 128 128
+cadena0 128 160
+cadena0 192 32
+cadena0 192 64
+cadena0 192 96
+cadena0 192 128
+cadena0 192 160
+//derecha
+cadena0 736 32
+cadena0 736 64
+cadena0 736 96
+cadena0 736 128
+cadena0 736 160
+cadena0 800 32
+cadena0 800 64
+cadena0 800 96
+cadena0 800 128
+cadena0 800 160
+
+>enemies
+// name x/32 y/32
+cherubil 15 10
+cherubil 11 6
+cherubil 19 6
+imp 6 12
+imp 23 12
+
+>items
+// name x/32 y/32
+//DEPRECATED
+//Todos los .lvl deben terminar en >end
+>end
+//A nadie le importa lo que escribas acá

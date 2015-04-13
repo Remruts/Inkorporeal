@@ -1,4 +1,4 @@
-// NIVEL 0
+// NIVEL 5
 // Mantener orden de secciones o se arruina todo
 // Si una línea empieza con "espacio" o "/", es salteada
 
@@ -18,22 +18,20 @@
 // # significa sólido. Cualquier otra cosa no lo es [aunque yo uso "espacio"].
 // El caracter separador '|' es mentira, pero tiene que haber algo entre cada tile
 // Lo hice así sólo para que se vea mejor
-// Debería haber hecho que los "0"s sean moneditas... y "H"s corazones
-// Update: Eso hice
 >map
 #|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#
 #| | | | | | | | | | | | | | | | | | | | | | | | | | | | |#
 #| | | | | | | | | | | | | | | | | | | | | | | | | | | | |#
 #| | | | | | | | | | | | | | | | | | | | | | | | | | | | |#
+#| |#|#|#|#| | | | | | | | | | | | | | | | | | |#|#|#|#| |#
 #| | | | | | | | | | | | | | | | | | | | | | | | | | | | |#
-#| | | | | | | | | | | | | | | | | | | | | | | | | | | | |#
-#| | | | | | | | | | | | |0|0|0|0| | | | | | | | | | | | |#
-#| | | | | | | | | | | | |0|0|0|0| | | | | | | | | | | | |#
-#| | | | | | | | | | | | | | | | | | | | | | | | |H| | | |#
-#|#|#|#|#|#|#|#|#| | | | | | | | | | | | |#|#|#|#|#|#|#|#|#
-#| | | | | | | | | | | | | | | | | | | | | | | | | | | | |#
-#| | | | | | | | | | | | | | | | | | | | | | | | | | | | |#
-#| | | | | | | | | | | | | | | | | | | | | | | | | | | | |#
+#| | | | | | | | |#| | | | | |#| | | | | |#| | | | | | | |#
+#| | | | | | | | |#| | |#| | |#| | |#| | |#| | | | | | | |#
+#| | | | | | | | |#| | |#| | |#| | |#| | |#| | | | | | | |#
+#| |#|#|#|#| | | |#| | |#| | |#| | |#| | |#| | |#|#|#|#| |#
+#| | | | | | | | |#| | |#| | |#| | |#| | |#| | | | | | | |#
+#| | | | | | | |#|#|#| |#| |#|#|#| |#| |#|#|#| | | | | | |#
+#| | | | | | | | |#| | |#| | |#| | |#| | |#| | | | | | | |#
 #|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#|#
 
 //formato: name x y
@@ -44,60 +42,81 @@
 //cuadro0 795 236
 //velas
 //vela1 70 340
-vela1 300 340
-cuadro1 380 360
-vela1 460 340
-cuadro1 540 360
-vela1 620 340
-//candelabros
-cadena0 140 32
-cadena0 140 64
-cadena0 140 96
-candelabro0 140 128
-cadena0 460 32
-cadena0 460 64
-cadena0 460 96
-candelabro0 460 128
-cadena0 780 32
-cadena0 780 64
-cadena0 780 96
-candelabro0 780 128
+//vela1 300 340
+//cuadro1 380 360
+//vela1 460 340
+//cuadro1 540 360
+//vela1 620 340
+florero1 64 256
+florero1 96 256
+florero1 128 256
+florero1 160 256
+florero1 768 256
+florero1 800 256
+florero1 832 256
+florero1 864 256
+//cadenas
+cadena0 288 32
+cadena0 288 64
+cadena0 288 96
+cadena0 384 32
+cadena0 384 64
+cadena0 480 32
+cadena0 480 64
+cadena0 480 96
+cadena0 576 32
+cadena0 576 64
+cadena0 672 32
+cadena0 672 64
+cadena0 672 96
 //
-columna2 672 384
-columna1 672 352
-columna0 672 320
-columna2 256 384
-columna1 256 352
-columna0 256 320
+//columna2 672 384
+//columna1 672 352
+//columna0 672 320
+//columna2 256 384
+//columna1 256 352
+//columna0 256 320
 
 >enemies
 // name x/32 y/32
-//ghost 25 5
-//ghost 5 5
-//ghost 23 10
-//ghost 10 12
+ghost 25 5
+ghost 5 5
+ghost 23 10
+ghost 10 12
 //skelleton 17 6
 //skelleton 5 6
 //skelleton 20 6
 //skelleton 15 3
-imp 23 12
+//imp 23 12
 //demobat 14 12
-//mask 17 12
+mask 2 2
 //jack 15 8
 //cherubil 15 8
 
 >items
 // name x/32 y/32
-//DEPRECATED
-//tomato 25 7
-//monedita 13 6
-//monedita 14 6
-//monedita 15 6
-//monedita 16 6
-//monedita 13 7
-//monedita 14 7
-//monedita 15 7
-//monedita 16 7
+tomato 15 5
+monedita 9 4
+monedita 12 3
+monedita 15 4
+monedita 18 3
+monedita 21 4
+monedita 2 3
+monedita 3 3
+monedita 4 3
+monedita 5 3
+monedita 24 3
+monedita 25 3
+monedita 26 3
+monedita 27 3
+monedita 10 12
+monedita 11 12
+monedita 13 12
+monedita 14 12
+monedita 16 12
+monedita 17 12
+monedita 19 12
+monedita 20 12
 
 //Todos los .lvl deben terminar en >end
 >end
