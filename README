@@ -21,4 +21,4 @@
 	- ALT-TAB resulta en aceleración del juego, lo que resulta en muerte instantánea si hay enemigos y no se pausó. No sé porqué.
 
 > Notas
-	- Hay un Makefile, así que en Linux sólo debería hacerse "make"
+	- Hay un Makefile, así que en Linux sólo debería hacerse "make" ...mientras tengan las bibliotecas SDL2, SDL2_Mixer, SDL2_Image, SDL2_TTF...
