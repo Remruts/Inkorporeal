@@ -5,7 +5,10 @@
 	- El arte también puede utilizarse libremente mientras no sea atribuído a otra persona 
 	- Los sonidos fueron hechos con http://www.bfxr.net/, excepto el sonido "shutter.wav" 
 	  que fue tomado de https://www.freesound.org, todos deberían ser CC0
+	- Sobre la música, el tema principal y de Game Over fueron hechos por Patrick Sturmer, 
+	  pueden usarse libremente, mientras no sean atribuídos a otra persona 
 	- Las fuentes TrueType son libres, pero no son de mi creación, así que no sé
+	
 
 > Composición del repo
 	- En "enemies" está el código de los enemigos
@@ -20,5 +23,14 @@
 	- Errores de colisión. Como las monedas y Alex quedándose atrapadas entre los bloques.
 	- ALT-TAB resulta en aceleración del juego, lo que resulta en muerte instantánea si hay enemigos y no se pausó. No sé porqué.
 
-> Notas
-	- Hay un Makefile, así que en Linux sólo debería hacerse "make" ...mientras tengan las bibliotecas SDL2, SDL2_Mixer, SDL2_Image, SDL2_TTF...
+> Sobre compilación
+	- Hay un Makefile, así que en Linux sólo debería hacerse "make" 
+	...mientras tengan las bibliotecas SDL2, SDL2_Mixer, SDL2_Image, SDL2_TTF...
+	
+> Controles extraños que no pueden modificarse: 
+	- Flechas o asdw para mover (aunque las flechas funcionan mejor)
+	- "space" o "arriba" para saltar
+	- "C" o "J" para disparar
+	- "X" o "K" para dash
+
+> Cualquier consulta, contactarme por este medio o facebook
