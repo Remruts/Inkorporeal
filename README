@@ -26,6 +26,19 @@
 > Sobre compilación
 	- Hay un Makefile, así que en Linux sólo debería hacerse "make" 
 	...mientras tengan las bibliotecas SDL2, SDL2_Mixer, SDL2_Image, SDL2_TTF...
+
+> Dependencias: 
+	- libsdl2, libsdl2-image, libsdl2-mixer, libsdl2-ttf
+	
+	- Lo más probable, si usan Ubuntu, es que sean instaladas así:
+		sudo apt-get install libsdl2-2.0-0 libsdl2-image-2.0-0 libsdl2-mixer-2.0-0 libsdl2-ttf-2.0-0
+		
+	- Si no, fijarse en las páginas respectivas a cada biblioteca:	
+		https://www.libsdl.org/download-2.0.php
+		https://www.libsdl.org/projects/SDL_image/
+		https://www.libsdl.org/projects/SDL_mixer/
+		https://www.libsdl.org/projects/SDL_ttf/
+	
 	
 > Controles extraños que no pueden modificarse: 
 	- Flechas o asdw para mover (aunque las flechas funcionan mejor)
