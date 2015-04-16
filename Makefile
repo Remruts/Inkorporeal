@@ -1,5 +1,5 @@
 CXX = g++ #i586-mingw32msvc-c++ #compilar en windows?
-CXXFLAGS = -Wall -g -std=c++11 #-O3
+CXXFLAGS = -Wall -std=c++11 -O3 #-g
 LDFLAGS = -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer
 
 DEPS = engine.h painter.h juego.h control.h level.h LTexture.h animation.h player.h enemies/enemy.h enemies/ghost.h enemies/skelleton.h enemies/demobat.h enemies/imp.h enemies/mask.h enemies/jack.h enemies/vlad.h enemies/cherubil.h enemies/priest.h particles.h door.h pickups.h points.h jukebox.h limbs.h
@@ -8,8 +8,8 @@ OBJ = main.o engine.o painter.o juego.o control.o level.o LTexture.o animation.o
 %.o: %.cpp $(DEPS)
 	$(CXX) -c -o $@ $< $(CXXFLAGS)
 
-main: $(OBJ)
+inkorporeal: $(OBJ)
 	$(CXX) -o $@ $^ $(CXXFLAGS) $(LDFLAGS)
 
 clean:
-	$(RM) $(OBJ) main
+	$(RM) $(OBJ) inkorporeal
