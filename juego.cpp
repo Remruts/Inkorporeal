@@ -309,7 +309,7 @@ juego::juego(painter* p, jukebox* b){
 	creditsScreen = NULL; //inicializo puntero a pantalla de creditos en NULL
 	//Cargo el nivel
 	currentLevel = new level("levels/level0.lvl", this);
-	currentScreen = stPressStart;
+	nextScreen = stPressStart;
 	//nextScreen = stIntro;
 	currentScreen = stTransition0;
 	//nextScreen = stPlaying;

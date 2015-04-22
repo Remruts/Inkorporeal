@@ -254,7 +254,7 @@ void vlad::step(level* lvl){
 					lvl->playSound("jumpSound");
 					state = stUppercut;
 					timer = abs(playerY)/20;
-					if (timer < 10);
+					if (timer < 10)
 						timer = 30;
 					spdY = -15;
 				}
