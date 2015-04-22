@@ -32,7 +32,7 @@
 	- libsdl2, libsdl2-image, libsdl2-mixer, libsdl2-ttf
 	
 	- Lo más probable, si usan Ubuntu, es que sean instaladas así:
-		sudo apt-get install libsdl2-2.0-0 libsdl2-image-2.0-0 libsdl2-mixer-2.0-0 libsdl2-ttf-2.0-0
+		sudo apt-get install libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev
 		
 	- Si no, fijarse en las páginas respectivas a cada biblioteca:	
 		https://www.libsdl.org/download-2.0.php
