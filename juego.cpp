@@ -292,6 +292,13 @@ juego::juego(painter* p, jukebox* b){
 		std::cout << "Error al cargar música de gameOver. " << std::endl;
 	}	
 	
+	/*
+	SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION,
+		"Testing",
+		"Esto estaria bueno!",
+		NULL);
+	*/
+	
 	hardcoreMode = false;
 	highscore = 0;
 	
